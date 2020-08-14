@@ -26,5 +26,14 @@
     <ClInclude Include="src\pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Base.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\WinProcedures\MainWindowProc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\WinProcedures\TestControlProc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -180,7 +180,10 @@
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Base.h" />
     <ClInclude Include="src\pch.h" />
+    <ClInclude Include="src\WinProcedures\MainWindowProc.h" />
+    <ClInclude Include="src\WinProcedures\TestControlProc.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
