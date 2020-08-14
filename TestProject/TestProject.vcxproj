@@ -30,14 +30,6 @@
   <ItemGroup>
     <ClInclude Include="src\pch.h" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\TestDLL\TestDLL.vcxproj">
-      <Project>{edea36d3-aff9-44e4-a0a7-7cb01989f3e5}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\TPTools\TPTools.vcxproj">
-      <Project>{b49df50b-9382-4e06-bf1f-3e7bf92fd404}</Project>
-    </ProjectReference>
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{2CB68AEA-2BBC-4620-94EB-249994CEACBC}</ProjectGuid>
@@ -125,7 +117,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>copy $(SolutionDir)\bin\$(Configuration)-$(Platform)\TPTools\TPTools.dll $(SolutionDir)\bin\$(Configuration)-$(Platform)\$(ProjectName)\</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -144,7 +137,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>copy $(SolutionDir)\bin\$(Configuration)-$(Platform)\TPTools\TPTools.dll $(SolutionDir)\bin\$(Configuration)-$(Platform)\$(ProjectName)\</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -167,7 +161,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>copy $(SolutionDir)\bin\$(Configuration)-$(Platform)\TPTools\TPTools.dll $(SolutionDir)\bin\$(Configuration)-$(Platform)\$(ProjectName)\</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -190,7 +185,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>copy $(SolutionDir)\bin\$(Configuration)-$(Platform)\TPTools\TPTools.dll $(SolutionDir)\bin\$(Configuration)-$(Platform)\$(ProjectName)\</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
