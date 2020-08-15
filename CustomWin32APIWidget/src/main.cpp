@@ -15,7 +15,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	wcCustom.cbWndExtra = sizeof(TestControlData*);
 	RegisterClass(&wcCustom);
 	
-	HWND hWndCustom = CreateWindow(TEST_CTRL_CLASS_NAME, L"NULL", WS_CHILD | WS_VISIBLE | WS_BORDER, 10, 10, 100, 100, hWnd, (HMENU)ID_TEST_CTRL, 0, 0);
+	HWND hWndCustom = CreateWindow(TEST_CTRL_CLASS_NAME, L"NULL", WS_CHILD | WS_VISIBLE | WS_BORDER, 10, 10, 100, 50, hWnd, (HMENU)ID_TEST_CTRL, 0, 0);
 	ShowWindow(hWndCustom, nCmdShow);
 
 	ENTER_MAIN_MESSAGE_LOOP();

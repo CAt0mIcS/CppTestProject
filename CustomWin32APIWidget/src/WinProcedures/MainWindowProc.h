@@ -8,11 +8,22 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 	{
 	case WM_DESTROY:
 		PostQuitMessage(0);
-		return 0;
+		break;
+	//case WM_NCPAINT:
+	//{
+	//	
+	//}
+	case WM_ERASEBKGND:
+		/**
+		* Removing WM_ERASEBKGND from being handled by DefWindowProc to avoid The Flickering Problem
+		*/
+		break;
+	break;
 	case WM_PAINT:
 	{
 		PAINTSTRUCT ps;
 		HDC hdc = BeginPaint(hWnd, &ps);
+		
 		FillRect(hdc, &ps.rcPaint, CreateSolidBrush(RGB(35, 38, 40)));
 		EndPaint(hWnd, &ps);
 	}

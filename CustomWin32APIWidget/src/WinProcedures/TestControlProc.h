@@ -2,15 +2,15 @@
 
 #include "pch.h"
 
-#define TEST_CTRL_CLASS_NAME L"TESTCONTROLCLASS"
-#define ID_TEST_CTRL 0x1
+#define TEST_CTRL_CLASS_NAME		L"TESTCONTROLCLASS"
+#define ID_TEST_CTRL				0x1
 
 #define XXM_TESTMESSAGE				(WM_USER + 1)
 
 #define XXS_BEMOREFANCY             0x0001
 #define XXS_HIGHESTCUSTOMSTYLE      0x8000
 
-#define XXN_NOTIFICATIONCODE                   0x1
+#define XXN_NOTIFICATIONCODE		0x1
 
 
 struct TestControlData
@@ -18,6 +18,8 @@ struct TestControlData
 	const char* text;
 	unsigned int pressCount;
 };
+
+void CustomPaint(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 
 LRESULT CALLBACK TestControlProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -39,10 +41,21 @@ LRESULT CALLBACK TestControlProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 		SetWindowLongPtr(hWnd, 0, (LONG_PTR)pData);
 	}
 	break;
+	/**
+	* Should be implemented because some snippet tools might use it
+	*/
+	//case WM_PRINTCLIENT:
+	//{
+	//	RECT rect;
+	//	GetClientRect(hWnd, &rect);
+	//	CustomPaint(hWnd, (UINT)wParam, *(WPARAM*)&rect, TRUE);
+	//}
+	break;
 	case XXM_TESTMESSAGE:
 	{
 		MessageBox(NULL, L"Testmessage received", L"", NULL);
 	}
+	break;
 	case WM_NCDESTROY:
 	{
 		if (!pData)
@@ -71,15 +84,47 @@ LRESULT CALLBACK TestControlProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 	break;
 	case WM_PAINT:
 	{
-		PAINTSTRUCT ps;
-		HDC hdc = BeginPaint(hWnd, &ps);
-		FillRect(hdc, &ps.rcPaint, CreateSolidBrush(RGB(255, 255, 255)));
-		EndPaint(hWnd, &ps);
+		CustomPaint(hWnd, uMsg, wParam, lParam);
 	}
 	break;
 	default:
 		return DefWindowProc(hWnd, uMsg, wParam, lParam);
 	}
 	return TRUE;
+}
+
+
+void CustomPaint(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	PAINTSTRUCT ps;
+	//RECT rect;
+	//GetClientRect(hWnd, &rect);
+
+	HDC hdc = BeginPaint(hWnd, &ps);
+	//FillRect(hdc, &ps.rcPaint, CreateSolidBrush(RGB(255, 255, 255)));
+	//SetTextColor(hdc, RGB(0, 0, 0));
+	//SetBkMode(hdc, TRANSPARENT);
+	//DrawText(hdc, _T("Hello World!"), -1, &rect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
+
+	#pragma region RoundButton
+
+	/**
+	* These values work with a window size of 100 by 50
+	*/
+
+	//auto left = ps.rcPaint.left;
+	//auto top = ps.rcPaint.top;
+	//auto bottom = ps.rcPaint.bottom + 50;	/* - Moves it away from the right side */
+	//auto right = ps.rcPaint.right - 50;		/* - Moves it away from the bottom */
+	//auto width = right - left;
+	//auto height = bottom - top;
+	//BOOL ret = RoundRect(hdc, left, top, bottom, right, width, height);
+	//if (!ret)
+	//	MessageBox(NULL, L"NOPAINT", L"NOPAINT", NULL);
+
+	#pragma endregion
+
+	EndPaint(hWnd, &ps);
+
 }
 
