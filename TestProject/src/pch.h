@@ -9,6 +9,9 @@
 #include <map>
 #include <array>
 #include <atomic>
+#include <fstream>
+#include <sstream>
+#include <filesystem>
 
 #include <Windows.h>
 #include <TlHelp32.h>
