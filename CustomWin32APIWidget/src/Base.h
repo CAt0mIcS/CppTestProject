@@ -2,13 +2,6 @@
 #include "pch.h"
 
 
-#define TEST_CTRL_CLASS_NAME L"TESTCONTROLCLASS"
-
-
-#define ID_TEST_CTRL 0x1
-
-
-
 #define CREATE_MAIN_WINDOW() \
 	WNDCLASS wc = {};\
 	wc.lpfnWndProc = MainWindowProc;\
