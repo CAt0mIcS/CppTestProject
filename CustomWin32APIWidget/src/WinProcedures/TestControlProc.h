@@ -1,6 +1,10 @@
 #pragma once
 
 #include "pch.h"
+#include "ControlBase.h"
+
+// Class name for this control. 
+const wchar_t* wszThemeClass = L"BUTTON";
 
 #define TEST_CTRL_CLASS_NAME		L"TESTCONTROLCLASS"
 #define ID_TEST_CTRL				0x1
@@ -15,11 +19,13 @@
 
 struct TestControlData
 {
+	HWND hWnd;
+	HTHEME hTheme;
 	const char* text;
 	unsigned int pressCount;
 };
 
-void CustomPaint(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+void CustomPaint(TestControlData* pData, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 
 LRESULT CALLBACK TestControlProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -35,10 +41,25 @@ LRESULT CALLBACK TestControlProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 		if (!pData)
 			return FALSE;
 
+		pData->hWnd = hWnd;
 		pData->text = "Hello World";
 		pData->pressCount = 0;
 
 		SetWindowLongPtr(hWnd, 0, (LONG_PTR)pData);
+	}
+	break;
+	case WM_CREATE:
+	{
+		pData->hTheme = OpenThemeData(hWnd, wszThemeClass);
+	}
+	break;
+	case WM_THEMECHANGED:
+	{
+		if (pData->hTheme)
+			CloseThemeData(pData->hTheme);
+
+		pData->hTheme = OpenThemeData(hWnd, wszThemeClass);
+		InvalidateRect(hWnd, NULL, TRUE);
 	}
 	break;
 	/**
@@ -50,7 +71,7 @@ LRESULT CALLBACK TestControlProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 	//	GetClientRect(hWnd, &rect);
 	//	CustomPaint(hWnd, (UINT)wParam, *(WPARAM*)&rect, TRUE);
 	//}
-	break;
+	//break;
 	case XXM_TESTMESSAGE:
 	{
 		MessageBox(NULL, L"Testmessage received", L"", NULL);
@@ -58,9 +79,8 @@ LRESULT CALLBACK TestControlProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 	break;
 	case WM_NCDESTROY:
 	{
-		if (!pData)
-			break;
-		free(pData);
+		if (pData)
+			free(pData);
 	}
 	break;
 	case WM_LBUTTONDOWN:
@@ -84,7 +104,7 @@ LRESULT CALLBACK TestControlProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 	break;
 	case WM_PAINT:
 	{
-		CustomPaint(hWnd, uMsg, wParam, lParam);
+		CustomPaint(pData, uMsg, wParam, lParam);
 	}
 	break;
 	default:
@@ -94,13 +114,14 @@ LRESULT CALLBACK TestControlProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 }
 
 
-void CustomPaint(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+void CustomPaint(TestControlData* pData, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	PAINTSTRUCT ps;
+	#pragma region Experiments
+	//PAINTSTRUCT ps;
 	//RECT rect;
 	//GetClientRect(hWnd, &rect);
 
-	HDC hdc = BeginPaint(hWnd, &ps);
+	//HDC hdc = BeginPaint(pData->hWnd, &ps);
 	//FillRect(hdc, &ps.rcPaint, CreateSolidBrush(RGB(255, 255, 255)));
 	//SetTextColor(hdc, RGB(0, 0, 0));
 	//SetBkMode(hdc, TRANSPARENT);
@@ -111,7 +132,6 @@ void CustomPaint(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	/**
 	* These values work with a window size of 100 by 50
 	*/
-
 	//auto left = ps.rcPaint.left;
 	//auto top = ps.rcPaint.top;
 	//auto bottom = ps.rcPaint.bottom + 50;	/* - Moves it away from the right side */
@@ -124,7 +144,18 @@ void CustomPaint(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 	#pragma endregion
 
-	EndPaint(hWnd, &ps);
+	//EndPaint(pData->hWnd, &ps);
+	#pragma endregion
 
+	if (pData->hTheme != NULL) 
+	{
+		// Paint with themes.
+		// ...
+	}
+	else 
+	{
+		// Fallback to old simple grayish look, painted with plain GDI.
+		// ...
+	}
 }
 

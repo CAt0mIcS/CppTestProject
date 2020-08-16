@@ -30,9 +30,9 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 	break;
 	case WM_NOTIFY:
 	{
-		wchar_t buff[256];
-		wsprintfW(buff, L"%d", wParam);
-		MessageBox(NULL, buff, buff, NULL);
+		//wchar_t buff[256];
+		//wsprintfW(buff, L"%d", wParam);
+		//MessageBox(NULL, buff, buff, NULL);
 	}
 	break;
 	default:
