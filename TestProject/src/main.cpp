@@ -131,77 +131,158 @@ DateTime GetWindowsCreationDate(const std::string& path)
 	return { time.wYear, time.wMonth };
 }
 
-
-DateTime GetCreationDate(const std::string& path)
-{
-	std::ifstream reader(path, std::ios::binary);
-
-	std::string line;
-	while (std::getline(reader, line))
-	{
-
-	}
-	return { 0 };
+inline bool FileExists(const std::string& name) {
+	struct stat buffer;
+	return (stat(name.c_str(), &buffer) == 0);
 }
 
 
-void CreateDirectories(unsigned int minYear, unsigned int maxYear)
+void CreateDirectoriesAndMove(unsigned int minYear, unsigned int maxYear, const std::string& searchPath, const std::string& createDir)
 {
 	std::array<std::string, 12> months{ "Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember" };
+
 	for (int i = minYear; i <= maxYear; ++i)
 	{
 		std::stringstream ss2;
-		ss2 << "F:\\Test\\" << i;
+		ss2 << createDir << i;
 		std::filesystem::create_directory(ss2.str());
-
+	
 		for (int j = 0; j < 12; ++j)
 		{
 			std::stringstream ss;
-			ss << "F:\\Test\\" << i << '\\' << months[j];
+			ss << createDir << i << '\\' << months[j];
 			std::filesystem::create_directory(ss.str());
 		}
 		
 	}
-}
 
-
-int main()
-{
-	
-	////std::cout << GetPNGCreationDate("D:\\dev\\ProgramFiles\\PicSorter\\Unsorted\\IMG_7718.PNG") << '\n';
-	//std::cout << GetJPGCreationDate("F:\\Photos\\J - ca. Herbst 2019 bis 10. April 2020\\IMG_7717.jpg") << '\n';
-
-	CreateDirectories(2000, 2020);
 
 	using recursive_directory_iterator = std::filesystem::recursive_directory_iterator;
-	for (const auto& dirEntry : recursive_directory_iterator("F:\\"))
+	int fileAmnt = 0;
+	for (const auto& dirEntry : recursive_directory_iterator(searchPath))
 	{
-		//std::cout << dirEntry.path() << std::endl;
-
 		try
 		{
-			if (dirEntry.path().string().find(".jpg") != std::string::npos || dirEntry.path().string().find(".JPG") != std::string::npos)
+			if (dirEntry.path().string().find(".jpg") != std::string::npos || dirEntry.path().string().find(".JPG") != std::string::npos && dirEntry.path().string().find(searchPath) == std::string::npos)
 			{
+				if (dirEntry.path().string().find("A - Schulfest 2016") != std::string::npos)
+					__debugbreak();
+
 				g_Dt = GetJPGCreationDate(dirEntry.path().string());
 				if (g_Dt.year == 0 || g_Dt.month == 0 || g_Dt.month > 12 || g_Dt.year > 2030 || g_Dt.month < 1 || g_Dt.year < 1900)
 					continue;
+				++fileAmnt;
 
-				if (g_Dt.month >= 10)
-					std::cout << ".JPG: " << g_Dt << '\n';
-				else
-					std::cout << ".JPG: " << '0' << g_Dt << '\n';
 			}
-			else if (dirEntry.path().string().find(".PNG") != std::string::npos || dirEntry.path().string().find(".png") != std::string::npos)
+			else if (dirEntry.path().string().find(".PNG") != std::string::npos || dirEntry.path().string().find(".png") != std::string::npos && dirEntry.path().string().find(searchPath) == std::string::npos)
 			{
 				g_Dt = GetPNGCreationDate(dirEntry.path().string());
 
 				if (g_Dt.year == 0 || g_Dt.month == 0 || g_Dt.month > 12 || g_Dt.year > 2030 || g_Dt.month < 1 || g_Dt.year < 1900)
 					continue;
+				++fileAmnt;
+			}
 
-				if (g_Dt.month >= 10)
-					std::cout << ".PNG: " << g_Dt << '\n';
-				else
-					std::cout << ".PNG: " << '0' << g_Dt << '\n';
+		}
+		catch (std::system_error)
+		{
+			continue;
+		}
+	}
+
+	int filesCoppied = 0;
+	for (const auto& dirEntry : recursive_directory_iterator(searchPath))
+	{
+		//std::cout << dirEntry.path() << std::endl;
+	
+		try
+		{
+			if (dirEntry.path().string().find(".jpg") != std::string::npos || dirEntry.path().string().find(".JPG") != std::string::npos && dirEntry.path().string().find(searchPath) == std::string::npos)
+			{
+				g_Dt = GetJPGCreationDate(dirEntry.path().string());
+				if (g_Dt.year == 0 || g_Dt.month == 0 || g_Dt.month > 12 || g_Dt.year > 2030 || g_Dt.month < 1 || g_Dt.year < 1900)
+					continue;
+			}
+			else if (dirEntry.path().string().find(".PNG") != std::string::npos || dirEntry.path().string().find(".png") != std::string::npos && dirEntry.path().string().find(searchPath) == std::string::npos)
+			{
+				g_Dt = GetPNGCreationDate(dirEntry.path().string());
+	
+				if (g_Dt.year == 0 || g_Dt.month == 0 || g_Dt.month > 12 || g_Dt.year > 2030 || g_Dt.month < 1 || g_Dt.year < 1900)
+					continue;
+	
+			}
+			else
+				continue;
+	
+			if (g_Dt.year <= minYear && g_Dt.year >= maxYear || dirEntry.path().string().find(".Trashes") != std::string::npos)
+				continue;
+	
+			for (int i = minYear; i <= maxYear; ++i)
+			{
+				if (i == g_Dt.year)
+				{
+					for (int j = 0; j < 12; ++j)
+					{
+						if (j + 1 == g_Dt.month)
+						{
+							std::stringstream ss;
+	
+							std::stringstream ss2;
+							ss2 << createDir << i << '\\' << months[j] << '\\' << dirEntry.path().filename();
+							if (FileExists(ss2.str()))
+							{
+								auto filePath = dirEntry.path().filename().string();
+								std::stringstream ss3;
+	
+								ss3 << "copy " << dirEntry.path() << ' ' << searchPath << "Temp\\";
+								system(ss3.str().c_str());
+	
+								std::stringstream ss4;
+								std::stringstream ss5;
+								std::stringstream ss6;
+	
+	
+								if (filePath.find(".jpg") != std::string::npos)
+								{
+									ss4 << "rename " << searchPath << "Temp\\" << dirEntry.path().filename().string() << ' ' << (dirEntry.path().filename().string().replace(filePath.size() - 4, filePath.size() - 1, "") + "_DUP" + std::to_string(i) + std::to_string(j)) << ".jpg";
+									ss5 << "copy " << searchPath << "Temp\\" << (dirEntry.path().filename().string().replace(filePath.size() - 4, filePath.size() - 1, "") + "_DUP" + std::to_string(i) + std::to_string(j)) << ".jpg" << ' ' << createDir << i << '\\' << months[j] << '\\';
+									ss6 << "del " << searchPath << "Temp\\" << (dirEntry.path().filename().string().replace(filePath.size() - 4, filePath.size() - 1, "") + "_DUP" + std::to_string(i) + std::to_string(j)) << ".jpg";
+	
+								}
+								else if (filePath.find(".PNG") != std::string::npos)
+								{
+									ss4 << "rename " << searchPath << "Temp\\" << dirEntry.path().filename().string() << ' ' << (dirEntry.path().filename().string().replace(filePath.size() - 4, filePath.size() - 1, "") + "_DUP" + std::to_string(i) + std::to_string(j)) << ".PNG";
+									ss5 << "copy " << searchPath << "Temp\\" << (dirEntry.path().filename().string().replace(filePath.size() - 4, filePath.size() - 1, "") + "_DUP" + std::to_string(i) + std::to_string(j)) << ".PNG" << ' ' << createDir << i << '\\' << months[j] << '\\';
+									ss6 << "del " << searchPath << "Temp\\" << (dirEntry.path().filename().string().replace(filePath.size() - 4, filePath.size() - 1, "") + "_DUP" + std::to_string(i) + std::to_string(j)) << ".PNG";
+	
+								}
+								else
+								{
+									ss4 << "rename " << searchPath << "Temp\\" << dirEntry.path().filename().string() << ' ' << (dirEntry.path().filename().string().replace(filePath.size() - 4, filePath.size() - 1, "") + "_DUP" + std::to_string(i) + std::to_string(j)) << ".png";
+									ss5 << "copy " << searchPath << "Temp\\" << (dirEntry.path().filename().string().replace(filePath.size() - 4, filePath.size() - 1, "") + "_DUP" + std::to_string(i) + std::to_string(j)) << ".png" << ' ' << createDir << i << '\\' << months[j] << '\\';
+									ss6 << "del " << searchPath << "Temp\\" << (dirEntry.path().filename().string().replace(filePath.size() - 4, filePath.size() - 1, "") + "_DUP" + std::to_string(i) + std::to_string(j)) << ".png";
+	
+								}
+	
+								system(ss4.str().c_str());
+	
+								system(ss5.str().c_str());
+	
+								system(ss6.str().c_str());
+							}
+							else
+							{
+								ss << "copy " << dirEntry.path() << ' ' << createDir << i << '\\' << months[j] << '\\';
+								system(ss.str().c_str());
+								std::cout << "Coppied file " << dirEntry.path() << " to " << createDir << i << '\\' << months[j] << '\n';
+							}
+							
+							++filesCoppied;
+							std::cout << filesCoppied * 100 / fileAmnt << "%\n";
+	
+						}
+					}
+				}
 			}
 		}
 		catch (std::system_error)
@@ -211,6 +292,13 @@ int main()
 
 	}
 
+}
+
+
+int main()
+{
+	//Trailing backslash is mandatory
+	CreateDirectoriesAndMove(2016, 2020, "F:\\", "F:\\Test\\");
 
 }
 

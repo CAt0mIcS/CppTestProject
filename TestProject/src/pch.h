@@ -12,6 +12,8 @@
 #include <fstream>
 #include <sstream>
 #include <filesystem>
+#include <algorithm>
+#include <utility>
 
 #include <Windows.h>
 #include <TlHelp32.h>
