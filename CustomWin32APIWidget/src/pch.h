@@ -30,7 +30,6 @@
 #include <vssym32.h>
 #include <vsstyle.h>
 
-
 /**
 * Common data structures
 */

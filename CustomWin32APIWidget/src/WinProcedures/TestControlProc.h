@@ -4,7 +4,7 @@
 #include "ControlBase.h"
 
 // Class name for this control. 
-const wchar_t* wszThemeClass = L"BUTTON";
+const wchar_t* wszThemeClass = L"TREEVIEW";
 
 #define TEST_CTRL_CLASS_NAME		L"TESTCONTROLCLASS"
 #define ID_TEST_CTRL				0x1
@@ -116,12 +116,13 @@ LRESULT CALLBACK TestControlProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 
 void CustomPaint(TestControlData* pData, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+	PAINTSTRUCT ps;
+	HDC hdc = BeginPaint(pData->hWnd, &ps);
+
 	#pragma region Experiments
-	//PAINTSTRUCT ps;
 	//RECT rect;
 	//GetClientRect(hWnd, &rect);
 
-	//HDC hdc = BeginPaint(pData->hWnd, &ps);
 	//FillRect(hdc, &ps.rcPaint, CreateSolidBrush(RGB(255, 255, 255)));
 	//SetTextColor(hdc, RGB(0, 0, 0));
 	//SetBkMode(hdc, TRANSPARENT);
@@ -144,18 +145,28 @@ void CustomPaint(TestControlData* pData, UINT uMsg, WPARAM wParam, LPARAM lParam
 
 	#pragma endregion
 
-	//EndPaint(pData->hWnd, &ps);
 	#pragma endregion
 
-	if (pData->hTheme != NULL) 
+	RECT rect;
+	GetClientRect(pData->hWnd, &rect);
+	if (pData->hTheme) 
 	{
-		// Paint with themes.
-		// ...
+		int part = TP_BUTTON;
+		int state = PBS_NORMAL;
+
+		if (IsThemeBackgroundPartiallyTransparent(pData->hTheme, part, state))
+		{
+			DrawThemeParentBackground(pData->hWnd, hdc, &rect);
+		}
+		DrawThemeBackground(pData->hTheme, hdc, part, state, &rect, &rect);
 	}
 	else 
 	{
 		// Fallback to old simple grayish look, painted with plain GDI.
-		// ...
+		DrawFrameControl(hdc, &rect, DFC_BUTTON, DFCS_BUTTONPUSH);
 	}
+
+	EndPaint(pData->hWnd, &ps);
+	ReleaseDC(pData->hWnd, hdc);
 }
 
