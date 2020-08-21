@@ -95,10 +95,17 @@ std::vector<std::string> GetBaseFileDirs()
 	return dirs;
 }
 
+void WriteLog(const std::string& msg)
+{
+	std::ofstream writer("D:\\dev\\Cpp\\Projects\\TestProject\\log.txt", std::ios::app);
+	writer << msg;
+	writer.close();
+}
+
 std::string GetFileName(const std::string& path)
 {
 	std::string filename = path;
-	unsigned short lastId = path.find_last_of("\\");
+	size_t lastId = path.find_last_of("\\");
 
 	filename.replace(0, lastId + 1, "");
 
@@ -108,7 +115,13 @@ std::string GetFileName(const std::string& path)
 bool CopyFiles(unsigned int minYear, unsigned int maxYear, const SystemTimes& dates, const std::string& path)
 {
 	if (dates.creationTime.wYear > maxYear || dates.creationTime.wYear < minYear)
+	{
+		std::stringstream ssLog;
+		ssLog << "Skipping file " << path << " due to invalid date: \t\t" << dates.creationTime.wYear << '-' << dates.creationTime.wMonth << '\n';
+		std::cout << ssLog.str();
+		WriteLog(ssLog.str());
 		return false;
+	}
 
 	const char* months[] = { "Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember" };
 	std::stringstream ss;
@@ -121,15 +134,57 @@ bool CopyFiles(unsigned int minYear, unsigned int maxYear, const SystemTimes& da
 
 	std::string filename = GetFileName(path);
 
-	if(success)
-		std::cout << SetWindowsCreationDate(dates, ss2.str() + "\\" + filename) << '\n';
+	if (success)
+	{
+		SetWindowsCreationDate(dates, ss2.str() + "\\" + filename);
+		
+		std::stringstream ssLog;
+		ssLog << "Copying file with date: " << dates.creationTime.wYear << '-' << dates.creationTime.wMonth << " to " << ss2.str() << '\n';
+		std::cout << ssLog.str();
+		WriteLog(ssLog.str());
+
+		std::stringstream ssRem;
+		ssRem << "del F:\\Temp\\" << filename;
+		
+		bool successDel = !(bool)system(ssRem.str().c_str());
+
+		if (successDel)
+		{
+			std::stringstream ssRemLog;
+			ssRemLog << "Removed file " << filename << " from F:\\Temp\\\n";
+			std::cout << ssRemLog.str();
+			WriteLog(ssRemLog.str());
+		}
+		else
+		{
+			std::stringstream ssRemLog;
+			ssRemLog << "Failed to remove file " << filename << " from F:\\Temp\\\n";
+			std::cout << ssRemLog.str();
+			WriteLog(ssRemLog.str());
+			return false;
+		}
+
+	}
+	else
+	{
+		std::stringstream ssLog;
+		ssLog << "Failed to copy file with date: " << dates.creationTime.wYear << '-' << dates.creationTime.wMonth << " to " << ss2.str() << '\n';
+		std::cout << ssLog.str();
+		WriteLog(ssLog.str());
+	}
 
 	return success;
 }
 
 void MoveTemp()
 {
+
+	//Clear log
+	std::ofstream writer("D:\\dev\\Cpp\\Projects\\TestProject\\log.txt");
+	writer.close();
+
 	int runs = 0;
+	int succRuns = 0;
 	for (auto& dir : GetBaseFileDirs())
 	{
 		SystemTimes dates = GetWindowsCreationDate(dir);
@@ -137,12 +192,18 @@ void MoveTemp()
 		//TODO: Copy files to ordered directory using the creationDate
 		if (!CopyFiles(2016, 2020, dates, dir))
 		{
-			std::cout << "Failed to copy file " << dir << '\n';
+			++runs;
+			continue;
 		}
 		++runs;
+		++succRuns;
 	}
 	std::cout << "Program ran through " << runs << " file(s)\n";
+	WriteLog(std::string("Program ran through ") + std::to_string(runs) + "file(s)\n");
 	//Ran 521 times
+	std::cout << "Program coppied " << succRuns << " file(s)\n";
+	WriteLog(std::string("Program coppied ") + std::to_string(succRuns) + " file(s)\n");
+	//Coppied 332 files
 }
 
 
