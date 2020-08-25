@@ -1,34 +1,68 @@
 #include "pch.h"
 
+#include "Errors/TError.h"
 
-int main()
+
+
+#define MAIN_WINDOW_CLASS "MAINWINDOWCLASS" 
+
+
+HWND hWnd;
+
+
+LRESULT CALLBACK MainWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
+
+int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ PWSTR nCmdLine, _In_ int nCmdShow)
 {
-	using ScoreMap = std::unordered_map<std::string, int>;
-	ScoreMap map;
-	map["Cherno"] = 5;
-	map["C++"] = 2;
-
-	for (ScoreMap::const_iterator it = map.begin(); it != map.end(); ++it)
+	try
 	{
-		auto& key = it->first;
-		auto& value = it->second;
-		std::cout << key << " = " << value << '\n';
+
+		WNDCLASS wc{ 0 };
+		wc.lpfnWndProc = MainWindowProc;
+		wc.lpszClassName = MAIN_WINDOW_CLASS;
+		wc.hInstance = hInstance;
+
+		RegisterClass(&wc);
+		hWnd = CreateWindowEx(0, MAIN_WINDOW_CLASS, "D3D11", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, hInstance, NULL);
+		
+		if (!hWnd)
+			throw T_ERROR_LAST();
+
+		ShowWindow(hWnd, nCmdShow);
+
+		MSG msg{};
+		while (GetMessage(&msg, NULL, 0, 0))
+		{
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
+		return msg.wParam;
 	}
-
-	std::cout << "\n\n";
-
-	//kv = key-value (std::pair)
-	for (auto kv : map)
+	catch (TError& e)
 	{
-		auto& key = kv.first;
-		auto& value = kv.second;
-		std::cout << key << " = " << value << '\n';
+		MessageBox(NULL, e.what(), e.GetType(), MB_OK);
 	}
-
-	std::cout << "\n\n";
-
-	for (auto [key, value] : map)
+	catch (std::exception& e)
 	{
-		std::cout << key << " = " << value << '\n';
+		MessageBox(NULL, e.what(), "Standard Exception", MB_OK);
 	}
+	catch (...)
+	{
+		MessageBox(NULL, "An unidentified exception occured", "Error", MB_OK);
+	}
+	return -1;
+}
+
+LRESULT CALLBACK MainWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	switch (uMsg)
+	{
+	case WM_DESTROY:
+	{
+		PostQuitMessage(0);
+		return 0;
+	}
+	}
+	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
