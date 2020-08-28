@@ -14,3 +14,4 @@
 #include <exception>
 #include <sstream>
 #include <iostream>
+#include <memory>

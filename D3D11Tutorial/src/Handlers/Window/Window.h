@@ -6,6 +6,8 @@
 #include "Handlers/Keyboard/Keyboard.h"
 #include "Handlers/Mouse/Mouse.h"
 
+#include "Rendering/Graphics.h"
+
 #include <optional>
 
 
@@ -53,6 +55,7 @@ public:
 	Window& operator=(const Window&) = delete;
 	void SetTitle(const std::string& title);
 	static std::optional<int> ProcessMessage();
+	Graphics& GetGraphics() const;
 
 public:
 	Keyboard kbd;
@@ -66,6 +69,7 @@ private:
 private:
 	int m_Width, m_Height;
 	HWND m_hWnd;
+	std::unique_ptr<Graphics> m_pGraphics;
 
 };
 

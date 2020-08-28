@@ -163,6 +163,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Exceptions\dxerr.cpp" />
+    <ClCompile Include="src\Rendering\Graphics.cpp" />
     <ClCompile Include="src\App\App.cpp" />
     <ClCompile Include="src\Handlers\Mouse\Mouse.cpp" />
     <ClCompile Include="src\Handlers\Keyboard\Keyboard.cpp" />
@@ -178,6 +180,8 @@
     <ClCompile Include="src\Util\Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Exceptions\dxerr.h" />
+    <ClInclude Include="src\Rendering\Graphics.h" />
     <ClInclude Include="src\App\App.h" />
     <ClInclude Include="src\Handlers\Mouse\Mouse.h" />
     <ClInclude Include="src\Handlers\Keyboard\Keyboard.h" />
@@ -192,6 +196,11 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\..\..\..\..\Documents\Pictures\Icons\Cpp-Icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\Exceptions\DXGetErrorDescription.inl" />
+    <None Include="src\Exceptions\DXGetErrorString.inl" />
+    <None Include="src\Exceptions\DXTrace.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
