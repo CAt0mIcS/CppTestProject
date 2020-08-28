@@ -116,6 +116,22 @@ void Mouse::OnWheelDown(int x, int y)
     TrimBuffer();
 }
 
+void Mouse::OnWheelDelta(int x, int y, int delta)
+{
+    m_WheelDeltaCarry += delta;
+    //generate event for every 120
+    while (m_WheelDeltaCarry >= WHEEL_DELTA)
+    {
+        m_WheelDeltaCarry -= WHEEL_DELTA;
+        OnWheelUp(x, y);
+    }
+    while (m_WheelDeltaCarry <= -WHEEL_DELTA)
+    {
+        m_WheelDeltaCarry += WHEEL_DELTA;
+        OnWheelDown(x, y);
+    }
+}
+
 void Mouse::TrimBuffer()
 {
     while (m_Buffer.size() > m_BufferSize)

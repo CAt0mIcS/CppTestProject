@@ -72,6 +72,8 @@ private:
 	void OnRightReleased(int x, int y);
 	void OnWheelUp(int x, int y);
 	void OnWheelDown(int x, int y);
+	void OnWheelDelta(int x, int y, int delta);
+
 	void TrimBuffer();
 
 private:
@@ -81,6 +83,7 @@ private:
 	bool m_LeftIsPressed = false;
 	bool m_RightIsPressed = false;
 	bool m_IsInWindow = false;
+	int m_WheelDeltaCarry = 0;
 	std::queue<Event> m_Buffer;
 
 };
