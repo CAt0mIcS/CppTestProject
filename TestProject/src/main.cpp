@@ -1,54 +1,33 @@
 #include "pch.h"
 
 
-class UserEntry
-{
-public:
-	UserEntry(const std::string& name, unsigned int age) : m_Name(name), m_Age(age), m_CacheEntry(0) {}
-
-	void Load() {}
-
-	const std::string& GetName() const { return m_Name; }
-	unsigned int GetAge() const { return m_Age; }
-
-private:
-	std::string m_Name;
-	unsigned int m_Age;
-	size_t m_CacheEntry;
-};
-
-
-
-namespace std 
-{
-	template <> struct tuple_size<UserEntry> : integral_constant<size_t, 2> { };
-	template <> struct tuple_element<0, UserEntry> { using type = std::string; };
-	template <> struct tuple_element<1, UserEntry> { using type = unsigned; };
-}
-
-//Couldn't get this to work...
-//template<>
-//const std::string& get<1>(const UserEntry& u) { return u.GetName(); }
-//
-//template<>
-//unsigned get<0>(const UserEntry& u) { return u.GetAge(); }
-
-//This however works...
-template<size_t I>
-auto get(const UserEntry& u)
-{
-	if constexpr (I == 0) return u.GetName();
-	else if constexpr (I == 1) return u.GetAge();
-}
-
-
-
 int main()
 {
-	UserEntry e("Simon", 15);
+	CoInitialize(NULL);
+	IActiveDesktop* pDesktop = nullptr;
+	wchar_t wszWallpaper[MAX_PATH];
 
-	auto [name, age] = e;
+	CoCreateInstance(CLSID_ActiveDesktop, nullptr, CLSCTX_INPROC_SERVER, __uuidof(IActiveDesktop), (void**)&pDesktop);
 
-	std::cout << "Name: " << name << "\nAge: " << age << '\n';
+	pDesktop->GetWallpaper(wszWallpaper, MAX_PATH, 0);
+	pDesktop->Release();
 
+	std::wcout << wszWallpaper << '\n';
+
+	IShellLink* pLink = nullptr;
+	CoCreateInstance(CLSID_ShellLink, nullptr, CLSCTX_INPROC_SERVER, __uuidof(IShellLink), (void**)&pLink);
+	
+	char path[MAX_PATH];
+	wcstombs(path, wszWallpaper, MAX_PATH);
+	pLink->SetPath(path);
+	
+	IPersistFile* pPersist = nullptr;
+	pLink->QueryInterface(__uuidof(IPersistFile), (void**)&pPersist);
+
+	pPersist->Save(L"D:\\dev\\ProgramFiles\\wallpaper.lnk", FALSE);
+	pPersist->Release();
+	pLink->Release();
+
+	CoUninitialize();
+	return 0;
 }

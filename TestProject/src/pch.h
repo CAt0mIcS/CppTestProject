@@ -1,6 +1,14 @@
+//disable warning "Return value ignored"
+#pragma warning(disable : 6031)
+
+// Include in this order for com to work
 #include <Windows.h>
+#include <WinInet.h>
+#include <ShlObj.h>
+
 #include <TlHelp32.h>
 #include <tchar.h>
+
 
 #include <iostream>
 #include <vector>
