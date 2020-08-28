@@ -16,6 +16,11 @@ int Mouse::GetPosY() const
     return m_X;
 }
 
+bool Mouse::IsInWindow() const
+{
+    return m_IsInWindow;
+}
+
 bool Mouse::IsLeftPressed() const
 {
     return m_LeftIsPressed;
@@ -49,6 +54,20 @@ void Mouse::OnMouseMove(int x, int y)
     m_Y = y;
 
     m_Buffer.push(Mouse::Event(Mouse::Event::Type::Move, *this));
+    TrimBuffer();
+}
+
+void Mouse::OnMouseEnter()
+{
+    m_IsInWindow = true;
+    m_Buffer.push(Mouse::Event(Mouse::Event::Type::Enter, *this));
+    TrimBuffer();
+}
+
+void Mouse::OnMouseLeave()
+{
+    m_IsInWindow = false;
+    m_Buffer.push(Mouse::Event(Mouse::Event::Type::Leave, *this));
     TrimBuffer();
 }
 

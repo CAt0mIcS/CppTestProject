@@ -144,7 +144,31 @@ LRESULT Window::HandleMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 	case WM_MOUSEMOVE:
 	{
 		const POINTS pt = MAKEPOINTS(lParam);
-		mouse.OnMouseMove(pt.x, pt.y);
+
+		//In client region -> log move and enter + capture mouse
+		if (pt.x >= 0 && pt.x < m_Width && pt.y >= 0 && pt.y < m_Height)
+		{
+			mouse.OnMouseMove(pt.x, pt.y);
+			if (!mouse.IsInWindow())
+			{
+				SetCapture(hWnd);
+				mouse.OnMouseEnter();
+			}
+		}
+		//not in client -> log move and maintain capture if button down
+		else
+		{
+			if (mouse.IsLeftPressed() || mouse.IsRightPressed())
+			{
+				mouse.OnMouseMove(pt.x, pt.y);
+			}
+			//button up
+			else
+			{
+				ReleaseCapture();
+				mouse.OnMouseLeave();
+			}
+		}
 		break;
 	}
 	case WM_LBUTTONDOWN:
