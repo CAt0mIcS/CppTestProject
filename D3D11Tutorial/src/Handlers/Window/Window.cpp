@@ -79,6 +79,30 @@ void Window::SetTitle(const std::string& title)
 	}
 }
 
+std::optional<int> Window::ProcessMessage()
+{
+	MSG msg;
+	//while the message queue has messages, remove and dispatch them
+	while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+	{
+		//check for quit because PeekMessage does not signal this via return
+		if (msg.message == WM_QUIT)
+		{
+			//return optional wrapping int
+			return msg.wParam;
+		}
+
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
+	
+	Sleep(10);
+	
+	//return empty optional when not quitting app
+	return {};
+
+}
+
 LRESULT Window::HandleMessageSetup(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	//use create parameter passed in from CreateWindow() to store window class pointer

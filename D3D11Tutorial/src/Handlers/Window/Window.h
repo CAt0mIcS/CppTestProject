@@ -6,6 +6,9 @@
 #include "Handlers/Keyboard/Keyboard.h"
 #include "Handlers/Mouse/Mouse.h"
 
+#include <optional>
+
+
 class Window
 {
 public:
@@ -49,6 +52,7 @@ public:
 	Window(const Window&) = delete;
 	Window& operator=(const Window&) = delete;
 	void SetTitle(const std::string& title);
+	static std::optional<int> ProcessMessage();
 
 public:
 	Keyboard kbd;
