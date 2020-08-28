@@ -9,15 +9,17 @@
 class Graphics
 {
 public:
-	class Exception : public Except::Exception
+	class GException : public Except::Exception
 	{
 		//using Except::Exception::Exception;
+	public:
+		GException(int line, const char* file);
 	};
 	
-	class HrException : public Exception
+	class HrException : public GException
 	{
 	public:
-		HrException(int line, const char* file);
+		HrException(int line, const char* file, HRESULT hr);
 		const char* what() const override;
 		const char* GetType() const override;
 		HRESULT GetErrorCode() const;
@@ -31,6 +33,7 @@ public:
 	class DeviceRemovedException : public HrException
 	{
 	public:
+		DeviceRemovedException(int line, const char* file, HRESULT hr);
 		const char* GetType() const override;
 	};
 

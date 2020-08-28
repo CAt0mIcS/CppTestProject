@@ -1,7 +1,11 @@
 #include "pch.h"
 #include "Graphics.h"
+#include "Exceptions/dxerr.h"
 
 #pragma comment(lib, "d3d11.lib")
+
+#define GFX_THROW_FAILED(hrcall) if(FAILED(hr = (hrcall))) throw Graphics::HrException(__LINE__, __FILE__, hr)
+#define GFX_DEVICE_REMOVED_EXCEPT(hr) Graphics::DeviceRemovedException(__LINE__, __FILE__, hr)
 
 
 Graphics::Graphics(HWND hWnd)
@@ -42,8 +46,11 @@ Graphics::Graphics(HWND hWnd)
 	//flags
 	sd.Flags = 0;
 
+	//for checking results of d3d11 functions
+	HRESULT hr;
+	
 	//create device and front/back buffers, swap chain and rendering context
-	D3D11CreateDeviceAndSwapChain(
+	GFX_THROW_FAILED(D3D11CreateDeviceAndSwapChain(
 		nullptr,
 		D3D_DRIVER_TYPE_HARDWARE,
 		nullptr,
@@ -56,14 +63,14 @@ Graphics::Graphics(HWND hWnd)
 		&m_pDevice,
 		nullptr,
 		&m_pContext
-	);
+	));
 
 	//gain access to texture subresource in swap chain (0 = back buffer)
 	ID3D11Resource* pBackBuffer = nullptr;
-	m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Resource), (void**)&pBackBuffer);
+	GFX_THROW_FAILED(m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Resource), (void**)&pBackBuffer));
 	
 	//create render target view
-	m_pDevice->CreateRenderTargetView(pBackBuffer, nullptr, &m_pTarget);
+	GFX_THROW_FAILED(m_pDevice->CreateRenderTargetView(pBackBuffer, nullptr, &m_pTarget));
 	
 	//release handle to back buffer
 	pBackBuffer->Release();
@@ -71,8 +78,21 @@ Graphics::Graphics(HWND hWnd)
 
 void Graphics::EndFrame()
 {
+	//for checking results of d3d11 functions
+	HRESULT hr;
+
 	//SyncInterval one means 60 fps, two means 30fps...
-	m_pSwapChain->Present(1u, 0u);
+	if (FAILED(hr = m_pSwapChain->Present(1u, 0u)))
+	{
+		if (hr == DXGI_ERROR_DEVICE_REMOVED)
+		{
+			throw GFX_DEVICE_REMOVED_EXCEPT(m_pDevice->GetDeviceRemovedReason());
+		}
+		else
+		{
+			GFX_THROW_FAILED(hr);
+		}
+	}
 }
 
 void Graphics::ClearBuffer(float red, float green, float blue)
@@ -93,3 +113,64 @@ Graphics::~Graphics()
 	if (m_pDevice)
 		m_pDevice->Release();
 }
+
+
+//Graphics Exception
+
+Graphics::GException::GException(int line, const char* file)
+	: Except::Exception(line, file)
+{
+
+}
+
+Graphics::HrException::HrException(int line, const char* file, HRESULT hr)
+	: GException(line, file)
+{
+
+}
+
+const char* Graphics::HrException::what() const
+{
+	std::ostringstream oss;
+	oss << GetType() << '\n'
+		<< "[Error Code] 0x" << std::hex << std::uppercase << GetErrorCode()
+		<< std::dec << " (" << (unsigned long)GetErrorCode() << ")\n"
+		<< "[Error String] " << GetErrorString() << '\n'
+		<< "[Description] " << GetErrorDescription() << '\n'
+		<< GetOriginString();
+	m_WhatBuffer = oss.str();
+	return m_WhatBuffer.c_str();
+}
+
+const char* Graphics::HrException::GetType() const
+{
+	return "Graphics Exception";
+}
+
+HRESULT Graphics::HrException::GetErrorCode() const
+{
+	return m_Hr;
+}
+
+std::string Graphics::HrException::GetErrorString() const
+{
+	return DXGetErrorString(m_Hr);
+}
+
+std::string Graphics::HrException::GetErrorDescription() const
+{
+	char buff[512];
+	DXGetErrorDescription(m_Hr, buff, sizeof(buff));
+	return buff;
+}
+
+Graphics::DeviceRemovedException::DeviceRemovedException(int line, const char* file, HRESULT hr)
+	: HrException(line, file, hr)
+{
+}
+
+const char* Graphics::DeviceRemovedException::GetType() const
+{
+	return "Graphics Exception [Device Removed] (DXGI_ERROR_DEVICE_REMOVED)";
+}
+
