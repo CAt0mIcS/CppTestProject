@@ -60,7 +60,7 @@ private:
 	LRESULT HandleMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	
 private:
-	unsigned int m_Width, m_Height;
+	int m_Width, m_Height;
 	HWND m_hWnd;
 
 };

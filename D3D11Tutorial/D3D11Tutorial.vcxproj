@@ -163,6 +163,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\App\App.cpp" />
     <ClCompile Include="src\Handlers\Mouse\Mouse.cpp" />
     <ClCompile Include="src\Handlers\Keyboard\Keyboard.cpp" />
     <ClCompile Include="src\Exceptions\Exception.cpp" />
@@ -176,6 +177,7 @@
     <ClCompile Include="src\Handlers\Window\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\App\App.h" />
     <ClInclude Include="src\Handlers\Mouse\Mouse.h" />
     <ClInclude Include="src\Handlers\Keyboard\Keyboard.h" />
     <ClInclude Include="src\resource.h" />
