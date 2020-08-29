@@ -33,5 +33,6 @@ void App::OnFrame()
 {
     const float c = (float)(std::sin(m_Timer.Peek()) / 2.0 + 0.5);
     m_Window.GetGraphics().ClearBuffer(c, c, 1.0f);
+    m_Window.GetGraphics().DrawTestTriangle();
     m_Window.GetGraphics().EndFrame();
 }

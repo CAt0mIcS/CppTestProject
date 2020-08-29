@@ -26,6 +26,8 @@ public:
 	*/
 	void ClearBuffer(float red, float green, float blue);
 
+	void DrawTestTriangle();
+
 	~Graphics() = default;
 
 private:
