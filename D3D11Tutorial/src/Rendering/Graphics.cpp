@@ -101,12 +101,13 @@ void Graphics::ClearBuffer(float red, float green, float blue)
 
 void Graphics::DrawTestTriangle()
 {
+	HRESULT hr;
 	struct Vertex
 	{
 		float x, y;
 	};
 	
-	//creaate vertex buffer (1 2d triangle at center of screen)
+	//create vertex buffer (1 2d triangle at center of screen)
 	const Vertex vertices[] =
 	{
 		{  0.0f,  0.5f },
@@ -117,35 +118,70 @@ void Graphics::DrawTestTriangle()
 	wrl::ComPtr<ID3D11Buffer> pVertexBuffer;
 
 	D3D11_BUFFER_DESC bd{};
-	bd.Usage = D3D11_USAGE_DEFAULT;
 	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	bd.MiscFlags = 0u;
+	bd.Usage = D3D11_USAGE_DEFAULT;
 	bd.CPUAccessFlags = 0u;
+	bd.MiscFlags = 0u;
 	bd.ByteWidth = sizeof(vertices);
 	bd.StructureByteStride = sizeof(Vertex);
 
-	D3D11_SUBRESOURCE_DATA sd{};
+	D3D11_SUBRESOURCE_DATA sd = {};
 	sd.pSysMem = vertices;
-
-	HRESULT hr;
 	GFX_THROW_FAILED(m_pDevice->CreateBuffer(&bd, &sd, &pVertexBuffer));
 
 	//bind vertex buffer to pipeline
 	const UINT stride = sizeof(Vertex);
 	const UINT offset = 0u;
 
-	m_pContext->IASetVertexBuffers(0u, 1u, &pVertexBuffer, &stride, &offset);
+	m_pContext->IASetVertexBuffers(0u, 1u, pVertexBuffer.GetAddressOf(), &stride, &offset);
 
-	//create vertex shader
-	wrl::ComPtr<ID3D11VertexShader> pVertexShader;
+	//create pixel shader
+	wrl::ComPtr<ID3D11PixelShader> pPixelShader;
 	wrl::ComPtr<ID3DBlob> pBlob;
-	GFX_THROW_FAILED(D3DReadFileToBlob(L"src/Shaders/VertexShader.cso", &pBlob));
+	GFX_THROW_FAILED(D3DReadFileToBlob(L"../bin/Debug-Win32/PixelShader.cso", &pBlob));
+	GFX_THROW_FAILED(m_pDevice->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pPixelShader));
+
+	// bind pixel shader
+	m_pContext->PSSetShader(pPixelShader.Get(), nullptr, 0u);
+
+	// create vertex shader
+	wrl::ComPtr<ID3D11VertexShader> pVertexShader;
+	GFX_THROW_FAILED(D3DReadFileToBlob(L"../bin/Debug-Win32/VertexShader.cso", &pBlob));
 	GFX_THROW_FAILED(m_pDevice->CreateVertexShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pVertexShader));
 
-	//bind vertex shader
+	// bind vertex shader
 	m_pContext->VSSetShader(pVertexShader.Get(), nullptr, 0u);
 
-	m_pContext->Draw(3u, 0u);
+	//input (vertex) layout (2d position only)
+	wrl::ComPtr<ID3D11InputLayout> pInputLayout;
+	// every element in Vertex is goint to have one element in descriptor array (x and y in Vertex are summarized into one element)
+	D3D11_INPUT_ELEMENT_DESC ied[] =
+	{
+		{"Position", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0}
+	};
+	m_pDevice->CreateInputLayout(ied, (UINT)std::size(ied), pBlob->GetBufferPointer(), pBlob->GetBufferSize(), &pInputLayout);
+	
+	//bind vertex layout
+	m_pContext->IASetInputLayout(pInputLayout.Get());
+
+	//bind render target
+	m_pContext->OMSetRenderTargets(1, m_pTarget.GetAddressOf(), nullptr);
+
+	//set primitive topology to triangle list (groups of 3 vertices)
+	m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	//configure viewport
+	D3D11_VIEWPORT vp{};
+	vp.Width = 800;
+	vp.Height = 600;
+	vp.MinDepth = 0;
+	vp.MaxDepth = 1;
+	vp.TopLeftX = 0;
+	vp.TopLeftY = 0;
+	m_pContext->RSSetViewports(1u, &vp);
+
+
+	m_pContext->Draw((UINT)std::size(vertices), 0u);
 }
 
 
