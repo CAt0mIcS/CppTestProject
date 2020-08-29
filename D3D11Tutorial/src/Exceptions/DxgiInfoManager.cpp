@@ -28,12 +28,6 @@ DxgiInfoManager::DxgiInfoManager()
 
 }
 
-DxgiInfoManager::~DxgiInfoManager()
-{
-	if (m_pDxgiInfoQueue)
-		m_pDxgiInfoQueue->Release();
-}
-
 void DxgiInfoManager::Set()
 {
 	//sets the index (next) so that the next call to GetMessages() 

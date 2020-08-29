@@ -5,6 +5,8 @@
 #pragma comment(lib, "d3d11.lib")
 
 
+namespace wrl = Microsoft::WRL;
+
 Graphics::Graphics(HWND hWnd)
 {
 	DXGI_SWAP_CHAIN_DESC sd{};
@@ -63,14 +65,11 @@ Graphics::Graphics(HWND hWnd)
 	));
 
 	//gain access to texture subresource in swap chain (0 = back buffer)
-	ID3D11Resource* pBackBuffer = nullptr;
-	GFX_THROW_FAILED(m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Resource), (void**)&pBackBuffer));
+	wrl::ComPtr<ID3D11Resource> pBackBuffer = nullptr;
+	GFX_THROW_FAILED(m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Resource), &pBackBuffer));
 	
 	//create render target view
-	GFX_THROW_FAILED(m_pDevice->CreateRenderTargetView(pBackBuffer, nullptr, &m_pTarget));
-	
-	//release handle to back buffer
-	pBackBuffer->Release();
+	GFX_THROW_FAILED(m_pDevice->CreateRenderTargetView(pBackBuffer.Get(), nullptr, &m_pTarget));
 }
 
 void Graphics::EndFrame()
@@ -95,20 +94,7 @@ void Graphics::EndFrame()
 void Graphics::ClearBuffer(float red, float green, float blue)
 {
 	const float color[] = { red, green, blue, 1.0f };
-	m_pContext->ClearRenderTargetView(m_pTarget, color);
-}
-
-Graphics::~Graphics()
-{
-	//free resources
-	if (m_pTarget)
-		m_pTarget->Release();
-	if (m_pContext)
-		m_pContext->Release();
-	if (m_pSwapChain)
-		m_pSwapChain->Release();
-	if (m_pDevice)
-		m_pDevice->Release();
+	m_pContext->ClearRenderTargetView(m_pTarget.Get(), color);
 }
 
 

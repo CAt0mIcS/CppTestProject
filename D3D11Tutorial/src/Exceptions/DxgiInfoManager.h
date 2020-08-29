@@ -1,13 +1,13 @@
 #pragma once
 
 #include "pch.h"
-
+#include <wrl.h>
 
 class DxgiInfoManager
 {
 public:
 	DxgiInfoManager();
-	~DxgiInfoManager();
+	~DxgiInfoManager() = default;
 	DxgiInfoManager(const DxgiInfoManager&) = delete;
 	DxgiInfoManager& operator=(const DxgiInfoManager&) = delete;
 
@@ -16,5 +16,5 @@ public:
 
 private:
 	unsigned long long m_Next = 0u;
-	struct IDXGIInfoQueue* m_pDxgiInfoQueue = nullptr;
+	Microsoft::WRL::ComPtr<struct IDXGIInfoQueue> m_pDxgiInfoQueue = nullptr;
 };

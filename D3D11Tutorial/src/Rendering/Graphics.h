@@ -3,6 +3,8 @@
 #include "pch.h"
 #include "Exceptions/Exception.h"
 
+#include <wrl.h>
+
 #include <d3d11.h>
 
 
@@ -24,12 +26,12 @@ public:
 	*/
 	void ClearBuffer(float red, float green, float blue);
 
-	~Graphics();
+	~Graphics() = default;
 
 private:
-	ID3D11Device* m_pDevice;
-	IDXGISwapChain* m_pSwapChain;
-	ID3D11DeviceContext* m_pContext;
-	ID3D11RenderTargetView* m_pTarget;
+	Microsoft::WRL::ComPtr<ID3D11Device> m_pDevice;
+	Microsoft::WRL::ComPtr<IDXGISwapChain> m_pSwapChain;
+	Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_pContext;
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_pTarget;
 };
 
