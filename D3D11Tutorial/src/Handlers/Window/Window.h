@@ -13,21 +13,6 @@
 
 class Window
 {
-public:
-	class Exception : public Except::Exception
-	{
-	public:
-		Exception(int line, const char* file, HRESULT hr);
-		virtual const char* what() const override;
-		virtual const char* GetType() const override;
-		static std::string TranslateErrorCode(HRESULT hr);
-		HRESULT GetErrorCode() const;
-		std::string GetErrorString() const;
-
-	private:
-		HRESULT m_Hr;
-	};
-
 private:
 	//Singelton manages registration/cleanup of window class
 	class WindowClass

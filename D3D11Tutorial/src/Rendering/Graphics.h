@@ -9,35 +9,6 @@
 class Graphics
 {
 public:
-	class GException : public Except::Exception
-	{
-		//using Except::Exception::Exception;
-	public:
-		GException(int line, const char* file);
-	};
-	
-	class HrException : public GException
-	{
-	public:
-		HrException(int line, const char* file, HRESULT hr);
-		const char* what() const override;
-		const char* GetType() const override;
-		HRESULT GetErrorCode() const;
-		std::string GetErrorString() const;
-		std::string GetErrorDescription() const;
-	
-	private:
-		HRESULT m_Hr;
-	};
-
-	class DeviceRemovedException : public HrException
-	{
-	public:
-		DeviceRemovedException(int line, const char* file, HRESULT hr);
-		const char* GetType() const override;
-	};
-
-public:
 	Graphics(HWND hWnd);
 
 	Graphics(const Graphics&) = delete;

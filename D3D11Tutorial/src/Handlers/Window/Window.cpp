@@ -108,6 +108,10 @@ std::optional<int> Window::ProcessMessage()
 
 Graphics& Window::GetGraphics() const
 {
+	if (!m_pGraphics)
+	{
+		throw THWND_NO_GFX_EXCEPT();
+	}
 	return *m_pGraphics;
 }
 
@@ -240,49 +244,4 @@ LRESULT Window::HandleMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 }
 
 
-//Exception
-Window::Exception::Exception(int line, const char* file, HRESULT hr)
-	: Except::Exception(line, file), m_Hr(hr)
-{
-}
 
-const char* Window::Exception::what() const
-{
-	std::ostringstream oss;
-	oss << GetType() << '\n'
-		<< "[Error Code] " << GetErrorCode() << '\n'
-		<< "[Description] " << GetErrorString() << '\n'
-		<< GetOriginString();
-
-	m_WhatBuffer = oss.str();
-	return m_WhatBuffer.c_str();
-}
-
-const char* Window::Exception::GetType() const
-{
-	return "Tutorial Window Exception";
-}
-
-std::string Window::Exception::TranslateErrorCode(HRESULT hr)
-{
-	char* pMsgBuf = nullptr;
-	DWORD nMsgLen = FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-		nullptr, hr, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&pMsgBuf, 0, nullptr);
-
-	if (nMsgLen == 0)
-		return "Unidentified error code";
-
-	std::string errorString = pMsgBuf;
-	LocalFree(pMsgBuf);
-	return errorString;
-}
-
-HRESULT Window::Exception::GetErrorCode() const
-{
-	return m_Hr;
-}
-
-std::string Window::Exception::GetErrorString() const
-{
-	return TranslateErrorCode(m_Hr);
-}

@@ -4,9 +4,6 @@
 
 #pragma comment(lib, "d3d11.lib")
 
-#define GFX_THROW_FAILED(hrcall) if(FAILED(hr = (hrcall))) throw Graphics::HrException(__LINE__, __FILE__, hr)
-#define GFX_DEVICE_REMOVED_EXCEPT(hr) Graphics::DeviceRemovedException(__LINE__, __FILE__, hr)
-
 
 Graphics::Graphics(HWND hWnd)
 {
@@ -54,7 +51,7 @@ Graphics::Graphics(HWND hWnd)
 		nullptr,
 		D3D_DRIVER_TYPE_HARDWARE,
 		nullptr,
-		0,
+		D3D11_CREATE_DEVICE_DEBUG,
 		nullptr,
 		0,
 		D3D11_SDK_VERSION,
@@ -115,62 +112,5 @@ Graphics::~Graphics()
 }
 
 
-//Graphics Exception
 
-Graphics::GException::GException(int line, const char* file)
-	: Except::Exception(line, file)
-{
-
-}
-
-Graphics::HrException::HrException(int line, const char* file, HRESULT hr)
-	: GException(line, file)
-{
-
-}
-
-const char* Graphics::HrException::what() const
-{
-	std::ostringstream oss;
-	oss << GetType() << '\n'
-		<< "[Error Code] 0x" << std::hex << std::uppercase << GetErrorCode()
-		<< std::dec << " (" << (unsigned long)GetErrorCode() << ")\n"
-		<< "[Error String] " << GetErrorString() << '\n'
-		<< "[Description] " << GetErrorDescription() << '\n'
-		<< GetOriginString();
-	m_WhatBuffer = oss.str();
-	return m_WhatBuffer.c_str();
-}
-
-const char* Graphics::HrException::GetType() const
-{
-	return "Graphics Exception";
-}
-
-HRESULT Graphics::HrException::GetErrorCode() const
-{
-	return m_Hr;
-}
-
-std::string Graphics::HrException::GetErrorString() const
-{
-	return DXGetErrorString(m_Hr);
-}
-
-std::string Graphics::HrException::GetErrorDescription() const
-{
-	char buff[512];
-	DXGetErrorDescription(m_Hr, buff, sizeof(buff));
-	return buff;
-}
-
-Graphics::DeviceRemovedException::DeviceRemovedException(int line, const char* file, HRESULT hr)
-	: HrException(line, file, hr)
-{
-}
-
-const char* Graphics::DeviceRemovedException::GetType() const
-{
-	return "Graphics Exception [Device Removed] (DXGI_ERROR_DEVICE_REMOVED)";
-}
 
