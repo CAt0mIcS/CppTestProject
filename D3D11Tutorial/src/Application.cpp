@@ -21,5 +21,8 @@ int Application::Run()
 
 void Application::OnFrame()
 {
-
+	if (m_Window.GetKeyboard().IsKeyPressed(VK_SPACE))
+	{
+		MessageBox(NULL, "Hello WOrld", "d", NULL);
+	}
 }

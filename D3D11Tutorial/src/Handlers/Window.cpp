@@ -127,10 +127,36 @@ LRESULT Window::HandleMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 		PostQuitMessage(0);
 		return 0;
 	}
+	case WM_KILLFOCUS:
+	{
+		m_Keyboard.ClearKeys();
+		return 0;
+	}
 	case WM_MOUSEMOVE:
 	{
 		POINTS pt = MAKEPOINTS(lParam);
-		m_Mouse.OnMouseMove(pt.x, pt.y);
+		
+		if (pt.x >= 0 && pt.x < m_Width && pt.y >= 0 && pt.y < m_Height)
+		{
+			m_Mouse.OnMouseMove(pt.x, pt.y);
+			if (!m_Mouse.IsInWindow())
+			{
+				SetCapture(hWnd);
+				m_Mouse.OnMouseEnter(pt.x, pt.y);
+			}
+		}
+		else
+		{
+			if (m_Mouse.IsLeftPressed() || m_Mouse.IsRightPressed())
+			{
+				m_Mouse.OnMouseMove(pt.x, pt.y);
+			}
+			else
+			{
+				ReleaseCapture();
+				m_Mouse.OnMouseLeave(pt.x, pt.y);
+			}
+		}
 		return 0;
 	}
 	case WM_LBUTTONDOWN:
@@ -159,16 +185,19 @@ LRESULT Window::HandleMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 	}
 	case WM_MOUSEWHEEL:
 	{
+		POINTS pt = MAKEPOINTS(lParam);
+		const auto delta = GET_WHEEL_DELTA_WPARAM(wParam);
+		m_Mouse.OnMouseWheelDelta(pt.x, pt.y, delta);
 		return 0;
 	}
 	case WM_KEYDOWN:
 	{
-		m_Keyboard.OnKeyPressed((int)wParam);
+		m_Keyboard.OnKeyPressed((unsigned char)wParam);
 		return 0;
 	}
 	case WM_KEYUP:
 	{
-		m_Keyboard.OnKeyReleased((int)wParam);
+		m_Keyboard.OnKeyReleased((unsigned char)wParam);
 		return 0;
 	}
 	}

@@ -28,6 +28,8 @@ private:
 
 public:
 	Window(unsigned int width, unsigned int height, const char* name);
+	Mouse& GetMouse() { return m_Mouse; }
+	Keyboard& GetKeyboard() { return m_Keyboard; }
 	~Window();
 
 	LRESULT CALLBACK HandleMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
