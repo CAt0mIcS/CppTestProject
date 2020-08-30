@@ -1,8 +1,6 @@
 #include "pch.h"
 #include "Window.h"
 
-#include "resource.h"
-
 
 Window::WindowClass Window::WindowClass::m_WndClass;
 
@@ -16,12 +14,12 @@ Window::WindowClass::WindowClass()
 	wc.cbClsExtra = 0;
 	wc.cbWndExtra = 0;
 	wc.hInstance = GetHINSTANCE();
-	wc.hIcon = (HICON)LoadImage(m_hInstance, MAKEINTRESOURCE(IDI_ICON1), IMAGE_ICON, 32, 32, 0);
+	wc.hIcon = NULL;
 	wc.hCursor = NULL;
 	wc.hbrBackground = NULL;
 	wc.lpszMenuName = NULL;
 	wc.lpszClassName = GetName();
-	wc.hIconSm = (HICON)LoadImage(m_hInstance, MAKEINTRESOURCE(IDI_ICON1), IMAGE_ICON, 16, 16, 0);
+	wc.hIconSm = NULL;
 
 	RegisterClassEx(&wc);
 }
@@ -54,32 +52,17 @@ Window::Window(unsigned int width, unsigned int height, const char* name)
 	wr.bottom = m_Height + wr.top;
 
 	//AdjustWindowRect(&wr, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE);
-	if (!AdjustWindowRect(&wr, WS_OVERLAPPEDWINDOW, FALSE))
-		throw THWND_LAST_EXCEPT();
+	AdjustWindowRect(&wr, WS_OVERLAPPEDWINDOW, FALSE);
 
 	m_hWnd = CreateWindow(WindowClass::GetName(), name, WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT, CW_USEDEFAULT, wr.right - wr.left, wr.bottom - wr.top, NULL, NULL, WindowClass::GetHINSTANCE(), this);
 
-	if (!m_hWnd)
-		throw THWND_LAST_EXCEPT();
-
 	ShowWindow(m_hWnd, SW_SHOWDEFAULT);
-
-	//create graphics object
-	m_pGraphics = std::make_unique<Graphics>(m_hWnd);
 }
 
 Window::~Window()
 {
 	DestroyWindow(m_hWnd);
-}
-
-void Window::SetTitle(const std::string& title)
-{
-	if(!SetWindowText(m_hWnd, title.c_str()))
-	{
-		throw THWND_LAST_EXCEPT();
-	}
 }
 
 std::optional<int> Window::ProcessMessage()
@@ -98,21 +81,12 @@ std::optional<int> Window::ProcessMessage()
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
-	
+
 	Sleep(10);
-	
+
 	//return empty optional when not quitting app
 	return {};
 
-}
-
-Graphics& Window::GetGraphics() const
-{
-	if (!m_pGraphics)
-	{
-		throw THWND_NO_GFX_EXCEPT();
-	}
-	return *m_pGraphics;
 }
 
 LRESULT Window::HandleMessageSetup(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -123,7 +97,7 @@ LRESULT Window::HandleMessageSetup(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 		//extract ptr to window class from creation data
 		const CREATESTRUCTW* const pCreate = (CREATESTRUCTW*)lParam;
 		Window* const pWnd = (Window*)pCreate->lpCreateParams;
-		
+
 		//Set Win-API managed user data to store ptr to window class
 		SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG_PTR)pWnd);
 
@@ -153,95 +127,51 @@ LRESULT Window::HandleMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 		PostQuitMessage(0);
 		return 0;
 	}
-	case WM_KILLFOCUS:
-	{
-		kbd.ClearState();
-		break;
-	}
-	case WM_KEYDOWN:
-	//Syskey commands need to be handled to track ALT key (VK_MENU) and F10
-	case WM_SYSKEYDOWN:
-	{
-		if(!(lParam & 0x40000000) || kbd.IsAutorepeatEnabled())
-			kbd.OnKeyPressed((unsigned char)wParam);
-		break;
-	}
-	case WM_KEYUP:
-	case WM_SYSKEYUP:
-	{
-		kbd.OnKeyReleased((unsigned char)wParam);
-		break;
-	}
-	case WM_CHAR:
-	{
-		kbd.OnChar((unsigned char)wParam);
-		break;
-	}
 	case WM_MOUSEMOVE:
 	{
-		const POINTS pt = MAKEPOINTS(lParam);
-
-		//In client region -> log move and enter + capture mouse
-		if (pt.x >= 0 && pt.x < m_Width && pt.y >= 0 && pt.y < m_Height)
-		{
-			mouse.OnMouseMove(pt.x, pt.y);
-			if (!mouse.IsInWindow())
-			{
-				SetCapture(hWnd);
-				mouse.OnMouseEnter();
-			}
-		}
-		//not in client -> log move and maintain capture if button down
-		else
-		{
-			if (mouse.IsLeftPressed() || mouse.IsRightPressed())
-			{
-				mouse.OnMouseMove(pt.x, pt.y);
-			}
-			//button up
-			else
-			{
-				ReleaseCapture();
-				mouse.OnMouseLeave();
-			}
-		}
-		break;
+		POINTS pt = MAKEPOINTS(lParam);
+		m_Mouse.OnMouseMove(pt.x, pt.y);
+		return 0;
 	}
 	case WM_LBUTTONDOWN:
 	{
-		const POINTS pt = MAKEPOINTS(lParam);
-		mouse.OnLeftPressed(pt.x, pt.y);
-		break;
+		POINTS pt = MAKEPOINTS(lParam);
+		m_Mouse.OnLMouseButtonPressed(pt.x, pt.y);
+		return 0;
 	}
 	case WM_LBUTTONUP:
 	{
-		const POINTS pt = MAKEPOINTS(lParam);
-		mouse.OnLeftReleased(pt.x, pt.y);
-		break;
+		POINTS pt = MAKEPOINTS(lParam);
+		m_Mouse.OnLMouseButtonReleased(pt.x, pt.y);
+		return 0;
 	}
 	case WM_RBUTTONDOWN:
 	{
-		const POINTS pt = MAKEPOINTS(lParam);
-		mouse.OnRightPressed(pt.x, pt.y);
-		break;
+		POINTS pt = MAKEPOINTS(lParam);
+		m_Mouse.OnRMouseButtonPressed(pt.x, pt.y);
+		return 0;
 	}
 	case WM_RBUTTONUP:
 	{
-		const POINTS pt = MAKEPOINTS(lParam);
-		mouse.OnRightReleased(pt.x, pt.y);
-		break;
+		POINTS pt = MAKEPOINTS(lParam);
+		m_Mouse.OnRMouseButtonReleased(pt.x, pt.y);
+		return 0;
 	}
 	case WM_MOUSEWHEEL:
 	{
-		const POINTS pt = MAKEPOINTS(lParam);
-		const int delta = GET_WHEEL_DELTA_WPARAM(wParam);
-		mouse.OnWheelDelta(pt.x, pt.y, delta);
-		break;
+		return 0;
+	}
+	case WM_KEYDOWN:
+	{
+		m_Keyboard.OnKeyPressed((int)wParam);
+		return 0;
+	}
+	case WM_KEYUP:
+	{
+		m_Keyboard.OnKeyReleased((int)wParam);
+		return 0;
 	}
 	}
 
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
-
-
-

@@ -1,17 +1,17 @@
 #pragma once
 
 
-#define _WIN32_WINNT 0x0601
-#include <sdkddkver.h>
+#pragma comment(lib, "d3d11.lib")
+#pragma comment(lib, "D3DCompiler.lib")
 
-#define WIN32_LEAN_AND_MEAN
-#define NOMINMAX
 #include <Windows.h>
+#include <ShlObj.h>
+#include <d3d11.h>
 
 
-#include <string>
 #include <vector>
-#include <exception>
-#include <sstream>
-#include <iostream>
+#include <string>
 #include <memory>
+#include <algorithm>
+#include <queue>
+#include <optional>
