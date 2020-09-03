@@ -4,7 +4,7 @@
 #include "BaseWindow.h"
 
 #include "NPE/Renderer/Renderer2D.h"
-
+#include "NPE/Controls/Button.h"
 
 namespace NPE
 {
@@ -31,6 +31,7 @@ namespace NPE
 		static LRESULT CALLBACK HandleMessagePass(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 		
 		HWND m_hWnd;
+		std::vector<Button> m_Buttons;
 	};
 
 

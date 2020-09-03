@@ -31,4 +31,8 @@
 
 #include <d2d1.h>
 #pragma comment(lib, "D2d1.lib")
+
 #include <wrl.h>
+
+#include <dwrite.h>
+#pragma comment(lib, "Dwrite.lib")

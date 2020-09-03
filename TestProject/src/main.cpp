@@ -15,6 +15,6 @@ int APIENTRY wWinMain(HINSTANCE, HINSTANCE, PWSTR, int)
 
 void OnFrame(MainWindow& win)
 {
-	win.Renderer2D.DrawTestButton(10, 10, 100, 100);
+	//win.Renderer2D.DrawTestButton(10, 10, 100, 100);
 }
 

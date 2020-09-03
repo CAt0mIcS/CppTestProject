@@ -44,5 +44,8 @@
     <ClInclude Include="src\NPE\Renderer\Renderer2D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\NPE\Controls\Button.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

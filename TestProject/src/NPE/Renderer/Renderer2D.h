@@ -37,6 +37,8 @@ public:
 
 	void DrawTestButton(float x, float y, float width, float height);
 
+	void DrawString(const float x, const float y, const int fontSize, const wchar_t* str);
+
 private:
 	void InitGraphicsResources();
 
@@ -45,6 +47,8 @@ private:
 	Microsoft::WRL::ComPtr<ID2D1HwndRenderTarget> pRenderTarget;
 	Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> pBrush;
 	Microsoft::WRL::ComPtr<ID2D1Factory> pFactory;
+	Microsoft::WRL::ComPtr<IDWriteFactory> pWriteFactory;
+	Microsoft::WRL::ComPtr<IDWriteTextFormat> pTextFormat;
 
 	HWND m_hWnd;
 };

@@ -22,10 +22,12 @@ namespace NPE
 		
 		ShowWindow(m_hWnd, SW_MAXIMIZE);
 		Renderer2D.Init(m_hWnd);
+		m_Buttons.emplace_back(Renderer2D, 10, 10, 100, 100, std::wstring(L"Ok"));
 	}
 
 	LRESULT MainWindow::HandleMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
+
 		switch (uMsg)
 		{
 		case WM_DESTROY:
@@ -35,15 +37,21 @@ namespace NPE
 		}
 		case WM_PAINT:
 		{
-			PAINTSTRUCT ps;
+			PAINTSTRUCT ps;			
 			HDC hDC = BeginPaint(hWnd, &ps);
 			Paint(hDC, &ps.rcPaint, FALSE);
 			EndPaint(hWnd, &ps);
 			ReleaseDC(hWnd, hDC);
+			
+			m_Buttons[0].Paint();
+
 			return 0;
 		}
 		case WM_LBUTTONDOWN:
 		{
+			if (m_Buttons[0].IsMouseOnButton(LOWORD(lParam), HIWORD(lParam)))
+				m_Buttons[0].OnClick();
+
 			return 0;
 		}
 		}
