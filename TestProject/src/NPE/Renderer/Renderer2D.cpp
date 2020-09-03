@@ -28,6 +28,8 @@ void Renderer2D::DrawString(const float x, const float y, const int fontSize, co
     pRenderTarget->BeginDraw();
 
     D2D1_SIZE_F renderTargetSize = pRenderTarget->GetSize();
+
+    pBrush->SetColor(D2D1::ColorF(1.0f, 1.0f, 1.0f));
     pRenderTarget->DrawTextW(str, wcslen(str), pTextFormat.Get(), D2D1::RectF(x, y, renderTargetSize.width, renderTargetSize.height), pBrush.Get());
     if (FAILED(pRenderTarget->EndDraw())) throw std::exception();
 }
@@ -51,8 +53,8 @@ void Renderer2D::InitGraphicsResources()
     ))) throw std::exception();
 
     if (FAILED(pWriteFactory->CreateTextFormat(L"Verdana", nullptr, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, 50, L"", &pTextFormat))) throw std::exception("");
-    pTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
-    pTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+    //pTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+    //pTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 
     const D2D1_COLOR_F color = D2D1::ColorF(35.0f / 255.0f, 38.0f / 255.0f, 40.0f / 255.0f);
     if (FAILED(pRenderTarget->CreateSolidColorBrush(color, &pBrush))) throw std::exception("");
