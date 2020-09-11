@@ -23,7 +23,7 @@ public:
 	void Paint()
 	{
 		Renderer.DrawTestButton(m_X, m_Y, m_Width, m_Height);
-		Renderer.DrawString(m_X, m_Y, 50, m_Text.c_str());
+		Renderer.DrawString(m_X, m_Y, m_Width, m_Height, 50, m_Text.c_str());
 	}
 
 	void OnClick()

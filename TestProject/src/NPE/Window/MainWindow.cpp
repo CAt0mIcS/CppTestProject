@@ -22,7 +22,6 @@ namespace NPE
 		
 		ShowWindow(m_hWnd, SW_MAXIMIZE);
 		Renderer2D.Init(m_hWnd);
-		m_Buttons.emplace_back(Renderer2D, 10, 10, 100, 100, std::wstring(L"Ok"));
 	}
 
 	LRESULT MainWindow::HandleMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -43,15 +42,6 @@ namespace NPE
 			EndPaint(hWnd, &ps);
 			ReleaseDC(hWnd, hDC);
 			
-			m_Buttons[0].Paint();
-
-			return 0;
-		}
-		case WM_LBUTTONDOWN:
-		{
-			if (m_Buttons[0].IsMouseOnButton(LOWORD(lParam), HIWORD(lParam)))
-				m_Buttons[0].OnClick();
-
 			return 0;
 		}
 		}
@@ -61,7 +51,8 @@ namespace NPE
 
 	void MainWindow::Paint(HDC hDC, RECT* rcDirty, BOOL bErase)
 	{
-		FillRect(hDC, rcDirty, CreateSolidBrush(RGB(35, 38, 40)));
+		//FillRect(hDC, rcDirty, CreateSolidBrush(RGB(35, 38, 40)));
+		Renderer2D.RenderBackgroundFromImage(L"image.bmp");
 	}
 
 	LRESULT MainWindow::HandleMessageSetup(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
