@@ -1,9 +1,42 @@
 #include "pch.h"
 #include "MainWindow.h"
 
+void CALLBACK OnTimer(HWND hWnd, UINT uMsg, UINT_PTR id, DWORD passedMs)
+{
+	std::cout << id << '\n';
+	KillTimer(hWnd, id);
+}
+
+
+class Timer
+{
+public:
+	Timer()
+		: id(0)
+	{
+
+	}
+
+	void Run(HWND hWnd, unsigned int secs)
+	{
+		id = s_id;
+		++s_id;
+
+		SetTimer(hWnd, id, secs, &OnTimer);
+
+	}
+
+private:
+	static unsigned int s_id;
+	unsigned int id;
+};
+
+inline unsigned int Timer::s_id = 0;
+
 
 namespace NPE
 {
+
 	MainWindow::MainWindow(unsigned short width, unsigned short height, PCWSTR name)
 	{
 		
@@ -42,6 +75,13 @@ namespace NPE
 			EndPaint(hWnd, &ps);
 			ReleaseDC(hWnd, hDC);
 			
+			return 0;
+		}
+		case WM_LBUTTONDOWN:
+		{
+			Timer timer;
+			timer.Run(m_hWnd, 1000);
+
 			return 0;
 		}
 		}
