@@ -22,7 +22,7 @@ public:
 		id = s_id;
 		++s_id;
 
-		SetTimer(hWnd, id, secs, &OnTimer);
+		SetTimer(hWnd, id, secs, nullptr);
 
 	}
 
@@ -82,6 +82,11 @@ namespace NPE
 			Timer timer;
 			timer.Run(m_hWnd, 1000);
 
+			return 0;
+		}
+		case WM_TIMER:
+		{
+			std::cout << "Hello World\n";
 			return 0;
 		}
 		}
