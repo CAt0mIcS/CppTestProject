@@ -23,6 +23,16 @@ namespace sstd
 		T* Data() { return m_Arr; }
 		const T* Data() const { return m_Arr; }
 
+		T* begin()
+		{
+			return &m_Arr[0];
+		}
+
+		T* end()
+		{
+			return &m_Arr[S - 1];
+		}
+
 	private:
 		int m_Arr[S];
 	};

@@ -51,21 +51,22 @@ struct Vector3
 
 int main()
 {
-	sstd::Vector<Vector3> vec;
-	//vec.PushBack(Vector3(1.0f));
-	//vec.PushBack(Vector3(2, 3, 4));
-	//vec.PushBack(Vector3());
+	sstd::Array<int, 10> vec;
+	vec[0] = 2;
+	vec[1] = 43;
+	vec[2] = 2;
+	vec[3] = 5;
+	vec[4] = 65;
+	vec[5] = 8;
+	vec[6] = 3;
+	vec[7] = 2;
+	vec[8] = 77;
+	vec[9] = 04;
 
-	vec.EmplaceBack(1.0f);
-	vec.EmplaceBack(2, 3, 4);
-	vec.EmplaceBack(1, 2, 4);
-	vec.EmplaceBack();
-	vec.PopBack();
-	vec.PopBack();
-	vec.EmplaceBack(5, 2, 0);
-	vec.EmplaceBack(1, 7, 9);
-	vec.Clear();
-	vec.EmplaceBack(5, 2, 0);
-	vec.EmplaceBack(1, 7, 9);
+	for (int i : vec)
+	{
+		std::cout << i << '\n';
+	}
+
 }
 
