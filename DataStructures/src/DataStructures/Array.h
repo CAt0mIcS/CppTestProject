@@ -30,7 +30,7 @@ namespace sstd
 
 		T* end()
 		{
-			return &m_Arr[S - 1];
+			return &m_Arr[S];
 		}
 
 	private:

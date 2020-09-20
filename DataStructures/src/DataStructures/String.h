@@ -13,7 +13,7 @@ namespace sstd
 
 		}
 
-		constexpr int Size() const { return m_Size; }
+		constexpr size_t Size() const { return m_Size; }
 
 	private:
 		char* m_Data;

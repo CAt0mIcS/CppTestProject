@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include <vector>
+#include <array>
 
 #include "DataStructures/Array.h"
 #include "DataStructures/String.h"
@@ -51,6 +52,7 @@ struct Vector3
 
 int main()
 {
+	std::array<int, 10> arr;
 	sstd::Array<int, 10> vec;
 	vec[0] = 2;
 	vec[1] = 43;
