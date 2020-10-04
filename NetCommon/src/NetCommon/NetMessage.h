@@ -4,7 +4,7 @@
 
 namespace net
 {
-	template<typename T>
+	template<typename T, typename = std::enable_if_t<std::is_enum<T>::value>>
 	struct MessageHeader
 	{
 		T id{};
@@ -82,5 +82,31 @@ namespace net
 			
 			return msg;
 		}
+	};
+
+
+	template<typename T>
+	class Connection;
+
+	template<typename T>
+	struct OwnedMessage
+	{
+		std::shared_ptr<Connection<T>> remote = nullptr;
+		Message<T> msg;
+
+		/// <summary>
+		/// Overloaded operator for std::cout
+		/// When calling std::cout on a message, this function will be called
+		/// and will print the message id and size
+		/// </summary>
+		/// <param name="os">Specifies the output stream</param>
+		/// <param name="msg">Specifies the message to output</param>
+		/// <returns>The output stream</returns>
+		friend std::ostream& operator <<(std::ostream& os, const OwnedMessage<T>& msg)
+		{
+			os << msg.msg;
+			return os;
+		}
+
 	};
 }

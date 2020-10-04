@@ -1,5 +1,5 @@
 #include <iostream>
-#include <Net.h>
+#include <NetCommon/Net.h>
 
 
 enum class CustomMsgTypes : uint32_t
@@ -9,19 +9,23 @@ enum class CustomMsgTypes : uint32_t
 };
 
 
+
+class CustomClient : public net::ClientInterface<CustomMsgTypes>
+{
+public:
+	bool FireBullet(float x, float y)
+	{
+		net::Message<CustomMsgTypes> msg;
+		msg.header.id = CustomMsgTypes::FireBullet;
+		msg << x << y;
+		return Send(msg);
+	}
+};
+
+
 int main()
 {
-	net::Message<CustomMsgTypes> msg;
-	msg.header.id = CustomMsgTypes::FireBullet;
-
-	float x = 2.0f;
-	bool t = true;
-
-	msg << x << t;
-
-	x = 4.0f;
-	t = false;
-
-	msg >> t >> x;
-
+	CustomClient c;
+	c.Connect("", 0);
+	c.FireBullet(2.0f, 5.0f);
 }

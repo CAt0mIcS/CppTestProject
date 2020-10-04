@@ -15,13 +15,25 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\NetCommon.h">
+    <ClInclude Include="src\NetCommon\Net.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\NetMessage.h">
+    <ClInclude Include="src\NetCommon\NetMessage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Net.h">
+    <ClInclude Include="src\NetCommon\NetCommon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\NetCommon\ts\NetQueue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\NetCommon\NetConnection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\NetCommon\NetServer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\NetCommon\NetClient.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

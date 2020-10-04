@@ -19,9 +19,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Net.h" />
-    <ClInclude Include="src\NetMessage.h" />
-    <ClInclude Include="src\NetCommon.h" />
+    <ClInclude Include="src\NetCommon\Net.h" />
+    <ClInclude Include="src\NetCommon\NetClient.h" />
+    <ClInclude Include="src\NetCommon\NetConnection.h" />
+    <ClInclude Include="src\NetCommon\NetMessage.h" />
+    <ClInclude Include="src\NetCommon\NetCommon.h" />
+    <ClInclude Include="src\NetCommon\NetServer.h" />
+    <ClInclude Include="src\NetCommon\ts\NetQueue.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
