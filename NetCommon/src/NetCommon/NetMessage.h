@@ -2,7 +2,7 @@
 #include "NetCommon.h"
 
 
-namespace net
+namespace Net
 {
 	template<typename T, typename = std::enable_if_t<std::is_enum<T>::value>>
 	struct MessageHeader

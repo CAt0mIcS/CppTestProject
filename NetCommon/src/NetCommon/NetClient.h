@@ -6,7 +6,7 @@
 #include "NetConnection.h"
 
 
-namespace net
+namespace Net
 {
 	template<typename T, typename = std::enable_if_t<std::is_enum<T>::value>>
 	class ClientInterface
@@ -39,12 +39,17 @@ namespace net
 		{
 			try
 			{
-				//m_Connection = std::make_shared<Connection<T>>();
-
 				asio::ip::tcp::resolver resolver(m_Context);
-				//m_Endpoints = resolver.resolve(host, std::to_string(port));
+				asio::ip::tcp::resolver::results_type endpoints = resolver.resolve(host, std::to_string(port));
+				
+				m_Connection = std::make_unique<Connection<T>>(
+					Connection<T>::Owner::Client,
+					m_Context,
+					asio::ip::tcp::socket(m_Context),
+					m_qMessagesIn
+				);
 
-				//m_Connection->ConnectToServer(m_Endpoints);
+				m_Connection->ConnectToServer(endpoints);
 
 				m_thrContext = std::thread([this]() { m_Context.run(); });
 			}
@@ -85,7 +90,7 @@ namespace net
 		/// Getter for thread save queue with owned messages
 		/// </summary>
 		/// <returns>A reference to the thread save queue</returns>
-		ts::Queue<OwnedMessage<T>>& Incoming()
+		TS::Queue<OwnedMessage<T>>& Incoming()
 		{
 			return m_qMessagesIn;
 		}
@@ -95,9 +100,9 @@ namespace net
 		/// </summary>
 		/// <param name="msg">Is the message which will be sent</param>
 		/// <returns>True if the message was sent successfully, false otherwise</returns>
-		bool Send(const Message<T>& msg)
+		void Send(const Message<T>& msg)
 		{
-			return m_Connection->Send(msg);
+			m_Connection->Send(msg);
 		}
 
 	protected:
@@ -125,6 +130,6 @@ namespace net
 		/// <summary>
 		/// This is the thread safe queue of incomming messages from the server
 		/// </summary>
-		ts::Queue<OwnedMessage<T>> m_qMessagesIn;
+		TS::Queue<OwnedMessage<T>> m_qMessagesIn;
 	};
 }

@@ -12,6 +12,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NetClient", "NetClient\NetC
 		{F8CECAD7-EDCC-4003-8272-8BD71301A9AE} = {F8CECAD7-EDCC-4003-8272-8BD71301A9AE}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NetServer", "NetServer\NetServer.vcxproj", "{165850EA-0DFD-4C3F-A9DE-17A594AD05D3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -44,6 +46,14 @@ Global
 		{98B2F50D-BCC4-4016-ADC8-66B3F2B06166}.Release|x64.Build.0 = Release|x64
 		{98B2F50D-BCC4-4016-ADC8-66B3F2B06166}.Release|x86.ActiveCfg = Release|Win32
 		{98B2F50D-BCC4-4016-ADC8-66B3F2B06166}.Release|x86.Build.0 = Release|Win32
+		{165850EA-0DFD-4C3F-A9DE-17A594AD05D3}.Debug|x64.ActiveCfg = Debug|x64
+		{165850EA-0DFD-4C3F-A9DE-17A594AD05D3}.Debug|x64.Build.0 = Debug|x64
+		{165850EA-0DFD-4C3F-A9DE-17A594AD05D3}.Debug|x86.ActiveCfg = Debug|Win32
+		{165850EA-0DFD-4C3F-A9DE-17A594AD05D3}.Debug|x86.Build.0 = Debug|Win32
+		{165850EA-0DFD-4C3F-A9DE-17A594AD05D3}.Release|x64.ActiveCfg = Release|x64
+		{165850EA-0DFD-4C3F-A9DE-17A594AD05D3}.Release|x64.Build.0 = Release|x64
+		{165850EA-0DFD-4C3F-A9DE-17A594AD05D3}.Release|x86.ActiveCfg = Release|Win32
+		{165850EA-0DFD-4C3F-A9DE-17A594AD05D3}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

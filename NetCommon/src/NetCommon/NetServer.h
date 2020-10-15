@@ -6,7 +6,7 @@
 #include "NetConnection.h"
 
 
-namespace net
+namespace Net
 {
 	template<typename T>
 	class ServerInterface
@@ -42,6 +42,7 @@ namespace net
 			}
 
 			std::cout << "[SERVER] Started!\n";
+			return true;
 		}
 
 		/// <summary>
@@ -152,6 +153,7 @@ namespace net
 			{
 				m_Connections.erase(
 					std::remove(m_Connections.begin(), m_Connections.end(), nullptr), m_Connections.end()
+				);
 			}
 
 		}
@@ -208,7 +210,7 @@ namespace net
 		/// <summary>
 		/// Thread Safe Queue for incoming message packets
 		/// </summary>
-		ts::Queue<OwnedMessage<T>> m_MessagesIn;
+		TS::Queue<OwnedMessage<T>> m_MessagesIn;
 
 		/// <summary>
 		/// Container of active validated connections

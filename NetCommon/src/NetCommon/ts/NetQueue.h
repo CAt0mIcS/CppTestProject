@@ -3,9 +3,9 @@
 #include "../NetCommon.h"
 
 
-namespace net
+namespace Net
 {
-	namespace ts
+	namespace TS
 	{
 		template<typename T>
 		class Queue
@@ -82,6 +82,15 @@ namespace net
 			{
 				std::scoped_lock lock(muxQueue);
 				return deqQueue.size();
+			}
+
+			/// <summary>
+			/// Checks if the queue is empty
+			/// </summary>
+			/// <returns>True if the queue is empty, false otherwise</returns>
+			bool Empty() const
+			{
+				return deqQueue.empty();
 			}
 
 			/// <summary>
