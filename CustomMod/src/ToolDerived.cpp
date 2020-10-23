@@ -1,7 +1,7 @@
 #include "ToolDerived.h"
 
 #include <iostream>
-
+#include <Windows.h>
 
 ToolDerived::ToolDerived()
 	:ToolBase()
@@ -16,7 +16,12 @@ void ToolDerived::ToolDo()
 void ToolDerived::OnUpdate()
 {
 	std::cout << "Updated\n";
-	m_ShouldClose = true;
+
+	if (GetKeyState(VK_CONTROL))
+	{
+		m_ShouldClose = true;
+	}
+
 }
 
 void ToolDerived::OnClose()
