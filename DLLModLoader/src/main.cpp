@@ -2,27 +2,38 @@
 
 #include "ToolBase.h"
 
+#include <filesystem>
+
 
 typedef ToolBase* (* CreateFunc)();
 
 int main(int argc, char** argv)
 {
-	HMODULE lib = LoadLibrary(L"D:\\dev\\Cpp\\Projects\\DLLModLoader\\bin\\Debug-Win32\\CustomMod.dll");
-	if (!lib || lib == INVALID_HANDLE_VALUE)
-	{
-		DWORD err = GetLastError();
-		__debugbreak();
-	}
 
-	CreateFunc func = (CreateFunc)GetProcAddress(lib, "CreateTool");
-	if (!func || func == INVALID_HANDLE_VALUE)
+	using recursive_directory_iterator = std::filesystem::recursive_directory_iterator;
+	for (const auto& dirEntry : recursive_directory_iterator("D:\\dev\\Cpp\\Projects\\DLLModLoader\\DLLs"))
 	{
-		DWORD err = GetLastError();
-		__debugbreak();
-	}
+		HMODULE lib = LoadLibrary(L"D:\\dev\\Cpp\\Projects\\DLLModLoader\\bin\\Debug-Win32\\CustomMod.dll");
+		if (!lib || lib == INVALID_HANDLE_VALUE)
+		{
+			std::cout << "[LoadLibrary] Error occured: " << GetLastError() << '\n';
+			return -1;
+		}
 
-	ToolBase* tb = func();
-	tb->ToolDo();
-	std::cout << tb->i << '\n';
+		CreateFunc func = (CreateFunc)GetProcAddress(lib, "CreateTool");
+		if (!func || func == INVALID_HANDLE_VALUE)
+		{
+			std::cout << "[GetProcAddress] Error occured: " << GetLastError() << '\n';
+			return -1;
+		}
+
+		ToolBase* tb = func();
+		tb->ToolDo();
+		while (!tb->ShouldClose())
+		{
+			tb->OnUpdate();
+		}
+		tb->OnClose();
+	}
 }
 

@@ -13,11 +13,21 @@ void ToolDerived::ToolDo()
 	std::cout << "Hello World\n";
 }
 
+void ToolDerived::OnUpdate()
+{
+	std::cout << "Updated\n";
+	m_ShouldClose = true;
+}
+
+void ToolDerived::OnClose()
+{
+	std::cout << "Closed\n";
+}
+
 
 ToolBase* CreateTool()
 {
 	ToolDerived* pDerived = new ToolDerived();
-	pDerived->i = 32;
 	return pDerived;
 }
 

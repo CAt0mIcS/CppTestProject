@@ -16,6 +16,8 @@ public:
 	ToolDerived();
 
 	virtual void ToolDo() override;
+	virtual void OnUpdate() override;
+	virtual void OnClose() override;
 };
 
 

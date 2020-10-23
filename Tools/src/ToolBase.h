@@ -13,8 +13,13 @@ class TL_API ToolBase
 public:
 	ToolBase();
 
-	virtual void ToolDo() {};
+	bool ShouldClose() const { return m_ShouldClose; }
 
-	int i = 0;
+	virtual void ToolDo() = 0;
+	virtual void OnUpdate() = 0;
+	virtual void OnClose() = 0;
+
+protected:
+	bool m_ShouldClose = false;
 };
 
