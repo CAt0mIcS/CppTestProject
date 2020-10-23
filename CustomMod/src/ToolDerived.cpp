@@ -10,23 +10,17 @@ ToolDerived::ToolDerived()
 
 void ToolDerived::ToolDo()
 {
-	std::cout << "Hello World\n";
+	std::cout << "ToolDerived initialized\n";
 }
 
 void ToolDerived::OnUpdate()
 {
-	std::cout << "Updated\n";
-
-	if (GetKeyState(VK_CONTROL))
-	{
-		m_ShouldClose = true;
-	}
-
+	std::cout << "ToolDerived OnUpdate\n";
 }
 
 void ToolDerived::OnClose()
 {
-	std::cout << "Closed\n";
+	std::cout << "ToolDerived OnClose\n";
 }
 
 

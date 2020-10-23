@@ -7,13 +7,15 @@
 
 typedef ToolBase* (* CreateFunc)();
 
+std::vector<ToolBase*> tools{};
+
 int main(int argc, char** argv)
 {
 
 	using recursive_directory_iterator = std::filesystem::recursive_directory_iterator;
 	for (const auto& dirEntry : recursive_directory_iterator("D:\\dev\\Cpp\\Projects\\DLLModLoader\\DLLs"))
 	{
-		HMODULE lib = LoadLibrary(L"D:\\dev\\Cpp\\Projects\\DLLModLoader\\bin\\Debug-Win32\\CustomMod.dll");
+		HMODULE lib = LoadLibrary(dirEntry.path().c_str());
 		if (!lib || lib == INVALID_HANDLE_VALUE)
 		{
 			std::cout << "[LoadLibrary] Error occured: " << GetLastError() << '\n';
@@ -29,11 +31,27 @@ int main(int argc, char** argv)
 
 		ToolBase* tb = func();
 		tb->ToolDo();
-		while (!tb->ShouldClose())
+		tools.push_back(tb);
+	}
+
+	bool shouldClose = false;
+	while (!shouldClose)
+	{
+		if (GetKeyState(VK_CONTROL))
+		{
+			shouldClose = true;
+		}
+
+		for (ToolBase* tb : tools)
 		{
 			tb->OnUpdate();
 		}
+	}
+
+	for (ToolBase* tb : tools)
+	{
 		tb->OnClose();
 	}
+
 }
 
