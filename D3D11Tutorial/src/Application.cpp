@@ -2,7 +2,7 @@
 #include "Application.h"
 
 Application::Application()
-	: m_Window(800, 600, "D3D11 TestWindow")
+	: m_Window(1280, 720, "D3D11 TestWindow")
 {
 
 }
@@ -19,10 +19,18 @@ int Application::Run()
 	}
 }
 
+float rotation = 0.0f;
 void Application::OnFrame()
 {
-	if (m_Window.GetKeyboard().IsKeyPressed(VK_SPACE))
-	{
-		MessageBox(NULL, "Hello WOrld", "d", NULL);
-	}
+	rotation += 0.01f;
+	auto& gfx = m_Window.GetGraphics();
+	gfx.ClearBuffer(1.0f, 1.0f, 1.0f);
+	
+	gfx.DrawTestTriangle(
+		rotation, 
+		m_Window.GetMouse().GetPosX() / 640.0f - 1.0f, 
+		-m_Window.GetMouse().GetPosY() / 360.0f + 1.0f
+	);
+
+	gfx.EndFrame();
 }

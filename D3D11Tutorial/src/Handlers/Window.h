@@ -3,6 +3,7 @@
 #include "Handlers/Hardware/Keyboard.h"
 #include "Handlers/Hardware/Mouse.h"
 
+#include "Renderer/Graphics.h"
 
 class Window
 {
@@ -30,6 +31,7 @@ public:
 	Window(unsigned int width, unsigned int height, const char* name);
 	Mouse& GetMouse() { return m_Mouse; }
 	Keyboard& GetKeyboard() { return m_Keyboard; }
+	Graphics& GetGraphics() { return *m_Gfx; }
 	~Window();
 
 	LRESULT CALLBACK HandleMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -42,6 +44,7 @@ private:
 private:
 	int m_Width, m_Height;
 	HWND m_hWnd;
+	std::shared_ptr<Graphics> m_Gfx;
 	Mouse m_Mouse;
 	Keyboard m_Keyboard;
 };

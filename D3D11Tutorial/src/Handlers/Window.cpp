@@ -57,6 +57,7 @@ Window::Window(unsigned int width, unsigned int height, const char* name)
 	m_hWnd = CreateWindow(WindowClass::GetName(), name, WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT, CW_USEDEFAULT, wr.right - wr.left, wr.bottom - wr.top, NULL, NULL, WindowClass::GetHINSTANCE(), this);
 
+	m_Gfx = std::make_shared<Graphics>(m_hWnd);
 	ShowWindow(m_hWnd, SW_SHOWDEFAULT);
 }
 
