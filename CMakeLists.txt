@@ -22,14 +22,14 @@ set_property(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" PROPERTY VS_STARTUP_PROJECT
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "" FORCE)
 
 if(NOT DEFINED CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE Debug)
+    set(CMAKE_BUILD_TYPE "Debug")
 endif()
 
-include(BuildFiles/macros.cmake)
-include(BuildFiles/functions.cmake)
+include("BuildFiles/macros.cmake")
+include("BuildFiles/functions.cmake")
 
 # Initialize the Solution Project
-project(NodePlanningEditor)
+project("NodePlanningEditor")
 
 # Redirect Output Files
 set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}/bin" CACHE INTERNAL "" FORCE)
