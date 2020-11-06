@@ -19,3 +19,4 @@ target_link_libraries("RlDebug" PRIVATE "${LIB}")
 
 set_target_properties("RlDebug" PROPERTIES FOLDER "RlUtilities")
 add_dependencies("RlDebug" "RlUtilities")
+AddRecursiveFilters("${SRC}")

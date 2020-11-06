@@ -17,3 +17,4 @@ target_link_libraries("ZealGUILayer" PRIVATE "${LIB}")
 
 set_target_properties("ZealGUILayer" PROPERTIES FOLDER "LayerExtensions")
 add_dependencies("ZealGUILayer" "Reyal")
+AddRecursiveFilters("${SRC}")

@@ -18,3 +18,4 @@ target_link_libraries("Reyal" PRIVATE "${LIB}")
 
 target_compile_definitions("Reyal" PUBLIC "RL_BUILD")
 add_dependencies("Reyal" "RlRender")
+AddRecursiveFilters("${SRC}")

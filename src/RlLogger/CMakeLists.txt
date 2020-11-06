@@ -18,3 +18,4 @@ target_link_libraries("RlLogger" PRIVATE "${LIB}")
 
 set_target_properties("RlLogger" PROPERTIES FOLDER "RlUtilities")
 add_dependencies("RlLogger" "RlUtilities")
+AddRecursiveFilters("${SRC}")

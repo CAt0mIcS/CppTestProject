@@ -22,6 +22,8 @@ target_include_directories("Zeal" PRIVATE "${INC}")
 target_link_libraries("Zeal" PRIVATE "${LIB}")
 
 add_dependencies("Zeal" "Reyal" "ZealGUILayer")
+AddRecursiveFilters("${SRC}")
+
 
 
 

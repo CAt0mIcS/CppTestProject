@@ -1,12 +1,16 @@
-function(AddLib libname libsrc libinc liblink)
-    add_library("${libname}" "${libsrc}")
-    target_include_directories("${libname}" PRIVATE "${libinc}")
-    target_link_libraries("${libname}" "${liblink}")
-endfunction()
+# File contains all self-defined CMake functions
 
+# Preserves directory structure by creating Visual Studio filters for folders
+function(AddRecursiveFilters targetSrc)
+    foreach(source IN ITEMS ${targetSrc})
+        get_filename_component(sourcePath "${source}" PATH)
+        if(IS_ABSOLUTE source)
+            file(RELATIVE_PATH relSourcePath "${_src_root_path}" "${sourcePath}")
+        else()
+            set(relSourcePath "${sourcePath}")
+        endif()
 
-function(AddExecutable execname execsrc execinc execlink)
-    add_executable("${execname}" "${execsrc}")
-    target_include_directories("${execname}" PRIVATE "${execinc}")
-    target_link_libraries("${execname}" "${execlink}")
+        string(REPLACE "/" "\\" groupPath "${relSourcePath}")
+        source_group("${groupPath}" FILES "${source}")
+    endforeach()
 endfunction()
