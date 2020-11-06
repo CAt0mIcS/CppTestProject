@@ -20,7 +20,6 @@ set(LIB
 add_executable("Zeal" "${SRC}")
 target_include_directories("Zeal" PRIVATE "${INC}")
 target_link_libraries("Zeal" PRIVATE "${LIB}")
-target_link_directories("Zeal" PRIVATE "${CMAKE_BINARY_DIR}/lib")
 
 add_dependencies("Zeal" "Reyal" "ZealGUILayer")
 
