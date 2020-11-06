@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.18.3)
+cmake_minimum_required(VERSION 3.18.2)
 
 if("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
     if(NOT DEFINED IN_SOURCE_BUILD)
@@ -16,6 +16,8 @@ if("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
     endif()
 endif()
 
+# Required for Solution Folders
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # Set the startup project for VS (TODO: Only for VS)
 set_property(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" PROPERTY VS_STARTUP_PROJECT "Zeal")
@@ -31,9 +33,25 @@ include("BuildFiles/functions.cmake")
 # Initialize the Solution Project
 project("NodePlanningEditor")
 
-# Redirect Output Files
-set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}/bin" CACHE INTERNAL "" FORCE)
-set(LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}/lib" CACHE INTERNAL "" FORCE)
+# ------------------------------------------------
+# Redirect Output Files (Remove VS /Debug folder)
+# ------------------------------------------------
+
+# For Single-Configuration Projects
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+
+# ------------------------------------------------
+# Redirect Output Files for Multi-Configuration Projects
+# ------------------------------------------------
+foreach(OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES})
+    string( TOUPPER ${OUTPUTCONFIG} OUTPUTCONFIG )
+    set("CMAKE_RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG}" "${CMAKE_BINARY_DIR}/bin")
+    set("CMAKE_LIBRARY_OUTPUT_DIRECTORY_${OUTPUTCONFIG}" "${CMAKE_BINARY_DIR}/bin")
+    set("CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG}" "${CMAKE_BINARY_DIR}/bin")
+endforeach()
+
 
 
 add_subdirectory("src/")
