@@ -10,6 +10,11 @@ IF NOT EXIST %~dp0\build (
 cd build
 
 echo Starting CMake
+echo.
+
 call cmake ..
-echo Cmake Finnished
+
+echo.
+echo Cmake finished
+
 PAUSE

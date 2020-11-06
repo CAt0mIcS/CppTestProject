@@ -1,7 +1,7 @@
 #ifndef RL_APPLICATION_H
 #define RL_APPLICATION_H
 
-#include "../RlBase.h"
+#include "RlBase.h"
 
 
 class RL_API Application
