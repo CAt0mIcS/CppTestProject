@@ -1,5 +1,4 @@
-
-#include <Reyal/Core/Application.h>
+#include <Reyal/Reyal.h>
 
 
 int main()
