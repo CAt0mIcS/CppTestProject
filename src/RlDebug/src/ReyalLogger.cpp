@@ -1,9 +1,9 @@
 #include "rldpch.h"
-#include "ReyalLogger.h"
+#include "RlDebug/ReyalLogger.h"
 
 #include <RlLogger/Log.h>
 
-#include "RlAssert.h"
+#include "RlDebug/RlAssert.h"
 
 
 namespace At0::Reyal::Debug

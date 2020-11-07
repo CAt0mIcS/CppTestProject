@@ -2,7 +2,7 @@
 #define RLU_RANDOM_H
 
 #include <string>
-#include "../RlUBase.h"
+#include "RlUBase.h"
 
 
 namespace At0::Util

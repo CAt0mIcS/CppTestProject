@@ -1,11 +1,11 @@
 #include "rlpch.h"
-#include "Application.h"
+#include "Reyal/Application.h"
 
-#include "Layers/Layer.h"
+#include "Reyal/Layers/Layer.h"
 
-#include "Events/KeyboardEvent.h"
-#include "Events/MouseEvent.h"
-#include "Events/ApplicationEvent.h"
+#include "Reyal/Events/KeyboardEvent.h"
+#include "Reyal/Events/MouseEvent.h"
+#include "Reyal/Events/ApplicationEvent.h"
 
 #include <RlDebug/RlAssert.h>
 #include <RlDebug/Instrumentor.h>

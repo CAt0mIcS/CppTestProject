@@ -1,8 +1,8 @@
 #ifndef RL_BASEWINDOW_H
 #define RL_BASEWINDOW_H
 
-#include "RlBase.h"
-#include "RlWin.h"
+#include "Reyal/RlBase.h"
+#include "Reyal/RlWin.h"
 
 #include <stdint.h>
 #include <string>

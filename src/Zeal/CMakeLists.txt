@@ -8,12 +8,10 @@ set(SRC
 )
 
 set(PUBLIC_INC
-	"${CMAKE_CURRENT_SOURCE_DIR}/include"
+	""
 )
 
 set(PRIVATE_INC
-	"include/RlUtil"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src"
     "${CMAKE_CURRENT_SOURCE_DIR}/../Reyal/include"
 )
 
@@ -22,10 +20,11 @@ set(PUBLIC_LIB
 )
 
 set(PRIVATE_LIB
-	"Reyal"
+    "Reyal"
+    "RlDebug"
 )
 
-add_executable("Zeal" "${SRC}")
+add_executable("Zeal" WIN32 "${SRC}")
 target_include_directories("Zeal"
     PRIVATE
         "${PRIVATE_INC}"
@@ -40,6 +39,7 @@ target_link_libraries("Zeal"
 )
 
 add_dependencies("Zeal" "Reyal" "ZealGUILayer")
+target_precompile_headers("Zeal" PRIVATE "src/pch.h")
 AddRecursiveFilters("${SRC}")
 
 

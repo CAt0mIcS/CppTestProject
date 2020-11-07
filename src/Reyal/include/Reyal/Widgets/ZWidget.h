@@ -1,15 +1,15 @@
 #ifndef RL_ZWIDGET_H
 #define RL_ZWIDGET_H
 
-#include "RlBase.h"
+#include "Reyal/RlBase.h"
 
 #include <sal.h>
 #include <vector>
 #include <string>
 
-#include "Core/Vec2.h"
+#include "Reyal/Core/Vec2.h"
 
-#include <RlRender/TypeDefines.h>
+#include <../../RlRender/include/RlRender/TypeDefines.h>
 
 // 4251 class 'std::wstring' needs to have dll-interface to be used by clients of class 'At0::Reyal::Widget'
 #pragma warning(disable : 4251)

@@ -1,7 +1,7 @@
 #ifndef RL_VEC2_H
 #define RL_VEC2_H
 
-#include "RlBase.h"
+#include "Reyal/RlBase.h"
 
 namespace std
 {

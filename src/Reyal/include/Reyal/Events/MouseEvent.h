@@ -1,11 +1,11 @@
 #ifndef RL_MOUSEEVENT_H
 #define RL_MOUSEEVENT_H
 
-#include "RlBase.h"
-#include "Events/Event.h"
+#include "Reyal/RlBase.h"
+#include "Reyal/Events/Event.h"
 
-#include "Core/Vec2.h"
-#include "Widgets/ZWidget.h"
+#include "Reyal/Core/Vec2.h"
+#include "Reyal/Widgets/ZWidget.h"
 
 
 namespace At0::Reyal

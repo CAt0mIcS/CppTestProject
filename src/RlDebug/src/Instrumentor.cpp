@@ -1,5 +1,5 @@
 #include "rldpch.h"
-#include "Instrumentor.h"
+#include "RlDebug/Instrumentor.h"
 
 #if RL_ENABLE_PROFILING
 

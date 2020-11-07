@@ -1,7 +1,7 @@
 #ifndef RL_EVENT_H
 #define RL_EVENT_H
 
-#include "RlBase.h"
+#include "Reyal/RlBase.h"
 
 
 #define RL_DECLARE_TYPE_FN(type)	static EventType GetStaticType() { return EventType::##type; }\

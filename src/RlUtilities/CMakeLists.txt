@@ -18,9 +18,7 @@ set(PUBLIC_INC
 )
 
 set(PRIVATE_INC
-	"include/RlUtil"
     "${CMAKE_CURRENT_SOURCE_DIR}/src"
-    "${CMAKE_CURRENT_SOURCE_DIR}/../RlUtilities/include"
 )
 
 set(PUBLIC_LIB
@@ -45,5 +43,6 @@ target_link_libraries("RlUtilities"
         "${PUBLIC_LIB}"
 )
 
+target_precompile_headers("RlUtilities" PRIVATE "src/utpch.h")
 set_target_properties("RlUtilities" PROPERTIES FOLDER "RlUtilities")
 AddRecursiveFilters("${SRC}")

@@ -1,7 +1,7 @@
 #include "rlpch.h"
-#include "LayerStack.h"
+#include "Reyal/Layers/LayerStack.h"
 
-#include "Layer.h"
+#include "Reyal/Layers/Layer.h"
 #include <RlDebug/Instrumentor.h>
 
 

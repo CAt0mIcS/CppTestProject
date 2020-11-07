@@ -11,8 +11,6 @@ set(PUBLIC_INC
 )
 
 set(PRIVATE_INC
-	"include/ZealGUILayer"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src"
     "${CMAKE_CURRENT_SOURCE_DIR}/../Reyal/include"
 )
 
@@ -21,7 +19,8 @@ set(PUBLIC_LIB
 )
 
 set(PRIVATE_LIB
-	"Reyal"
+    "Reyal"
+    "RlDebug"
 )
 
 add_library("ZealGUILayer" SHARED "${SRC}")
@@ -39,5 +38,6 @@ target_link_libraries("ZealGUILayer"
 )
 
 set_target_properties("ZealGUILayer" PROPERTIES FOLDER "LayerExtensions")
+target_precompile_headers("ZealGUILayer" PRIVATE "src/glpch.h")
 add_dependencies("ZealGUILayer" "Reyal")
 AddRecursiveFilters("${SRC}")

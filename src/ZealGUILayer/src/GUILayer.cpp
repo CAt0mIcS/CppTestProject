@@ -3,8 +3,11 @@
 
 // You need to include this to use the logger
 #include <RlDebug/ReyalLogger.h>
-
 #include <RlDebug/Instrumentor.h>
+
+#include <Reyal/Events/MouseEvent.h>
+#include <Reyal/Events/ApplicationEvent.h>
+#include <Reyal/Events/KeyboardEvent.h>
 
 
 namespace At0::Layers

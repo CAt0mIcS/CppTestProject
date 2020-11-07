@@ -1,5 +1,5 @@
 #include "rlpch.h"
-#include "Mouse.h"
+#include "Reyal/Input/Mouse.h"
 
 #include "Reyal/Widgets/ZWidget.h"
 

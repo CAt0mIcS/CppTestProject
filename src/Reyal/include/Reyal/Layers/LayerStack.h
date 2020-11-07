@@ -1,7 +1,7 @@
 #ifndef RL_LAYERSTACK_H
 #define RL_LAYERSTACK_H
 
-#include "RlBase.h"
+#include "Reyal/RlBase.h"
 #include <vector>
 
 // 'LayerStack::m_Layers': class 'std::vector<Reyal::Layer*>' needs to have dll-interface to be used by clients of class 'Reyal::LayerStack'

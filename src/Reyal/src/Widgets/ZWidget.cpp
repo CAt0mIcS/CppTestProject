@@ -1,7 +1,7 @@
 #include "rlpch.h"
-#include "ZWidget.h"
+#include "Reyal/Widgets/ZWidget.h"
 
-#include "Input/Mouse.h"
+#include "Reyal/Input/Mouse.h"
 
 #include <RlDebug/Instrumentor.h>
 #include <RlUtil/Exception.h>

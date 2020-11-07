@@ -1,9 +1,9 @@
 #ifndef RL_MOUSE_H
 #define RL_MOUSE_H
 
-#include "RlBase.h"
+#include "Reyal/RlBase.h"
 
-#include "Core/Vec2.h"
+#include "Reyal/Core/Vec2.h"
 
 
 namespace At0::Reyal

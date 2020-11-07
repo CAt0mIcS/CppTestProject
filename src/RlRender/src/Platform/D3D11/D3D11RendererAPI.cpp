@@ -1,10 +1,10 @@
 #include "rlrpch.h"
-#include "D3D11RendererAPI.h"
+#include "RlRender/Platform/D3D11/D3D11RendererAPI.h"
 
 #include <RlDebug/ReyalLogger.h>
 #include <RlDebug/RlAssert.h>
 
-#include "RlRWin.h"
+#include "RlRender/RlRWin.h"
 
 namespace WRL = Microsoft::WRL;
 

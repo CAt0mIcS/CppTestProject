@@ -3,11 +3,11 @@
 
 #include "BaseWindow.h"
 
-#include "Input/Keyboard.h"
-#include "Input/Mouse.h"
+#include "Reyal/Input/Keyboard.h"
+#include "Reyal/Input/Mouse.h"
 
-#include "Widgets/ZWidget.h"
-#include "Core/Queue.h"
+#include "Reyal/Widgets/ZWidget.h"
+#include "Reyal/Core/Queue.h"
 
 #include <functional>
 
