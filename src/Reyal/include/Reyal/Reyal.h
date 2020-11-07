@@ -1,3 +1,10 @@
-#pragma once
+#ifndef RL_REYALINCLUDE_H
+#define RL_REYALINCLUDE_H
 
-#include "../../src/Core/Application.h"
+
+#include "Application.h"
+#include "Widgets/ZWidget.h"
+#include "Window/Window.h"
+#include "Layers/Layer.h"
+
+#endif // RL_REYALINCLUDE_H

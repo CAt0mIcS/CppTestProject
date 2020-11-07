@@ -1,21 +1,28 @@
 set(SRC
-    "RlLog.h"
-    "RlLog.cpp"
+    "include/RlLogger/Formatters/BracketFormatter.h"
+    "include/RlLogger/Formatters/DateTimeFormatter.h"
+    "include/RlLogger/Formatters/Formatter.h"
+    "include/RlLogger/Formatters/LogLevelFormatter.h"
+    "include/RlLogger/Formatters/NullTerminatorFormatter.h"
+    "include/RlLogger/Loggers/BaseLogger.h"
+    "include/RlLogger/Loggers/FileLogger.h"
+    "include/RlLogger/LogConfigure.h"
+    "include/RlLogger/LogLevel.h"
+
+    "include/RlLogger/Log.h"
 )
 
 set(INC
-    "../"
-)
-
-set(LIB
-    "RlUtilities"
+    "include"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../RlUtilities/include"
 )
 
 
-add_library("RlLogger" "${SRC}")
-target_include_directories("RlLogger" PRIVATE "${INC}")
-target_link_libraries("RlLogger" PRIVATE "${LIB}")
+add_library("RlLogger" INTERFACE)
 
-set_target_properties("RlLogger" PROPERTIES FOLDER "RlUtilities")
+target_include_directories("RlLogger" INTERFACE "${INC}")
+target_link_libraries("RlLogger" INTERFACE "RlUtilities")
+
+# set_target_properties("RlLogger" PROPERTIES FOLDER "RlUtilities")
 add_dependencies("RlLogger" "RlUtilities")
 AddRecursiveFilters("${SRC}")
