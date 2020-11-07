@@ -20,32 +20,37 @@ namespace At0
 		m_MainWindow.Show();
 
 		// Test loading in layers
-		//using LayerCreateFunc = Reyal::Layer* (*)();
-		//const std::wstring ending = L".dll";
+		using LayerCreateFunc = Reyal::Layer* (*)();
+		const std::wstring ending = L".dll";
 
-		//for (const std::filesystem::directory_entry& dirEntry : std::filesystem::recursive_directory_iterator(ZL_OUT_DIR + std::string("/Editors")))
-		//{
-		//	std::wstring_view path = dirEntry.path().native();
+		#if defined(_DEBUG) || defined(DEBUG)
+			std::string outStr = "../../bin/Debug-Windows";
+		#else
+			std::string outStr = "../../bin/Release-Windows";
+		#endif
 
-		//	if (path.size() < ending.size() || path.compare(path.size() - ending.size(), ending.size(), ending) != 0)
-		//		continue;
+		for (const std::filesystem::directory_entry& dirEntry : std::filesystem::recursive_directory_iterator(outStr))
+		{
+			std::wstring_view path = dirEntry.path().native();
 
-		//	HMODULE hDll = LoadLibrary(path.data());
-		//	if (!hDll || hDll == INVALID_HANDLE_VALUE)
-		//	{
-		//		MessageBox(NULL, L"Error", L"Cannot find dll", MB_OK);
-		//		return;
-		//	}
+			if (path.size() < ending.size() || path.compare(path.size() - ending.size(), ending.size(), ending) != 0)
+				continue;
 
-		//	LayerCreateFunc layerCreateFunc = (LayerCreateFunc)GetProcAddress(hDll, "CreateLayer");
-		//	if (!layerCreateFunc)
-		//	{
-		//		MessageBox(NULL, L"Error", L"Cannot find layer create function", MB_OK);
-		//		return;
-		//	}
+			HMODULE hDll = LoadLibrary(path.data());
+			if (!hDll || hDll == INVALID_HANDLE_VALUE)
+			{
+				MessageBox(NULL, L"Error", L"Cannot find dll", MB_OK);
+				return;
+			}
 
-		//	PushLayer(layerCreateFunc());
-		//}
+			LayerCreateFunc layerCreateFunc = (LayerCreateFunc)GetProcAddress(hDll, "CreateLayer");
+			if (!layerCreateFunc)
+			{
+				continue;
+			}
+
+			PushLayer(layerCreateFunc());
+		}
 
 	}
 	

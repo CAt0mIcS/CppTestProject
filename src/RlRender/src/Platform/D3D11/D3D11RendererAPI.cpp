@@ -150,7 +150,7 @@ namespace At0::Reyal
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
         WRL::ComPtr<ID3D11PixelShader> pPixelShader;
         WRL::ComPtr<ID3DBlob> pBlob;
-        D3DReadFileToBlob(L"../Reyal/Shaders/PixelShader-p.cso", &pBlob);
+        D3DReadFileToBlob(L"../../bin/Debug-Windows/PixelShader-p.cso", &pBlob);
         m_Device->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pPixelShader);
         m_Context->PSSetShader(pPixelShader.Get(), nullptr, 0);
         RL_LOG_DEBUG("Bound Pixel Shader {0}", pPixelShader.Get());
@@ -160,7 +160,7 @@ namespace At0::Reyal
         ////////// Vertex Shader ///////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
         WRL::ComPtr<ID3D11VertexShader> pVertexShader;
-        D3DReadFileToBlob(L"../Reyal/Shaders/VertexShader-v.cso", &pBlob);
+        D3DReadFileToBlob(L"../../bin/Debug-Windows/VertexShader-v.cso", &pBlob);
         m_Device->CreateVertexShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pVertexShader);
         m_Context->VSSetShader(pVertexShader.Get(), nullptr, 0);
         RL_LOG_DEBUG("Bound Vertex Shader {0}", pVertexShader.Get());
