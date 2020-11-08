@@ -36,7 +36,6 @@ if(NOT DEFINED CMAKE_BUILD_TYPE)
 endif()
 
 include("BuildFiles/macros.cmake")
-include("BuildFiles/functions.cmake")
 
 # Initialize the Solution Project
 project("NodePlanningEditor")
