@@ -4,6 +4,7 @@ set(SRC
     "include/RlUtil/TypeConvert.cpp"
     "include/RlUtil/utpch.cpp"
     "include/RlUtil/utpch.h"
+    "include/RlUtil/PlatformDetection.h"
 
     "include/RlUtil/CoreConfig.h"
     "include/RlUtil/Exception.h"

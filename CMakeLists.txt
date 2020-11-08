@@ -24,8 +24,8 @@ set_property(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" PROPERTY VS_STARTUP_PROJECT
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "" FORCE)
 
 # Set default string stuff to be unicode
-ADD_DEFINITIONS(-DUNICODE)
-ADD_DEFINITIONS(-D_UNICODE)
+add_definitions(-DUNICODE)
+add_definitions(-D_UNICODE)
 
 # Set C++ Version requirement
 set(CMAKE_CXX_STANDARD 17)

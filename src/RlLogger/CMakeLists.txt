@@ -19,9 +19,15 @@ set(INC
 
 add_library("RlLogger" INTERFACE)
 
+if(MSVC)
+    add_custom_target("IRlLogger"
+        SOURCES "${SRC}"
+    )
+    set_target_properties("IRlLogger" PROPERTIES FOLDER "RlUtilities")
+endif()
+
 target_include_directories("RlLogger" INTERFACE "${INC}")
 target_link_libraries("RlLogger" INTERFACE "RlUtilities")
 
-# set_target_properties("RlLogger" PROPERTIES FOLDER "RlUtilities")
 add_dependencies("RlLogger" "RlUtilities")
 AddRecursiveFilters("${SRC}")
