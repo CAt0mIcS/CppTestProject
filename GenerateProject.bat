@@ -1,5 +1,7 @@
 @echo off
 
+:loop
+
 IF NOT EXIST %~dp0\build (
 	echo Build Directory does not exist, creating it...
 	mkdir build
@@ -18,3 +20,4 @@ echo.
 echo Cmake finished
 
 PAUSE
+goto loop
