@@ -2,7 +2,6 @@
 #include "Sandbox.h"
 
 
-//QUESTION: When entry point is included in Reyal.h
 #include <Reyal/Reyal.h>
 
 
@@ -18,37 +17,37 @@ namespace At0
 		m_MainWindow.InitRenderer3D();
 		m_MainWindow.SetTitle(L"Zeal");
 		m_MainWindow.Show();
-
+		
 		// Test loading in layers
 		using LayerCreateFunc = Reyal::Layer* (*)();
 		const std::wstring ending = L".dll";
-
+		
 		#if defined(_DEBUG) || defined(DEBUG)
 			std::string outStr = "../../bin/Debug-Windows";
 		#else
 			std::string outStr = "../../bin/Release-Windows";
 		#endif
-
+		
 		for (const std::filesystem::directory_entry& dirEntry : std::filesystem::recursive_directory_iterator(outStr))
 		{
 			std::wstring_view path = dirEntry.path().native();
-
+		
 			if (path.size() < ending.size() || path.compare(path.size() - ending.size(), ending.size(), ending) != 0)
 				continue;
-
+		
 			HMODULE hDll = LoadLibrary(path.data());
 			if (!hDll || hDll == INVALID_HANDLE_VALUE)
 			{
 				MessageBox(NULL, L"Error", L"Cannot find dll", MB_OK);
 				return;
 			}
-
+		
 			LayerCreateFunc layerCreateFunc = (LayerCreateFunc)GetProcAddress(hDll, "CreateLayer");
 			if (!layerCreateFunc)
 			{
 				continue;
 			}
-
+		
 			PushLayer(layerCreateFunc());
 		}
 
@@ -62,7 +61,6 @@ namespace At0
 	void Sandbox::OnEvent(Reyal::Widget* receiver, Reyal::Event& e)
 	{
 		//RL_PROFILE_FUNCTION();
-
 	}
 
 }
@@ -93,7 +91,7 @@ void SignalHandler(int signum)
 	// but it's good to have it here
 	RL_LOG_END();
 
-	// We need to do this tough
+	// We need to do this though
 	RL_PROFILE_END_SESSION();
 
 	exit(signum);
@@ -118,13 +116,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ PWSTR p
 
 	//TODO: Awake function (maybe)?
 
-#ifdef _DEBUG
+	#ifdef _DEBUG
 	{
 		AllocConsole();
 		FILE* file;
 		freopen_s(&file, "CONOUT$", "w", stdout);
 	}
-#endif
+	#endif
 
 	try
 	{

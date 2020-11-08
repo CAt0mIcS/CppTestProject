@@ -3,6 +3,8 @@
 
 #include "Queue.h"
 #include <mutex>
+#include <functional>
+
 
 namespace std
 {

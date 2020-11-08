@@ -5,9 +5,8 @@
 
 #include <deque>
 #include <mutex>
+#include <functional>
 
-//TODO
-#include <iostream>
 
 namespace At0::Reyal
 {
@@ -18,6 +17,7 @@ namespace At0::Reyal
 	template<typename T, size_t MaxSize = -1>
 	class RL_API Queue
 	{
+	public:
 		using Iterator = typename std::deque<T>::iterator;
 		using ReverseIterator = typename std::deque<T>::reverse_iterator;
 		using ConstInterator = typename std::deque<T>::const_iterator;
