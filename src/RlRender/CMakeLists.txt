@@ -1,9 +1,9 @@
 set(SRC
-    "src/Platform/D3D11/D3D11RendererAPI.cpp"
-    "src/Renderer3D.cpp"
-    "src/RendererAPI.cpp"
-    "src/rlrpch.cpp"
-    "src/rlrpch.h"
+    "include/RlRender/Platform/D3D11/D3D11RendererAPI.cpp"
+    "include/RlRender/Renderer3D.cpp"
+    "include/RlRender/RendererAPI.cpp"
+    "include/RlRender/rlrpch.cpp"
+    "include/RlRender/rlrpch.h"
 
     "include/RlRender/Platform/D3D11/D3D11RendererAPI.h"
     "include/RlRender/RendererAPI.h"
@@ -21,7 +21,7 @@ set(PUBLIC_INC
 )
 
 set(PRIVATE_INC
-    "${CMAKE_CURRENT_SOURCE_DIR}/src"
+    "include/RlRender"
 )
 
 set(PUBLIC_LIB
@@ -52,7 +52,7 @@ target_link_libraries("RlRender"
 
 add_dependencies("RlRender" "RlDebug")
 target_compile_definitions("RlRender" PRIVATE "RLR_BUILD")
-target_include_directories("RlRender" PRIVATE "src/rlrpch.h")
+target_include_directories("RlRender" PRIVATE "include/RlRender/rlrpch.h")
 
 # Set Pixel and Vertex Shaders to compile in VS
 set_property(SOURCE "Shaders/PixelShader-p.hlsl" PROPERTY VS_SHADER_TYPE Pixel)

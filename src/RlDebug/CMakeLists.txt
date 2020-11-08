@@ -1,8 +1,8 @@
 set(SRC
-    "src/Instrumentor.cpp"
-    "src/ReyalLogger.cpp"
-    "src/rldpch.cpp"
-    "src/rldpch.h"
+    "include/RlDebug/Instrumentor.cpp"
+    "include/RlDebug/ReyalLogger.cpp"
+    "include/RlDebug/rldpch.cpp"
+    "include/RlDebug/rldpch.h"
 
     "include/RlDebug/Instrumentor.h"
     "include/RlDebug/ReyalLogger.h"
@@ -15,7 +15,7 @@ set(PUBLIC_INC
 )
 
 set(PRIVATE_INC
-	"${CMAKE_CURRENT_SOURCE_DIR}/src"
+	"include/RlDebug"
 )
 
 set(PUBLIC_LIB
@@ -44,6 +44,6 @@ target_link_libraries("RlDebug"
 
 set_target_properties("RlDebug" PROPERTIES FOLDER "RlUtilities")
 target_compile_definitions("RlDebug" PRIVATE "RLD_BUILD")
-target_precompile_headers("RlDebug" PRIVATE "src/rldpch.h")
+target_precompile_headers("RlDebug" PRIVATE "include/RlDebug/rldpch.h")
 add_dependencies("RlDebug" "RlUtilities")
 AddRecursiveFilters("${SRC}")

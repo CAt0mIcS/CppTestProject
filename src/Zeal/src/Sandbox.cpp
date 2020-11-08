@@ -4,7 +4,6 @@
 
 #include <Reyal/Reyal.h>
 
-
 #include <filesystem>
 #include <Windows.h>
 

@@ -1,9 +1,9 @@
 set(SRC
-    "src/Exception.cpp"
-    "src/Random.cpp"
-    "src/TypeConvert.cpp"
-    "src/utpch.cpp"
-    "src/utpch.h"
+    "include/RlUtil/Exception.cpp"
+    "include/RlUtil/Random.cpp"
+    "include/RlUtil/TypeConvert.cpp"
+    "include/RlUtil/utpch.cpp"
+    "include/RlUtil/utpch.h"
 
     "include/RlUtil/CoreConfig.h"
     "include/RlUtil/Exception.h"
@@ -14,11 +14,11 @@ set(SRC
 )
 
 set(PUBLIC_INC
-	"${CMAKE_CURRENT_SOURCE_DIR}/include"
+	"include"
 )
 
 set(PRIVATE_INC
-    "${CMAKE_CURRENT_SOURCE_DIR}/src"
+    "include/RlUtil"
 )
 
 set(PUBLIC_LIB
@@ -43,6 +43,6 @@ target_link_libraries("RlUtilities"
         "${PUBLIC_LIB}"
 )
 
-target_precompile_headers("RlUtilities" PRIVATE "src/utpch.h")
+target_precompile_headers("RlUtilities" PRIVATE "include/RlUtil/utpch.h")
 set_target_properties("RlUtilities" PROPERTIES FOLDER "RlUtilities")
 AddRecursiveFilters("${SRC}")
