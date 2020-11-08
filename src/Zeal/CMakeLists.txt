@@ -12,7 +12,7 @@ set(PUBLIC_INC
 )
 
 set(PRIVATE_INC
-    "${CMAKE_CURRENT_SOURCE_DIR}/../Reyal/include"
+    ""
 )
 
 set(PUBLIC_LIB

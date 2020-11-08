@@ -14,7 +14,6 @@ set(SRC
 
 set(INC
     "include"
-    "${CMAKE_CURRENT_SOURCE_DIR}/../RlUtilities/include"
 )
 
 
