@@ -69,6 +69,8 @@ target_link_libraries("Reyal"
 
 target_compile_definitions("Reyal" PRIVATE "RL_BUILD")
 add_dependencies("Reyal" "RlRender")
+
+# Add precompiled headers and move the cmake-generated file into a already existing filter (TODO)
 target_precompile_headers("Reyal" PRIVATE "include/Reyal/rlpch.h")
 
 AddRecursiveFilters("${SRC}")

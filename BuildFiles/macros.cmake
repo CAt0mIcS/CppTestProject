@@ -13,4 +13,19 @@ function(AddRecursiveFilters targetSrc)
         string(REPLACE "/" "\\" groupPath "${relSourcePath}")
         source_group("${groupPath}" FILES "${source}")
     endforeach()
+
+    GeneratePCHFilters()
+endfunction()
+
+# Add CMake-generated pch files into their separate filter
+function(GeneratePCHFilters)
+    get_directory_property(targets BUILDSYSTEM_TARGETS)
+    set(configList "${CMAKE_CONFIGURATION_TYPES}")
+
+    foreach(target "${targets}")
+        foreach(configuration IN LISTS CMAKE_CONFIGURATION_TYPES ITEMS ${CMAKE_BUILD_TYPE})
+            source_group("CMake" FILES "${CMAKE_SOURCE_DIR}/build/src/${target}/CMakeFiles/${target}.dir/${configuration}/cmake_pch.hxx")
+        endforeach()
+        source_group("CMake" FILES "${CMAKE_SOURCE_DIR}/build/src/${target}/CMakeFiles/${target}.dir/cmake_pch.cxx")
+    endforeach()
 endfunction()

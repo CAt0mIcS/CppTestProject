@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.18.2)
+cmake_minimum_required(VERSION 3.19.0)
 
 if("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
     if(NOT DEFINED IN_SOURCE_BUILD)
@@ -61,8 +61,10 @@ foreach(OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES})
 endforeach()
 
 
-
 add_subdirectory("src/")
+
+
+
 
 
 
