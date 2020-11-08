@@ -11,7 +11,7 @@ set(PUBLIC_INC
 )
 
 set(PRIVATE_INC
-    "${CMAKE_CURRENT_SOURCE_DIR}/../Reyal/include"
+    ""
 )
 
 set(PUBLIC_LIB
@@ -24,7 +24,7 @@ set(PRIVATE_LIB
 )
 
 add_library("ZealGUILayer" SHARED "${SRC}")
-target_include_directories("RlUtilities"
+target_include_directories("ZealGUILayer"
     PRIVATE
         "${PRIVATE_INC}"
     PUBLIC
