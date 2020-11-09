@@ -1,0 +1,5 @@
+.vscode/
+.vs/
+.git/
+build/
+tutorial.txt
