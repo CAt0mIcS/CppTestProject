@@ -27,6 +27,12 @@ void Application::OnFrame()
 	gfx.ClearBuffer(1.0f, 1.0f, 1.0f);
 	
 	gfx.DrawTestTriangle(
+		rotation,
+		0.0f / 640.0f - 1.0f,
+		0.0f / 360.0f + 1.0f
+	);
+
+	gfx.DrawTestTriangle(
 		rotation, 
 		m_Window.GetMouse().GetPosX() / 640.0f - 1.0f, 
 		-m_Window.GetMouse().GetPosY() / 360.0f + 1.0f
