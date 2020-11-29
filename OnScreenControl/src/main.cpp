@@ -1,5 +1,5 @@
 // https://stackoverflow.com/questions/29091028/windows-api-write-to-screen-as-on-screen-display
-
+// https://www.daniweb.com/programming/software-development/threads/213358/intercept-windows-mouse-events
 
 #include <Windows.h>
 #include <iostream>
