@@ -1,30 +1,34 @@
 #include <Windows.h>
 #include <stdio.h>
 
+
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-int main() {
+int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int)
+{
+    AllocConsole();
+    freopen("CONOUT$", "w", stdout);
+
     // create a window class:
     WNDCLASS wc = {};
     wc.lpfnWndProc = WindowProc;
-    wc.hInstance = GetModuleHandle(NULL);
-    wc.lpszClassName = L"hooking";
+    wc.hInstance = hInstance;
+    wc.lpszClassName = L"Hooking";
 
     // register class with operating system:
     RegisterClass(&wc);
 
     // create and show window:
-    HWND hwnd = CreateWindow(L"hooking", L"hooking", WS_OVERLAPPEDWINDOW, 0, 0, 500, 400, NULL, NULL, GetModuleHandle(NULL), NULL);
+    HWND hwnd = CreateWindow(L"Hooking", L"Hooking", WS_OVERLAPPEDWINDOW, 0, 0, 500, 400, NULL, NULL, hInstance, NULL);
 
-    if (hwnd == NULL) {
+    if (hwnd == NULL) 
+    {
         return 0;
     }
 
     ShowWindow(hwnd, SW_SHOW);
 
-    //DWORD threadID = GetWindowThreadProcessId(notepad, NULL);
-
-    HINSTANCE hinstDLL = LoadLibrary(TEXT("Hooker.dll"));
+    HINSTANCE hinstDLL = LoadLibrary(L"Hooker.dll");
 
     void (*AttachHookProc)(DWORD);
     AttachHookProc = (void (*)(DWORD)) GetProcAddress(hinstDLL, "AttachHook");
@@ -33,14 +37,13 @@ int main() {
     // handle messages:
     MSG msg = {};
 
-    while (GetMessage(&msg, hwnd, 0, 0)) 
+    while (GetMessage(&msg, NULL, 0, 0)) 
     {
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
 
-    printf("Done execution... press any key to exit");
-    char garbage = getchar();
+    FreeLibrary(hinstDLL);
     return 0;
 }
 

@@ -49,9 +49,9 @@ LRESULT CALLBACK LaunchListener(int nCode, WPARAM wParam, LPARAM lParam) {
             std::cout << "Window moved\n";
             break; 
         }
-        default:
+        case WM_SIZE:
         {
-            std::cout << pCwp->message << '\n';
+            std::cout << "Window resized\n";
             break;
         }
         }
