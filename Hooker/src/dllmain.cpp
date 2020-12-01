@@ -2,61 +2,130 @@
 #include <Windows.h>
 #include <stdio.h>
 
-// TODO: create a mutex so this can only be loaded once
-HMODULE thisModule;
-HHOOK hook;
+
+// https://stackoverflow.com/questions/29091028/windows-api-write-to-screen-as-on-screen-display
+// https://www.daniweb.com/programming/software-development/threads/213358/intercept-windows-mouse-events
+
+#include <Windows.h>
+#include <iostream>
+
 LRESULT CALLBACK LaunchListener(int nCode, WPARAM wParam, LPARAM lParam);
+static RECT g_Rc{ 5, 5, 1000, 500 };
+HMODULE g_hInstance;
+HHOOK g_Hook;
+
+
+// ---------------------------------------------------------
+// WINDOW SHOULD RESIZE TO RECT
+bool MouseIsInRect()
+{
+	POINT mousePos;
+	GetCursorPos(&mousePos);
+	if (PtInRect(&g_Rc, mousePos))
+	{
+		return true;
+	}
+
+	return false;
+}
+
+// ---------------------------------------------------------
+// RESIZING LOGIC
+void ResizeMovingWindow(HWND hWnd)
+{
+	int32_t newWidth = g_Rc.right - g_Rc.left;
+	int32_t newHeight = g_Rc.bottom - g_Rc.top;
+
+	SendMessage(hWnd, WM_SIZE, SIZE_RESTORED, MAKELPARAM(newWidth, newHeight));
+}
+
+// ---------------------------------------------------------
+// DRAWING LOGIC
+void DrawRectangle(int r, int g, int b)
+{
+	HDC hDC = GetDC(NULL);
+	FrameRect(hDC, &g_Rc, CreateSolidBrush(RGB(r, g, b)));
+	ReleaseDC(NULL, hDC);
+}
+
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved)
 {
-    thisModule = hModule;
+	g_hInstance = hModule;
 
-    // Very restricted set of things that can be done in DllMain, refer to documentation
-    // before adding anything here.
+	// Very restricted set of things that can be done in DllMain, refer to documentation
+	// before adding anything here.
 
-    switch (ul_reason_for_call) {
-    case DLL_PROCESS_ATTACH:
-    case DLL_THREAD_ATTACH:
-        break;
-    case DLL_THREAD_DETACH:
-    case DLL_PROCESS_DETACH:
-        break;
-    }
-    return TRUE;
+	switch (ul_reason_for_call) {
+	case DLL_PROCESS_ATTACH:
+	case DLL_THREAD_ATTACH:
+		break;
+	case DLL_THREAD_DETACH:
+	case DLL_PROCESS_DETACH:
+		break;
+	}
+	return TRUE;
 }
 
-#ifdef __cplusplus    // If used by C++ code, 
-extern "C" {          // we need to export the C interface
+#ifdef __cplusplus
+extern "C" 
+{
 #endif
-//window message loop is necessary for hooks to work? (didn't work with console app)
-//provide function pointer to execute when notepad is launched.
-    __declspec(dllexport) void AttachHook(DWORD threadID) {
-        hook = SetWindowsHookEx(WH_CALLWNDPROC, LaunchListener, thisModule, threadID);
-    }
+	__declspec(dllexport) void AttachHook(DWORD threadID) {
+		g_Hook = SetWindowsHookEx(WH_CALLWNDPROC, LaunchListener, g_hInstance, threadID);
+	}
 #ifdef __cplusplus
 }
 #endif
 
+bool g_MouseUp = true;
+bool g_CurrentlyMoving = false;
 LRESULT CALLBACK LaunchListener(int nCode, WPARAM wParam, LPARAM lParam) {
-    // process event here
-    if (nCode >= 0) 
-    {
-        CWPSTRUCT* pCwp = (CWPSTRUCT*)lParam;
-        switch (pCwp->message)
-        {
-        case WM_MOVE:
-        {
-            std::cout << "Window moved\n";
-            break; 
-        }
-        case WM_SIZE:
-        {
-            std::cout << "Window resized\n";
-            break;
-        }
-        }
+	if (nCode >= 0) 
+	{
+		CWPSTRUCT* pCwp = (CWPSTRUCT*)lParam;
+		switch (pCwp->message)
+		{
+		case WM_MOVE:
+		{
+			g_CurrentlyMoving = true;
+			std::cout << "Window moved\n";
 
-    }
+			if (MouseIsInRect() && g_MouseUp)
+			{
+				ResizeMovingWindow(pCwp->hwnd);
+				DrawRectangle(255, 0, 0);
+			}
+			else
+			{
+				DrawRectangle(0, 255, 0);
+			}
+			break;
+		}
+		case WM_LBUTTONUP:
+		{
+			std::cout << "LMB Up\n";
+			if (g_CurrentlyMoving)
+			{
+				g_MouseUp = true;
+				g_CurrentlyMoving = false;
+			}
+			break;
+		}
+		case WM_LBUTTONDOWN:
+		{
+			std::cout << "LMB Down\n";
+			g_MouseUp = false;
+			break;
+		}
+		case WM_SIZE:
+		{
+			std::cout << "Window resized\n";
+			break;
+		}
+		}
 
-    return CallNextHookEx(NULL, nCode, wParam, lParam);
+	}
+
+	return CallNextHookEx(NULL, nCode, wParam, lParam);
 }

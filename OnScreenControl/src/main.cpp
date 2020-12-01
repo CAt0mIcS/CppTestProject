@@ -44,6 +44,7 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int)
     }
 
     FreeLibrary(hinstDLL);
+    FreeConsole();
     return 0;
 }
 
