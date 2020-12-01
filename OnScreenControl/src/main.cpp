@@ -1,119 +1,60 @@
-// https://stackoverflow.com/questions/29091028/windows-api-write-to-screen-as-on-screen-display
-// https://www.daniweb.com/programming/software-development/threads/213358/intercept-windows-mouse-events
-
 #include <Windows.h>
-#include <iostream>
-// ---------------------------------------------------------
-// GLOBALS
-void Shutdown();
-void Setup();
-void DrawRectangle(int r, int g, int b);
-void CALLBACK WinHookProc(
-	HWINEVENTHOOK hook, DWORD e, HWND hWnd,
-	LONG idObject, LONG idChild,
-	DWORD dwEventThread, DWORD dwmsEventTime
-);
+#include <stdio.h>
 
-static HWINEVENTHOOK g_Hook = 0;
-static RECT g_Rc{ 5, 5, 1000, 500 };
+LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
+int main() {
+    // create a window class:
+    WNDCLASS wc = {};
+    wc.lpfnWndProc = WindowProc;
+    wc.hInstance = GetModuleHandle(NULL);
+    wc.lpszClassName = L"hooking";
 
+    // register class with operating system:
+    RegisterClass(&wc);
 
-// ---------------------------------------------------------
-// WINDOW SHOULD RESIZE TO RECT
-bool MouseIsInRectAndWindowIsMoving()
-{
-	POINT mousePos;
-	GetCursorPos(&mousePos);
-	if (PtInRect(&g_Rc, mousePos))
-	{
-		return true;
-	}
+    // create and show window:
+    HWND hwnd = CreateWindow(L"hooking", L"hooking", WS_OVERLAPPEDWINDOW, 0, 0, 500, 400, NULL, NULL, GetModuleHandle(NULL), NULL);
 
-	return false;
-}
+    if (hwnd == NULL) {
+        return 0;
+    }
 
-// ---------------------------------------------------------
-// RESIZING LOGIC
-void ResizeMovingWindow()
-{
+    ShowWindow(hwnd, SW_SHOW);
 
-}
+    //DWORD threadID = GetWindowThreadProcessId(notepad, NULL);
 
-// ---------------------------------------------------------
-// MAIN FUNCTION
-int main()
-{
-	Setup();
+    HINSTANCE hinstDLL = LoadLibrary(TEXT("Hooker.dll"));
 
-	while (true)
-	{
-		if (MouseIsInRectAndWindowIsMoving())
-		{
-			DrawRectangle(255, 0, 0);
-			ResizeMovingWindow();
-		}
-		else
-		{
-			DrawRectangle(0, 255, 0);
-		}
-	}
+    void (*AttachHookProc)(DWORD);
+    AttachHookProc = (void (*)(DWORD)) GetProcAddress(hinstDLL, "AttachHook");
+    AttachHookProc(0);
 
-	Shutdown();
-}
+    // handle messages:
+    MSG msg = {};
 
-// ---------------------------------------------------------
-// SETUP PROCEDURE
-void Setup()
-{
-	if(FAILED(CoInitialize(NULL)))
-		std::cout << "Failed to initialize COM: 0x" << std::hex << std::uppercase << GetLastError() << '\n';
+    while (GetMessage(&msg, hwnd, 0, 0)) 
+    {
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
+    }
 
-	g_Hook = SetWinEventHook(
-		EVENT_MIN,
-		EVENT_MAX, NULL, WinHookProc,
-		0, 0, WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS
-	);
-
-	std::cout << "Event Hook GetLastError: 0x" << std::hex << std::uppercase << GetLastError() << '\n';
-	if (!g_Hook)
-	{
-		std::cout << "Failed to set event hook: 0x" << std::hex << std::uppercase << GetLastError() << '\n';
-	}
-}
-
-// ---------------------------------------------------------
-// DRAWING LOGIC
-void DrawRectangle(int r, int g, int b)
-{
-	HDC hDC = GetDC(NULL);
-	FrameRect(hDC, &g_Rc, CreateSolidBrush(RGB(r, g, b)));
-	ReleaseDC(NULL, hDC);
+    printf("Done execution... press any key to exit");
+    char garbage = getchar();
+    return 0;
 }
 
 
-// ---------------------------------------------------------
-// WINDOWS HOOK
-void CALLBACK WinHookProc(
-	HWINEVENTHOOK hook, DWORD e, HWND hWnd,
-	LONG idObject, LONG idChild,
-	DWORD dwEventThread, DWORD dwmsEventTime
-)
+LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	std::cout << "Window Hook Entered!\n";
+    switch (uMsg)
+    {
+    case WM_DESTROY:
+    {
+        PostQuitMessage(0);
+        return 0;
+    }
+    }
 
-	int len = GetWindowTextLength(hWnd);
-	wchar_t* name = new wchar_t[len];
-
-	GetWindowText(hWnd, name, len);
-	std::cout << "Window with name " << name << " moved!\n";
-}
-
-
-// ---------------------------------------------------------
-// SHUTDOWN PROCEDURE
-void Shutdown()
-{
-	UnhookWinEvent(g_Hook);
-	CoUninitialize();
+    return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
