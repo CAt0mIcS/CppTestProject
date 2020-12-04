@@ -58,10 +58,14 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReser
 
 	switch (ul_reason_for_call) {
 	case DLL_PROCESS_ATTACH:
+		g_Hook = SetWindowsHookEx(WH_CALLWNDPROC, LaunchListener, g_hInstance, 0);
+		break;
 	case DLL_THREAD_ATTACH:
 		break;
 	case DLL_THREAD_DETACH:
+		break;
 	case DLL_PROCESS_DETACH:
+		UnhookWindowsHookEx(g_Hook);
 		break;
 	}
 	return TRUE;
@@ -71,8 +75,14 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReser
 extern "C" 
 {
 #endif
-	__declspec(dllexport) void AttachHook(DWORD threadID) {
+	__declspec(dllexport) void AttachHook(DWORD threadID) 
+	{
 		g_Hook = SetWindowsHookEx(WH_CALLWNDPROC, LaunchListener, g_hInstance, threadID);
+	}
+
+	__declspec(dllexport) void DetachHook()
+	{
+		UnhookWindowsHookEx(g_Hook);
 	}
 #ifdef __cplusplus
 }
@@ -116,6 +126,7 @@ LRESULT CALLBACK LaunchListener(int nCode, WPARAM wParam, LPARAM lParam) {
 		{
 			std::cout << "LMB Down\n";
 			g_MouseUp = false;
+			g_CurrentlyMoving = true;
 			break;
 		}
 		case WM_SIZE:

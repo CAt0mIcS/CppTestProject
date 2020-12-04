@@ -30,9 +30,9 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int)
 
     HINSTANCE hinstDLL = LoadLibrary(L"Hooker.dll");
 
-    void (*AttachHookProc)(DWORD);
-    AttachHookProc = (void (*)(DWORD)) GetProcAddress(hinstDLL, "AttachHook");
-    AttachHookProc(0);
+    //void (*AttachHookProc)(DWORD);
+    //AttachHookProc = (void (*)(DWORD)) GetProcAddress(hinstDLL, "AttachHook");
+    //AttachHookProc(0);
 
     // handle messages:
     MSG msg = {};
@@ -42,6 +42,10 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int)
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
+
+    //void (*DetachHook)();
+    //DetachHook = (void(*)())GetProcAddress(hinstDLL, "DetachHook");
+    //DetachHook();
 
     FreeLibrary(hinstDLL);
     FreeConsole();
