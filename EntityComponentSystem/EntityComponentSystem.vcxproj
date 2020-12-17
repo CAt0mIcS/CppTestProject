@@ -158,7 +158,7 @@
     <ClInclude Include="src\ECS\EntityComponentSystem.h" />
     <ClInclude Include="src\ECS\Internal.h" />
     <ClInclude Include="src\ECS\Registry.h" />
-    <ClInclude Include="src\ECS\Storage.h" />
+    <ClInclude Include="src\ECS\Entity.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
