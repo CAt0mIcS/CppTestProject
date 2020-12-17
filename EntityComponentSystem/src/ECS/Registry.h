@@ -19,11 +19,10 @@ namespace ECS
 				// Entity entry doesn't exist in the component vector
 				if (entity >= m_Components.size())
 				{
-					std::vector<Component> comps;
-					comps.emplace_back(std::forward<Args>(args)...);
-					m_Components.emplace_back(std::move(comps));
+					m_Components.emplace_back();
+					m_Components[entity].emplace_back(std::forward<Args>(args)...);
 				}
-				// Does exist
+				// Entity entry does exist in the component vector
 				else
 				{
 					m_Components[entity].emplace_back(std::forward<Args>(args)...);
@@ -47,22 +46,6 @@ namespace ECS
 		{
 			return PoolHandler<Comp>::Emplace(entity, std::forward<Args>(args)...);
 		}
-
-
-	private:
-		template<typename Comp>
-		PoolHandler<Comp>& Assure()
-		{
-			if constexpr (HasTypeIndex<Comp>::Value)
-			{
-				const auto index = TypeIndex<Comp>::Value();
-			}
-			else
-			{
-
-			}
-		}
-
 
 	private:
 		uint32_t m_EntityCounter = 0;

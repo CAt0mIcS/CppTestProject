@@ -12,7 +12,9 @@ struct TagComponent
 
 struct TransformComponent
 {
+	float x;
 
+	TransformComponent(float x) : x(x) {}
 };
 
 struct SpriteRenderComponent
