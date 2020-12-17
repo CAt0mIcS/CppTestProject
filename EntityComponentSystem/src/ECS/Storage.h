@@ -6,14 +6,14 @@
 
 namespace ECS
 {
-	template<typename Entity, typename Components>
+	template<typename Entity, typename Comp>
 	class Storage
 	{
 	public:
 
 
 	private:
-		std::vector<Components> m_Components;
+		std::vector<Comp> m_Components;
 	};
 
 }

@@ -46,11 +46,14 @@ namespace ECS
 	};
 
 
-	enum class Entity : uint32_t {};
-	constexpr auto ToIntegral(Entity id)
-	{
-		return std::underlying_type_t<Entity>(id);
-	}
+	//enum class Entity : uint32_t {};
+	//constexpr auto ToIntegral(Entity id)
+	//{
+	//	return std::underlying_type_t<Entity>(id);
+	//}
+	using Entity = uint32_t;
+
+
 
 	// QUESTION: What?
 	template<typename, typename = void>
