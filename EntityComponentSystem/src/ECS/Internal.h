@@ -51,4 +51,11 @@ namespace ECS
 	{
 		return std::underlying_type_t<Entity>(id);
 	}
+
+	// QUESTION: What?
+	template<typename, typename = void>
+	struct HasTypeIndex : std::false_type {};
+	
+	template<typename Type>
+	struct HasTypeIndex<Type, std::void_t<decltype(TypeIndex<Type>::Value())>> : std::true_type {};
 }

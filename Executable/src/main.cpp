@@ -25,5 +25,5 @@ int main()
 
 	ECS::Registry registry;
 	ECS::Entity entity = registry.Create();
-	registry.Emplace<TagComponent>("This is a tag component");
+	registry.Emplace<TagComponent>(entity, "This is a tag component");
 }
