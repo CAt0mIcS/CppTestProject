@@ -6,7 +6,7 @@
 namespace ECS
 {
 	using IndexType = uint32_t;
-	inline constexpr uint32_t MAX_ENTITIES = 5000;
+	inline constexpr uint32_t MAX_ENTITIES = 50000;
 	inline constexpr uint32_t MAX_COMPONENTS = 50;
 
 	namespace Internal

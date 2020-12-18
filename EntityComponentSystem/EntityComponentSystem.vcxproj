@@ -21,6 +21,8 @@
   <ItemGroup>
     <ClInclude Include="src\ECS\Entity.h" />
     <ClInclude Include="src\ECS\Internal.h" />
+    <ClInclude Include="src\ECS\Registry.h" />
+    <ClInclude Include="src\ECS\SparseSet.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

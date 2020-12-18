@@ -16,6 +16,16 @@ namespace ECS
 		{
 		}
 
+		Entity(IDType id)
+			: m_ID(id)
+		{
+		}
+
+		operator uint32_t()
+		{
+			return m_ID;
+		}
+
 		template<typename Component, typename... Args>
 		decltype(auto) Add(Args&&... args)
 		{
