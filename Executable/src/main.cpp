@@ -6,9 +6,6 @@
 
 int main()
 {
-	ECS::SparseSet sparseSet;
-
-
 	std::cout << "ECS: \n";
 	auto tStart = std::chrono::high_resolution_clock::now();
 
@@ -20,14 +17,6 @@ int main()
 		std::ostringstream oss;
 		oss << "This is Entity " << i;
 		entities[i].Add<TagComponent>(oss.str());
-
-		sparseSet.Insert(entities[i]);
 	}
 
-	for (uint32_t i = 0; i < arrSize; ++i)
-	{
-		auto e = sparseSet.Search(entities[i]);
-		if (e != entities[i])
-			assert(false && "Found entity didn't match searched one");
-	}
 }

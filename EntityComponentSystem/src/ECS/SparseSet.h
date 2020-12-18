@@ -6,7 +6,7 @@
 
 namespace ECS
 {
-	class SparseSet
+	struct SparseSet
 	{
 	public:
 		Entity Search(Entity entity)
@@ -34,10 +34,15 @@ namespace ECS
 			--n;
 		}
 
+		uint32_t Index(Entity entity)
+		{
+			return m_Sparse[entity];
+		}
+
 	private:
 		std::vector<Entity> m_Packed;
 		std::vector<uint32_t> m_Sparse;
-		size_t n = 0;
+		uint32_t n = 0;
 	};
 }
 

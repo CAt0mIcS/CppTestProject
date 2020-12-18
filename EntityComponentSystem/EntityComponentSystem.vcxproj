@@ -23,6 +23,7 @@
     <ClInclude Include="src\ECS\Internal.h" />
     <ClInclude Include="src\ECS\Registry.h" />
     <ClInclude Include="src\ECS\SparseSet.h" />
+    <ClInclude Include="src\ECS\Storage.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
