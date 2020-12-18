@@ -18,6 +18,10 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\ECS\Entity.h" />
+    <ClInclude Include="src\ECS\Internal.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -154,13 +158,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="src\ECS\EntityComponentSystem.h" />
-    <ClInclude Include="src\ECS\Internal.h" />
-    <ClInclude Include="src\ECS\Registry.h" />
-    <ClInclude Include="src\ECS\Entity.h" />
-    <ClInclude Include="src\ECS\Storage.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

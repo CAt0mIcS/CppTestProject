@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Components.h"
 
-#include <ECS\EntityComponentSystem.h>
+#include "ECS\Entity.h"
 
 
 
@@ -22,17 +22,72 @@ int main()
 	//{
 	//	std::cout << "Component not found\n";
 	//}
+	std::cout << "ECS: \n";
+	auto tStart = std::chrono::high_resolution_clock::now();
 
-	ECS::Registry registry;
-	ECS::Entity entity;
-	TagComponent& tag = registry.Emplace<TagComponent>(entity, "This is the first entity's a tag component");
-	TransformComponent& transform = registry.Emplace<TransformComponent>(entity, 3.0f);
-	std::cout << tag.tag << '\n';
-	std::cout << "TransformComponent: " << transform.x << '\n';
+	static constexpr uint32_t arrSize = 50000;
+	ECS::Entity entities[arrSize];
+	for (uint32_t i = 0; i < arrSize; ++i)
+	{
+		entities[i].Add<TransformComponent>(453.43f);
+		std::ostringstream oss;
+		oss << "This is Entity " << i;
+		entities[i].Add<TagComponent>(oss.str());
+	}
 
-	ECS::Entity entity2;
-	TagComponent& tag2 = registry.Emplace<TagComponent>(entity2, "This is the 2nd entity's tag component");
-	TransformComponent& transform2 = registry.Emplace<TransformComponent>(entity2, 6.0f);
-	std::cout << tag2.tag << '\n';
-	std::cout << "TransformComponent: " << transform2.x << '\n';
+	auto tEnd = std::chrono::high_resolution_clock::now();
+	std::cout << "[ECS] Creation finished: " << (tEnd - tStart).count() / 1000.0f / 1000.0f << "ms\n";
+
+	tStart = std::chrono::high_resolution_clock::now();
+	for (uint32_t i = 0; i < arrSize; ++i)
+	{
+		if (entities[i].Has<TransformComponent>())
+		{
+			auto& tform = entities[i].Get<TransformComponent>();
+			tform.x += 0.43f;
+		}
+	}
+
+	tEnd = std::chrono::high_resolution_clock::now();
+	std::cout << "[ECS] GetSet finished: " << std::chrono::duration_cast<std::chrono::milliseconds>(tEnd - tStart).count() << "ms\n";
+
+	////////////////////////////////////////////////////////////////////////////////////
+	// ENTT
+	////////////////////////////////////////////////////////////////////////////////////
+	std::cout << "\n\nENTT: \n";
+
+	tStart = std::chrono::high_resolution_clock::now();
+
+	entt::registry reg;
+	entt::entity enttEntities[arrSize];
+	for (uint32_t i = 0; i < arrSize; ++i)
+	{
+		enttEntities[i] = reg.create();
+	}
+
+	for (uint32_t i = 0; i < arrSize; ++i)
+	{
+		reg.emplace<TransformComponent>(enttEntities[i], 453.43f);
+		std::ostringstream oss;
+		oss << "This is Entity " << i;
+		reg.emplace<TagComponent>(enttEntities[i], oss.str());
+	}
+
+	tEnd = std::chrono::high_resolution_clock::now();
+	std::cout << "[ENTT] Creation finished: " << (tEnd - tStart).count() / 1000.0f / 1000.0f << "ms\n";
+
+	tStart = std::chrono::high_resolution_clock::now();
+	for (uint32_t i = 0; i < arrSize; ++i)
+	{
+		if (reg.has<TransformComponent>(enttEntities[i]))
+		{
+			auto& tform = reg.get<TransformComponent>(enttEntities[i]);
+			tform.x += 0.43f;
+		}
+	}
+
+	tEnd = std::chrono::high_resolution_clock::now();
+	std::cout << "[ENTT] GetSet finished: " << std::chrono::duration_cast<std::chrono::milliseconds>(tEnd - tStart).count() << "ms\n";
+
+
 }

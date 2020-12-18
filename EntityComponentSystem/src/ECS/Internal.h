@@ -1,55 +1,36 @@
 #pragma once
 
-#include <assert.h>
-#include <string>
+#include <stdint.h>
 
-#ifndef NOMINMAX
-#define NOMINMAX
-#endif
-#include <Windows.h>
-
-#define ECS_EXPECTS(expr, msg) if(!(expr)) _wassert(::ECS::Internal::MultiByteToWideChar(#expr ": " msg).c_str(), ::ECS::Internal::MultiByteToWideChar(__FILE__).c_str(), __LINE__)
-
-namespace ECS::Internal
-{
-	std::wstring MultiByteToWideChar(const char* str)
-	{
-		auto size = ::MultiByteToWideChar(CP_UTF8, MB_COMPOSITE, str, -1, nullptr, 0);
-
-		std::wstring buff;
-		buff.resize(size);
-		::MultiByteToWideChar(CP_UTF8, MB_COMPOSITE, str, -1, buff.data(), size);
-
-		return buff;
-	}
-
-	struct TypeIndex
-	{
-		static uint32_t Next()
-		{
-			static uint32_t counter = 0;
-			return counter++;
-		}
-	};
-}
 
 namespace ECS
 {
-	template<typename T>
-	struct TypeIndex
+	using IndexType = uint32_t;
+	inline constexpr uint32_t MAX_ENTITIES = 5000;
+	inline constexpr uint32_t MAX_COMPONENTS = 50;
+
+	namespace Internal
 	{
-		static uint32_t Value()
+		struct ComponentIndex
 		{
-			static const uint32_t value = Internal::TypeIndex::Next();
-			return value;
+			static IndexType Next()
+			{
+				static IndexType idx = 0;
+				return idx++;
+			}
+		};
+	}
+
+
+	template<typename Component>
+	struct ComponentIndex
+	{
+		static IndexType Value()
+		{
+			static IndexType next = Internal::ComponentIndex::Next();
+			return next;
 		}
 	};
 
-
-	// QUESTION: What?
-	template<typename, typename = void>
-	struct HasTypeIndex : std::false_type {};
-	
-	template<typename Type>
-	struct HasTypeIndex<Type, std::void_t<decltype(TypeIndex<Type>::Value())>> : std::true_type {};
 }
+
