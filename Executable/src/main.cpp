@@ -6,17 +6,10 @@
 
 int main()
 {
-	std::cout << "ECS: \n";
-	auto tStart = std::chrono::high_resolution_clock::now();
+	ECS::Registry registry;
+	ECS::Entity entity = registry.Create();
+	registry.Emplace<TransformComponent>(entity, 32.432f);
 
-	static constexpr uint32_t arrSize = 40000;
-	ECS::Entity entities[arrSize];
-	for (uint32_t i = 0; i < arrSize; ++i)
-	{
-		entities[i].Add<TransformComponent>(453.43f);
-		std::ostringstream oss;
-		oss << "This is Entity " << i;
-		entities[i].Add<TagComponent>(oss.str());
-	}
-
+	TransformComponent& tform = registry.Get<TransformComponent>(entity);
+	std::cout << tform.x << '\n';
 }

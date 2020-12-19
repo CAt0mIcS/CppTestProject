@@ -1,7 +1,8 @@
 #pragma once
 
-#include "Entity.h"
 #include <vector>
+#include "Internal.h"
+#include <assert.h>
 
 
 namespace ECS
@@ -19,8 +20,8 @@ namespace ECS
 
 		void Insert(Entity entity)
 		{
-			m_Packed.emplace_back(entity); // at index n
 			m_Sparse.emplace_back(n); // at index entity
+			m_Packed.emplace_back(entity); // at index n
 
 			++n;
 		}
@@ -34,7 +35,7 @@ namespace ECS
 			--n;
 		}
 
-		uint32_t Index(Entity entity)
+		uint32_t Index(Entity entity) const
 		{
 			return m_Sparse[entity];
 		}

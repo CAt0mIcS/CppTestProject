@@ -18,9 +18,6 @@
     <ClInclude Include="src\ECS\Internal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ECS\Entity.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\ECS\SparseSet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
