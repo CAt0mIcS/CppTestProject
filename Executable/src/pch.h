@@ -7,4 +7,5 @@
 #include <sstream>
 #include <chrono>
 
+#include <bitset>
 #include "entt.hpp"
