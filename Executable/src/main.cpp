@@ -4,31 +4,58 @@
 #include "ECS\Registry.h"
 
 
-#include <Windows.h>
-uint32_t Combine(uint16_t x, uint16_t y)
-{
-	LPARAM result = 0;
-	result = (x << 16) | (y);
-	return result;
-}
-
-
-void PrintSplit(uint32_t lParam)
-{
-	std::bitset<32> bits(lParam);
-	std::cout << "Bits: " << bits << '\n';
-
-	uint16_t first = (uint16_t)(lParam >> 16);
-	std::cout << first << '\n';
-
-	uint16_t second = (uint16_t)lParam;
-	std::cout << second << '\n';
-
-}
-
 
 int main()
 {
-	uint32_t lParam = Combine(11, 22);
-	PrintSplit(lParam);
+	static constexpr uint32_t arrSize = 10000000;
+	std::cout << "=========================== ECS =========================== \n";
+
+	{
+		auto start = std::chrono::high_resolution_clock::now();
+
+		ECS::Registry registry;
+		ECS::Entity* entities = new ECS::Entity[arrSize];
+
+		for (uint32_t i = 0; i < arrSize; ++i)
+		{
+			entities[i] = registry.Create();
+			registry.Emplace<TransformComponent>(entities[i], 3245.423f);
+		}
+		auto end = std::chrono::high_resolution_clock::now();
+		std::cout << "Creation: " << (end - start).count() / 1000.0f / 1000.0f << "ms\n";
+
+		start = std::chrono::high_resolution_clock::now();
+		for (uint32_t i = 0; i < arrSize; ++i)
+		{
+			TransformComponent& tForm = registry.Get<TransformComponent>(entities[i]);
+		}
+		end = std::chrono::high_resolution_clock::now();
+		std::cout << "Get: " << (end - start).count() / 1000.0f / 1000.0f << "ms\n";
+	}
+
+	std::cout << "=========================== ENTT =========================== \n";
+
+	{
+		auto start = std::chrono::high_resolution_clock::now();
+
+		entt::registry registry;
+		entt::entity* entities = new entt::entity[arrSize];
+
+		for (uint32_t i = 0; i < arrSize; ++i)
+		{
+			entities[i] = registry.create();
+			registry.emplace<TransformComponent>(entities[i], 3245.423f);
+		}
+		auto end = std::chrono::high_resolution_clock::now();
+		std::cout << "Creation: " << (end - start).count() / 1000.0f / 1000.0f << "ms\n";
+
+		start = std::chrono::high_resolution_clock::now();
+		for (uint32_t i = 0; i < arrSize; ++i)
+		{
+			TransformComponent& tForm = registry.get<TransformComponent>(entities[i]);
+		}
+		end = std::chrono::high_resolution_clock::now();
+		std::cout << "Get: " << (end - start).count() / 1000.0f / 1000.0f << "ms\n";
+	}
+
 }
