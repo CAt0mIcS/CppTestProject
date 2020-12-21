@@ -17,6 +17,13 @@ void PrintSplit(uint32_t lParam)
 {
 	std::bitset<32> bits(lParam);
 	std::cout << "Bits: " << bits << '\n';
+
+	uint16_t first = (uint16_t)(lParam >> 16);
+	std::cout << first << '\n';
+
+	uint16_t second = (uint16_t)lParam;
+	std::cout << second << '\n';
+
 }
 
 
