@@ -73,6 +73,7 @@ int main()
 	registry.Emplace<TransformComponent>(e2, 4.44f);
 
 	auto view = registry.View<TagComponent, TransformComponent>();
+	auto [transformComponent, tagComponent] = registry.Get<TransformComponent, TagComponent>(e);
 
 	//for (auto entity : view)
 	//{
@@ -88,6 +89,7 @@ int main()
 	//registry.emplace<TagComponent>(e2, "This is a 2 tag");
 
 	//auto view = registry.view<TransformComponent, TagComponent>();
+	//auto [transformComponent, tagComponent] = registry.get<TransformComponent, TagComponent>(e);
 
 	//for (entt::entity e : view)
 	//{

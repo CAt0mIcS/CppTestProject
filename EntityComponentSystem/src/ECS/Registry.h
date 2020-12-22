@@ -17,11 +17,23 @@ namespace ECS
 			return Assure<Component>().Emplace(e, std::forward<Args>(args)...);
 		}
 
-		template<typename Component>
-		Component& Get(Entity e)
+		//template<typename Component>
+		//Component& Get(Entity e)
+		//{
+		//	return Assure<Component>().Get(e);
+		//}
+
+		template<typename... Component>
+		decltype(auto) Get(Entity e)
 		{
-			//assert(Has<Component>() && "Entity does not have component");
-			return Assure<Component>().Get(e);
+			if constexpr (sizeof...(Component) == 1)
+			{
+				return (Assure<Component>().Get(e), ...);
+			}
+			else
+			{
+				return std::forward_as_tuple(Get<Component>(e)...);
+			}
 		}
 
 		Entity Create()
