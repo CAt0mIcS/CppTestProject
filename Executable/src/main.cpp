@@ -74,10 +74,10 @@ int main()
 
 	auto view = registry.View<TagComponent, TransformComponent>();
 
-	for (auto entity : view)
-	{
-		std::cout << registry.Get<TagComponent>(entity).tag << '\n';
-	}
+	//for (auto entity : view)
+	//{
+	//	std::cout << registry.Get<TagComponent>(entity).tag << '\n';
+	//}
 
 	//entt::registry registry;
 	//entt::entity e = registry.create();
