@@ -2,6 +2,7 @@
 
 #include "Internal.h"
 #include "Storage.h"
+#include "View.h"
 
 #include <memory>
 
@@ -38,6 +39,12 @@ namespace ECS
 			}
 
 			return e;
+		}
+
+		template<typename... Component>
+		View<Component...> View()
+		{
+			return { Assure<Component>()... };
 		}
 
 	private:
