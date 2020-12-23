@@ -21,12 +21,12 @@ namespace ECS
 
 		}
 
-		Entity* begin()
+		std::vector<Entity>::iterator begin()
 		{
 			return std::get<0>(m_Components)->begin();
 		}
 
-		Entity* end()
+		std::vector<Entity>::iterator end()
 		{
 			return std::get<sizeof...(Component) - 1>(m_Components)->end();
 		}
