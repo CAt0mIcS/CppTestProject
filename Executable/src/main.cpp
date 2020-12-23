@@ -83,7 +83,7 @@ int main()
 
 	for (ECS::Entity e : view)
 	{
-		auto tuple = view.Get<TagComponent, TransformComponent>(e);
+		auto tuple = view.Get(e);
 		std::cout << std::get<0>(tuple).tag << '\n';
 	}
 

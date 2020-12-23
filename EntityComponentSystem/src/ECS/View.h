@@ -74,7 +74,11 @@ namespace ECS
 		template<typename... Comp>
 		decltype(auto) Get(Entity e)
 		{
-			if constexpr (sizeof...(Comp) == 1)
+			if constexpr (sizeof...(Comp) == 0)
+			{
+				return std::forward_as_tuple(std::get<PoolType<Component>*>(m_Components)->Get(e)...);
+			}
+			else if constexpr (sizeof...(Comp) == 1)
 			{
 				return (std::get<PoolType<Comp>*>(m_Components)->Get(e), ...);
 			}
