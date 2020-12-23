@@ -81,7 +81,7 @@ int main()
 	//	std::cout << registry.Get<TagComponent>(*it).tag << '\n';
 	//}
 
-	for (auto e : view)
+	for (ECS::Entity e : view)
 	{
 		std::cout << registry.Get<TagComponent>(e).tag << '\n';
 	}

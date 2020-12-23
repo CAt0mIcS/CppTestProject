@@ -13,17 +13,17 @@ namespace ECS
 		class Iterator
 		{
 		public:
-			Iterator(const std::vector<Entity>& packed, uint32_t index)
+			Iterator(const std::vector<Entity>& packed, size_t index)
 				: m_Packed(packed), m_Idx(index) {}
 
 			Iterator& operator++()
 			{
-				return --m_Idx, *this;
+				return ++m_Idx, *this;
 			}
 
 			Iterator& operator--()
 			{
-				return ++m_Idx, *this;
+				return --m_Idx, *this;
 			}
 
 			Iterator& operator--(int)
@@ -94,7 +94,7 @@ namespace ECS
 
 			const Entity* operator->() const
 			{
-				const size_t pos = m_Idx - 1;
+				const size_t pos = m_Idx;
 				return &m_Packed[pos];
 			}
 
@@ -146,12 +146,12 @@ namespace ECS
 
 		Iterator begin() const
 		{
-			return Iterator{ m_Packed, m_Packed.size() };
+			return Iterator{ m_Packed, 0 };
 		}
 
 		Iterator end() const
 		{
-			return Iterator{ m_Packed, {} };
+			return Iterator{ m_Packed, m_Packed.size() };
 		}
 
 	private:

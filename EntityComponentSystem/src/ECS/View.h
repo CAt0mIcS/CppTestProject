@@ -23,13 +23,13 @@ namespace ECS
 
 			Iterator operator++()
 			{
-				while (++m_It != m_View.end());
+				++m_It;
 				return *this;
 			}
 
 			Iterator operator--()
 			{
-				while (--m_It != m_View.end());
+				--m_It;
 				return *this;
 			}
 
