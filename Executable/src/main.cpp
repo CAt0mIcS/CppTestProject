@@ -72,8 +72,19 @@ int main()
 	registry.Emplace<TransformComponent>(e, 3.33f);
 	registry.Emplace<TransformComponent>(e2, 4.44f);
 
-	auto view = registry.View<TagComponent, TransformComponent>();
+	ECS::View<TagComponent, TransformComponent> view = registry.View<TagComponent, TransformComponent>();
 	auto [transformComponent, tagComponent] = registry.Get<TransformComponent, TagComponent>(e);
+
+
+	//for (auto it = view.begin(); it != view.end(); ++it)
+	//{
+	//	std::cout << registry.Get<TagComponent>(*it).tag << '\n';
+	//}
+
+	for (auto e : view)
+	{
+		std::cout << registry.Get<TagComponent>(e).tag << '\n';
+	}
 
 	//for (auto entity : view)
 	//{

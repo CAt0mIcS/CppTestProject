@@ -40,6 +40,16 @@ namespace ECS
 			return m_Sparse[entity];
 		}
 
+		std::vector<Entity>::iterator begin()
+		{
+			return m_Packed.begin();
+		}
+
+		std::vector<Entity>::iterator end()
+		{
+			return m_Packed.end();
+		}
+
 	private:
 		std::vector<Entity> m_Packed;
 		std::vector<uint32_t> m_Sparse;

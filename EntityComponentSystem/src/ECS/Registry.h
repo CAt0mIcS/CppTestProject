@@ -17,12 +17,6 @@ namespace ECS
 			return Assure<Component>().Emplace(e, std::forward<Args>(args)...);
 		}
 
-		//template<typename Component>
-		//Component& Get(Entity e)
-		//{
-		//	return Assure<Component>().Get(e);
-		//}
-
 		template<typename... Component>
 		decltype(auto) Get(Entity e)
 		{

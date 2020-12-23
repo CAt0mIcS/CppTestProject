@@ -21,7 +21,15 @@ namespace ECS
 
 		}
 
+		Entity* begin()
+		{
+			return std::get<0>(m_Components)->begin();
+		}
 
+		Entity* end()
+		{
+			return std::get<sizeof...(Component) - 1>(m_Components)->end();
+		}
 
 	private:
 		std::tuple<PoolType<Component>*...> m_Components;
