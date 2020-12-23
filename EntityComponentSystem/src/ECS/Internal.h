@@ -42,7 +42,10 @@ namespace ECS
 		}
 	};
 
-	// QUESTION: What?
+	// If ComponentIndex<Component>::Value() already exists for the component then the type from this function (decltype)
+	// will be converted to void and the std::true_type struct will be used because of template specialisation. If the function Value()
+	// for the specific component has not been generated, then decltype will fail and the std::false_type struct will be used.
+
 	template<typename, typename = void>
 	struct HasComponentIndex : std::false_type {};
 
