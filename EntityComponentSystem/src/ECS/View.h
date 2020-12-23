@@ -71,6 +71,19 @@ namespace ECS
 
 		}
 
+		template<typename... Comp>
+		decltype(auto) Get(Entity e)
+		{
+			if constexpr (sizeof...(Comp) == 1)
+			{
+				return (std::get<PoolType<Comp>*>(m_Components)->Get(e), ...);
+			}
+			else
+			{
+				return std::forward_as_tuple(std::get<PoolType<Comp>*>(m_Components)->Get(e)...);
+			}
+		}
+
 		Iterator begin() const
 		{
 			const SparseSet& view = Candidate();
