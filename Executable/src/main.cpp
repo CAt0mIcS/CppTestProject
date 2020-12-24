@@ -62,51 +62,26 @@ void SpeedTest()
 
 int main()
 {
-	//SpeedTest();
-
-	ECS::Registry registry;
-	ECS::Entity e = registry.Create();
-	ECS::Entity e2 = registry.Create();
-	registry.Emplace<TagComponent>(e, "This is the first entities tag component");
-	registry.Emplace<TagComponent>(e2, "This is the second entities tag component");
-	registry.Emplace<TransformComponent>(e, 3.33f);
-	registry.Emplace<TransformComponent>(e2, 4.44f);
-
-	ECS::View<TagComponent, TransformComponent> view = registry.View<TagComponent, TransformComponent>();
-	auto [transformComponent, tagComponent] = registry.Get<TransformComponent, TagComponent>(e);
-
-
-	//for (auto it = view.begin(); it != view.end(); ++it)
-	//{
-	//	std::cout << registry.Get<TagComponent>(*it).tag << '\n';
-	//}
-
-	for (ECS::Entity e : view)
 	{
-		auto tuple = view.Get(e);
-		std::cout << std::get<0>(tuple).tag << '\n';
+		entt::registry registry;
+		entt::entity e = registry.create();
+		entt::entity e2 = registry.create();
+		registry.emplace<TransformComponent>(e2, 3.33f);
+		registry.emplace<TagComponent>(e, "1st Tag");
 	}
+	
+	{
+		ECS::Registry registry;
+		ECS::Entity e = registry.Create();
+		ECS::Entity e2 = registry.Create();
+		registry.Emplace<TransformComponent>(e2, 3.33f);
+		registry.Emplace<TagComponent>(e, "1st Tag");
 
-	//for (auto entity : view)
-	//{
-	//	std::cout << registry.Get<TagComponent>(entity).tag << '\n';
-	//}
-
-	//entt::registry registry;
-	//entt::entity e = registry.create();
-	//entt::entity e2 = registry.create();
-	//registry.emplace<TransformComponent>(e, 3.333f);
-	//registry.emplace<TagComponent>(e, "This is a tag");
-	//registry.emplace<TransformComponent>(e2, 4.444f);
-	//registry.emplace<TagComponent>(e2, "This is a 2 tag");
-
-	//auto view = registry.view<TransformComponent, TagComponent>();
-	//auto [transformComponent, tagComponent] = registry.get<TransformComponent, TagComponent>(e);
-
-	//for (entt::entity e : view)
-	//{
-	//	TransformComponent& transformComponent = registry.get<TransformComponent>(e);
-	//	TagComponent& tagComponent = registry.get<TagComponent>(e);
-	//}
+		auto view = registry.View<TransformComponent, TagComponent>();
+		for (ECS::Entity e : view)
+		{
+			std::cout << registry.Get<TagComponent>(e).tag << '\n';
+		}
+	}
 
 }

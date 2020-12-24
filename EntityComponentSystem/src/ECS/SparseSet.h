@@ -119,8 +119,14 @@ namespace ECS
 
 		void Insert(Entity entity)
 		{
-			m_Sparse.emplace_back(n); // at index entity
-			m_Packed.emplace_back(entity); // at index n
+			if (entity >= m_Sparse.size())
+			{
+				m_Sparse.resize(entity + 1);
+				m_Packed.resize(entity + 1);
+			}
+
+			m_Sparse[entity] = n; // at index entity
+			m_Packed[n] = entity; // at index n
 
 			++n;
 		}
@@ -156,8 +162,8 @@ namespace ECS
 
 	private:
 		std::vector<Entity> m_Packed;
-		std::vector<uint32_t> m_Sparse;
-		uint32_t n = 0;
+		std::vector<size_t> m_Sparse;
+		size_t n = 0;
 	};
 }
 
