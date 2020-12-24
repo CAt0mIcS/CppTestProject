@@ -18,7 +18,7 @@ namespace ECS
 			else
 				m_Instances.emplace_back(std::forward<Args>(args)...);
 
-			SparseSet::Insert(entity);
+			SparseSet::Emplace(entity, m_Instances.size() - 1);
 		}
 
 		const Component& Get(Entity entity) const

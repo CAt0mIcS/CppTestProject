@@ -109,61 +109,45 @@ namespace ECS
 		};
 
 	public:
-		Entity Search(Entity entity)
-		{
-			if (m_Sparse[entity] < n && m_Packed[m_Sparse[entity]] == entity)
-				return m_Sparse[entity];
-
-			assert(false && "Unable to find entity");
-		}
-
-		void Insert(Entity entity)
-		{
-			if (entity >= m_Sparse.size())
-			{
-				m_Sparse.resize(entity + 1);
-				m_Packed.resize(entity + 1);
-			}
-
-			m_Sparse[entity] = n; // at index entity
-			m_Packed[n] = entity; // at index n
-
-			++n;
-		}
-
-		void Remove(Entity entity)
-		{
-			Entity temp = m_Packed[n - 1];
-			m_Packed[m_Sparse[entity]] = temp;
-			m_Sparse[temp] = m_Sparse[entity];
-
-			--n;
-		}
-
-		size_t Index(Entity entity) const
-		{
-			return m_Sparse[entity];
-		}
-
 		size_t Size() const
 		{
-			return m_Packed.size();
+			return m_Entities.size();
 		}
 
 		Iterator begin() const
 		{
-			return Iterator{ m_Packed, 0 };
+			return Iterator{ m_Entities, 0 };
 		}
 
 		Iterator end() const
 		{
-			return Iterator{ m_Packed, m_Packed.size() };
+			return Iterator{ m_Entities, m_Entities.size() };
+		}
+
+		size_t Index(Entity entity) const
+		{
+			return m_ComponentIndex[entity].IndexInComponentVector;
+		}
+
+		void Emplace(Entity entity, size_t index)
+		{
+			m_Entities.emplace_back(entity);
+			m_ComponentIndex.push_back(MappedComponentIndex{ entity, index });
 		}
 
 	private:
-		std::vector<Entity> m_Packed;
-		std::vector<size_t> m_Sparse;
-		size_t n = 0;
+		struct MappedComponentIndex
+		{
+			Entity Entity;
+			size_t IndexInComponentVector;
+		};
+
+		// All entities which have the Component
+		std::vector<Entity> m_Entities;
+
+		// m_ComponentIndex[entity] == index in m_Instances;
+		std::vector<MappedComponentIndex> m_ComponentIndex;
+
 	};
 }
 
