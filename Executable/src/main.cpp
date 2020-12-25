@@ -3,6 +3,8 @@
 
 #include "ECS\Registry.h"
 
+
+
 template<size_t arrSize = 10000000>
 void SpeedTest(uint32_t num = 1)
 {
@@ -10,7 +12,7 @@ void SpeedTest(uint32_t num = 1)
 	float avgCreationTimeENTT = 0.0f;
 	float avgGetTimeECS = 0.0f;
 	float avgGetTimeENTT = 0.0f;
-	for (size_t i = 0; i <= num; ++i)
+	for (size_t i = 0; i < num; ++i)
 	{
 		std::cout << "=========================== ECS =========================== \n";
 
@@ -24,6 +26,7 @@ void SpeedTest(uint32_t num = 1)
 			{
 				entities[i] = registry.Create();
 				registry.Emplace<TransformComponent>(entities[i], 3245.423f);
+				registry.Emplace<TagComponent>(entities[i], "Tag " + std::to_string(i));
 			}
 			auto end = std::chrono::high_resolution_clock::now();
 			avgCreationTimeECS += (end - start).count() / 1000.0f / 1000.0f;
@@ -33,6 +36,7 @@ void SpeedTest(uint32_t num = 1)
 			for (uint32_t i = 0; i < arrSize; ++i)
 			{
 				TransformComponent& tForm = registry.Get<TransformComponent>(entities[i]);
+				TagComponent& tag = registry.Get<TagComponent>(entities[i]);
 			}
 			end = std::chrono::high_resolution_clock::now();
 			avgGetTimeECS += (end - start).count() / 1000.0f / 1000.0f;
@@ -80,8 +84,7 @@ void SpeedTest(uint32_t num = 1)
 
 int main()
 {
-	SpeedTest<5000000>(100);
-
+	SpeedTest<10000000>(2);
 
 	//{
 	//	entt::registry registry;
