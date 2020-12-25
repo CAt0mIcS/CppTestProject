@@ -12,7 +12,7 @@ namespace ECS
 	{
 	public:
 		template<typename Component, typename... Args>
-		decltype(auto) Emplace(Entity& e, Args&&... args)
+		decltype(auto) Emplace(Entity e, Args&&... args)
 		{
 			return Assure<Component>().Emplace(e, std::forward<Args>(args)...);
 		}
@@ -32,10 +32,19 @@ namespace ECS
 
 		Entity Create()
 		{
-			Entity e = 0;
-			Internal::SetEntityID(e, m_Entities.size());
-			
-			return m_Entities.emplace_back(e);
+			Entity e;
+			if (m_Destroyed == EntityNull)
+			{
+				// No entity to recycle (non destroyed)
+				e = m_Entities.emplace_back(m_Entities.size());
+			}
+			else
+			{
+				// Entity to recycle
+				assert(false && "Missing bit-mask implementation");
+			}
+
+			return e;
 		}
 
 		template<typename... Component>
@@ -47,7 +56,7 @@ namespace ECS
 	private:
 		struct PoolData
 		{
-			uint32_t TypeID{};
+			uint32_t TypeID;
 			std::unique_ptr<SparseSet> Pool{};
 		};
 
@@ -55,7 +64,7 @@ namespace ECS
 		struct PoolHandler : Storage<Component>
 		{
 			template<typename... Args>
-			decltype(auto) Emplace(Entity& e, Args&&... args)
+			decltype(auto) Emplace(Entity e, Args&&... args)
 			{
 				Storage<Component>::Emplace(e, std::forward<Args>(args)...);
 
@@ -112,7 +121,7 @@ namespace ECS
 	private:
 		std::vector<PoolData> m_Pools{};
 		std::vector<Entity> m_Entities{};
-		//Entity m_Destroyed{EntityNull};
+		Entity m_Destroyed{EntityNull};
 	};
 }
 

@@ -7,44 +7,11 @@
 namespace ECS
 {
 	using IndexType = uint32_t;
-	using Entity = uint64_t;
-
-	//struct Entity
-	//{
-	//	uint64_t ID : 48;
-	//	uint16_t ComponentIndex : 16;
-
-	//	Entity(uint64_t id) : ID(id), ComponentIndex{} {}
-	//	Entity() = default;
-
-	//	bool operator==(const Entity& other) const
-	//	{
-	//		return ID == other.ID;
-	//	}
-	//};
+	using Entity = uint32_t;
+	inline constexpr uint32_t EntityNull = -1;
 
 	namespace Internal
 	{
-		uint16_t GetEntityComponentIndex(Entity entity)
-		{
-			return entity & (entity >> 48);
-		}
-
-		void SetEntityComponentIndex(Entity& entity, uint16_t idx)
-		{
-			entity = entity | (((uint64_t)(idx)) << 48);
-		}
-
-		uint64_t GetEntityID(Entity entity)
-		{
-			return entity & 0x00ffffff;
-		}
-
-		void SetEntityID(Entity& entity, uint64_t id)
-		{
-			entity = entity | id;
-		}
-
 		struct ComponentIndex
 		{
 			static IndexType Next()

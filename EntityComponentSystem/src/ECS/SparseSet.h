@@ -124,14 +124,30 @@ namespace ECS
 			return Iterator{ m_Entities, m_Entities.size() };
 		}
 
-		void Emplace(Entity entity)
+		size_t Index(Entity entity) const
+		{
+			return m_ComponentIndex[entity].IndexInComponentVector;
+		}
+
+		void Emplace(Entity entity, size_t index)
 		{
 			m_Entities.emplace_back(entity);
+			m_ComponentIndex.push_back(MappedComponentIndex{ entity, index });
 		}
 
 	private:
+		struct MappedComponentIndex
+		{
+			Entity Entity;
+			size_t IndexInComponentVector;
+		};
+
 		// All entities which have the Component
 		std::vector<Entity> m_Entities;
+
+		// m_ComponentIndex[entity] == index in m_Instances;
+		std::vector<MappedComponentIndex> m_ComponentIndex;
+
 	};
 }
 
