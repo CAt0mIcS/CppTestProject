@@ -10,6 +10,8 @@ void SpeedTest(uint32_t num = 1)
 	float avgCreationTimeENTT = 0.0f;
 	float avgGetTimeECS = 0.0f;
 	float avgGetTimeENTT = 0.0f;
+	float avgViewTimeECS = 0.0f;
+	float avgViewTimeENTT = 0.0f;
 	for (size_t i = 0; i <= num; ++i)
 	{
 		std::cout << "=========================== ECS =========================== \n";
@@ -24,6 +26,9 @@ void SpeedTest(uint32_t num = 1)
 			{
 				entities[i] = registry.Create();
 				registry.Emplace<TransformComponent>(entities[i], 3245.423f);
+				registry.Emplace<TagComponent>(entities[i], "Tag " + std::to_string(i));
+				registry.Emplace<SpriteRenderComponent>(entities[i], 332);
+				registry.Emplace<RenderComponent>(entities[i], 32);
 			}
 			auto end = std::chrono::high_resolution_clock::now();
 			avgCreationTimeECS += (end - start).count() / 1000.0f / 1000.0f;
@@ -37,6 +42,18 @@ void SpeedTest(uint32_t num = 1)
 			end = std::chrono::high_resolution_clock::now();
 			avgGetTimeECS += (end - start).count() / 1000.0f / 1000.0f;
 			std::cout << "Get: " << (end - start).count() / 1000.0f / 1000.0f << "ms\n";
+
+			start = std::chrono::high_resolution_clock::now();
+			auto view = registry.View<TransformComponent, TagComponent, SpriteRenderComponent>();
+			for (auto entity : view)
+			{
+				TransformComponent& tform = registry.Get<TransformComponent>(entity);
+				TagComponent& tag = registry.Get<TagComponent>(entity);
+				SpriteRenderComponent& spriteRender = registry.Get<SpriteRenderComponent>(entity);
+			}
+			end = std::chrono::high_resolution_clock::now();
+			avgViewTimeECS += (end - start).count() / 1000.0f / 1000.0f;
+			std::cout << "View: " << (end - start).count() / 1000.0f / 1000.0f << "ms\n";
 		}
 
 		std::cout << "=========================== ENTT =========================== \n";
@@ -51,6 +68,9 @@ void SpeedTest(uint32_t num = 1)
 			{
 				entities[i] = registry.create();
 				registry.emplace<TransformComponent>(entities[i], 3245.423f);
+				registry.emplace<TagComponent>(entities[i], "Tag " + std::to_string(i));
+				registry.emplace<SpriteRenderComponent>(entities[i], 332);
+				registry.emplace<RenderComponent>(entities[i], 32);
 			}
 			auto end = std::chrono::high_resolution_clock::now();
 			avgCreationTimeENTT += (end - start).count() / 1000.0f / 1000.0f;
@@ -64,6 +84,19 @@ void SpeedTest(uint32_t num = 1)
 			end = std::chrono::high_resolution_clock::now();
 			avgGetTimeENTT += (end - start).count() / 1000.0f / 1000.0f;
 			std::cout << "Get: " << (end - start).count() / 1000.0f / 1000.0f << "ms\n";
+
+			start = std::chrono::high_resolution_clock::now();
+			auto view = registry.view<TransformComponent, TagComponent, SpriteRenderComponent>();
+			for (auto entity : view)
+			{
+				TransformComponent& tform = registry.get<TransformComponent>(entity);
+				TagComponent& tag = registry.get<TagComponent>(entity);
+				SpriteRenderComponent& spriteRender = registry.get<SpriteRenderComponent>(entity);
+			}
+			end = std::chrono::high_resolution_clock::now();
+			avgViewTimeENTT += (end - start).count() / 1000.0f / 1000.0f;
+			std::cout << "View: " << (end - start).count() / 1000.0f / 1000.0f << "ms\n";
+
 		}
 
 
@@ -72,8 +105,15 @@ void SpeedTest(uint32_t num = 1)
 
 	std::cout << "\n\n=========================== RESULT =========================== \n";
 
-	std::cout << "ECS: \n\tAverage Creation Time: " << avgCreationTimeECS / num << "\n\tAverage Get Time: " << avgGetTimeECS / num << "\n";
-	std::cout << "ENTT: \n\tAverage Creation Time: " << avgCreationTimeENTT / num << "\n\tAverage Get Time: " << avgGetTimeENTT / num << "\n";
+	std::cout << "ECS: \n\tAverage Creation Time: " << avgCreationTimeECS / num;
+	std::cout << "\n\tAverage Get Time: " << avgGetTimeECS / num;
+	std::cout << "\n\tAverage View Time: " << avgViewTimeECS / num;
+
+	std::cout << '\n';
+
+	std::cout << "ENTT: \n\tAverage Creation Time: " << avgCreationTimeENTT / num;
+	std::cout << "\n\tAverage Get Time: " << avgGetTimeENTT / num;
+	std::cout << "\n\tAverage View Time: " << avgViewTimeENTT / num;
 }
 
 
