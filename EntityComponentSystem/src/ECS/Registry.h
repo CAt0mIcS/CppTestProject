@@ -36,7 +36,7 @@ namespace ECS
 			if (m_Destroyed == EntityNull)
 			{
 				// No entity to recycle (non destroyed)
-				e = m_Entities.emplace_back(m_Entities.size());
+				e = m_Entities.emplace_back((uint32_t)m_Entities.size());
 			}
 			else
 			{
