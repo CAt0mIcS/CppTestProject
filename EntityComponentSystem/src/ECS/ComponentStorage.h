@@ -18,7 +18,7 @@ namespace ECS
 			else
 				m_Instances.emplace_back(std::forward<Args>(args)...);
 
-			EntityStorage::Emplace(entity, m_Instances.size() - 1);
+			EntityStorage::Emplace(entity, (IndexType)m_Instances.size() - 1);
 
 			if constexpr (!std::is_empty_v<Component>)
 				return m_Instances.back();

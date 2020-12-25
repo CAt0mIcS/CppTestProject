@@ -9,11 +9,23 @@ namespace ECS
 {
 	struct EntityStorage
 	{
+	private:
+		struct MappedComponentIndex
+		{
+			MappedComponentIndex(Entity e, IndexType idx)
+				: Entity(e), IndexInComponentVector(idx)
+			{
+			}
+
+			Entity Entity;
+			IndexType IndexInComponentVector;
+		};
+
 	public:
 		class Iterator
 		{
 		public:
-			Iterator(const std::vector<Entity>& packed, size_t index)
+			Iterator(const std::vector<MappedComponentIndex>& packed, IndexType index)
 				: m_Packed(packed), m_Idx(index) {}
 
 			Iterator& operator++()
@@ -24,12 +36,6 @@ namespace ECS
 			Iterator& operator--()
 			{
 				return --m_Idx, *this;
-			}
-
-			Iterator& operator--(int)
-			{
-				Iterator orig = *this;
-				return operator--(), orig;
 			}
 
 			Iterator& operator+=(uint32_t value)
@@ -59,7 +65,7 @@ namespace ECS
 			const Entity& operator[](size_t idx) const
 			{
 				const size_t pos = m_Idx - idx - 1;
-				return m_Packed[pos];
+				return m_Packed[pos].Entity;
 			}
 
 			bool operator==(const Iterator& other) const
@@ -95,7 +101,7 @@ namespace ECS
 			const Entity* operator->() const
 			{
 				const size_t pos = m_Idx;
-				return &m_Packed[pos];
+				return &m_Packed[pos].Entity;
 			}
 
 			const Entity& operator*() const
@@ -104,47 +110,37 @@ namespace ECS
 			}
 
 		private:
-			const std::vector<Entity>& m_Packed;
-			size_t m_Idx;
+			const std::vector<MappedComponentIndex>& m_Packed;
+			IndexType m_Idx;
 		};
 
 	public:
-		size_t Size() const
+		IndexType Size() const
 		{
-			return m_Entities.size();
+			return (IndexType)m_ComponentIndex.size();
 		}
 
 		Iterator begin() const
 		{
-			return Iterator{ m_Entities, 0 };
+			return Iterator{ m_ComponentIndex, 0 };
 		}
 
 		Iterator end() const
 		{
-			return Iterator{ m_Entities, m_Entities.size() };
+			return Iterator{ m_ComponentIndex, (IndexType)m_ComponentIndex.size() };
 		}
 
-		size_t Index(Entity entity) const
+		IndexType Index(Entity entity) const
 		{
 			return m_ComponentIndex[entity].IndexInComponentVector;
 		}
 
-		void Emplace(Entity entity, size_t index)
+		void Emplace(Entity entity, IndexType index)
 		{
-			m_Entities.emplace_back(entity);
-			m_ComponentIndex.push_back(MappedComponentIndex{ entity, index });
+			m_ComponentIndex.emplace_back(entity, index);
 		}
 
 	private:
-		struct MappedComponentIndex
-		{
-			Entity Entity;
-			size_t IndexInComponentVector;
-		};
-
-		// All entities which have the Component
-		std::vector<Entity> m_Entities;
-
 		// m_ComponentIndex[entity] == index in m_Instances;
 		std::vector<MappedComponentIndex> m_ComponentIndex;
 
