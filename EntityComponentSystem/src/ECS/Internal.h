@@ -33,14 +33,6 @@ namespace ECS
 		}
 	};
 
-	template<typename Component, typename = void>
-	struct ComponentInfo
-	{
-		static uint32_t ID()
-		{
-			return ComponentIndex<Component>::Value();
-		}
-	};
 
 	// If ComponentIndex<Component>::Value() already exists for the component then the type from this function (decltype)
 	// will be converted to void and the std::true_type struct will be used because of template specialisation. If the function Value()

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Internal.h"
-#include "Storage.h"
+#include "ComponentStorage.h"
 #include "View.h"
 
 #include <memory>
@@ -57,26 +57,21 @@ namespace ECS
 		struct PoolData
 		{
 			uint32_t TypeID;
-			std::unique_ptr<SparseSet> Pool{};
+			std::unique_ptr<EntityStorage> Pool{};
 		};
 
 		template<typename Component>
-		struct PoolHandler : Storage<Component>
+		struct PoolHandler : ComponentStorage<Component>
 		{
 			template<typename... Args>
 			decltype(auto) Emplace(Entity e, Args&&... args)
 			{
-				Storage<Component>::Emplace(e, std::forward<Args>(args)...);
-
-				if constexpr (!std::is_empty_v<Component>)
-				{
-					return Storage<Component>::Get(e);
-				}
+				return ComponentStorage<Component>::Emplace(e, std::forward<Args>(args)...);
 			}
 
 			Component& Get(Entity e)
 			{
-				return Storage<Component>::Get(e);
+				return ComponentStorage<Component>::Get(e);
 			}
 		};
 
@@ -92,7 +87,7 @@ namespace ECS
 
 				if (auto&& pData = m_Pools[index]; !pData.Pool)
 				{
-					pData.TypeID = ComponentInfo<Component>::ID();
+					pData.TypeID = ComponentIndex<Component>::Value();
 					pData.Pool.reset(new PoolHandler<Component>());
 				}
 
@@ -100,13 +95,13 @@ namespace ECS
 			}
 			else
 			{
-				SparseSet* candidate{ nullptr };
+				EntityStorage* candidate{ nullptr };
 
-				if (auto it = std::find_if(m_Pools.begin(), m_Pools.end(), [id = ComponentInfo<Component>::ID()](const auto& pData) { return id == pData.TypeID; }); it == m_Pools.cend())
+				if (auto it = std::find_if(m_Pools.begin(), m_Pools.end(), [id = ComponentIndex<Component>::Value()](const auto& pData) { return id == pData.TypeID; }); it == m_Pools.cend())
 				{
 					candidate = m_Pools.emplace_back(PoolData{
-						ComponentInfo<Component>::ID(),
-						std::unique_ptr<SparseSet>{new PoolHandler<Component>{}}
+						ComponentIndex<Component>::Value(),
+						std::unique_ptr<EntityStorage>{new PoolHandler<Component>{}}
 						}
 					).Pool.get();
 				}

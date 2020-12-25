@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Storage.h"
+#include "ComponentStorage.h"
 #include <tuple>
 
 
@@ -10,15 +10,15 @@ namespace ECS
 	class View
 	{
 	private:
-		// If the Component (Comp) is const then PoolType will be "const Storage<std::remove_const_t<Comp>>" else just "Storage<Comp>"
+		// If the Component (Comp) is const then PoolType will be "const ComponentStorage<std::remove_const_t<Comp>>" else just "ComponentStorage<Comp>"
 		template<typename Comp>
-		using PoolType = std::conditional_t<std::is_const_v<Comp>, const Storage<std::remove_const_t<Comp>>, Storage<Comp>>;
+		using PoolType = std::conditional_t<std::is_const_v<Comp>, const ComponentStorage<std::remove_const_t<Comp>>, ComponentStorage<Comp>>;
 
 	public:
 		class Iterator
 		{
 		public:
-			Iterator(const SparseSet& candidate, SparseSet::Iterator curr)
+			Iterator(const EntityStorage& candidate, EntityStorage::Iterator curr)
 				: m_View{ candidate }, m_It{ curr } {}
 
 			Iterator operator++()
@@ -60,12 +60,12 @@ namespace ECS
 			}
 
 		private:
-			const SparseSet& m_View;
-			SparseSet::Iterator m_It;
+			const EntityStorage& m_View;
+			EntityStorage::Iterator m_It;
 		};
 
 	public:
-		View(Storage<Component>&... component)
+		View(ComponentStorage<Component>&... component)
 			: m_Components{ &component... }
 		{
 
@@ -90,20 +90,20 @@ namespace ECS
 
 		Iterator begin() const
 		{
-			const SparseSet& view = Candidate();
+			const EntityStorage& view = Candidate();
 			return Iterator{ view, view.begin() };
 		}
 
 		Iterator end() const
 		{
-			const SparseSet& view = Candidate();
+			const EntityStorage& view = Candidate();
 			return Iterator{ view, view.end() };
 		}
 
 	private:
-		const SparseSet& Candidate() const
+		const EntityStorage& Candidate() const
 		{
-			return *std::min({ static_cast<const SparseSet*>(std::get<PoolType<Component>*>(m_Components))... }, [](const SparseSet* lhs, const SparseSet* rhs)
+			return *std::min({ static_cast<const EntityStorage*>(std::get<PoolType<Component>*>(m_Components))... }, [](const EntityStorage* lhs, const EntityStorage* rhs)
 				{
 					return lhs->Size() < rhs->Size();
 				}

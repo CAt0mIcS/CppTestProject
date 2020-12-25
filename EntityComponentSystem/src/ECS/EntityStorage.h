@@ -7,7 +7,7 @@
 
 namespace ECS
 {
-	struct SparseSet
+	struct EntityStorage
 	{
 	public:
 		class Iterator

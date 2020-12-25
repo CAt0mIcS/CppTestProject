@@ -18,16 +18,16 @@
     <ClInclude Include="src\ECS\Internal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ECS\SparseSet.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\ECS\Registry.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ECS\Storage.h">
+    <ClInclude Include="src\ECS\View.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ECS\View.h">
+    <ClInclude Include="src\ECS\EntityStorage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ECS\ComponentStorage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

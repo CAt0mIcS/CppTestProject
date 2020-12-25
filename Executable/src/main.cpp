@@ -80,7 +80,7 @@ void SpeedTest(uint32_t num = 1)
 
 int main()
 {
-	SpeedTest<5000000>(100);
+	SpeedTest<5000000>(10);
 
 
 	//{

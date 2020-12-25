@@ -1,29 +1,32 @@
 #pragma once
 
 #include "Internal.h"
-#include "SparseSet.h"
+#include "EntityStorage.h"
 
 
 namespace ECS
 {
 	template<typename Component>
-	struct Storage : SparseSet
+	struct ComponentStorage : EntityStorage
 	{
 	public:
 		template<typename... Args>
-		void Emplace(Entity entity, Args&&... args)
+		decltype(auto) Emplace(Entity entity, Args&&... args)
 		{
 			if constexpr (std::is_aggregate_v<Component>)
 				m_Instances.push_back(Component{ std::forward<Args>(args)... });
 			else
 				m_Instances.emplace_back(std::forward<Args>(args)...);
 
-			SparseSet::Emplace(entity, m_Instances.size() - 1);
+			EntityStorage::Emplace(entity, m_Instances.size() - 1);
+
+			if constexpr (!std::is_empty_v<Component>)
+				return m_Instances.back();
 		}
 
 		const Component& Get(Entity entity) const
 		{
-			return m_Instances[SparseSet::Index(entity)];
+			return m_Instances[EntityStorage::Index(entity)];
 		}
 
 		Component& Get(Entity entity)
