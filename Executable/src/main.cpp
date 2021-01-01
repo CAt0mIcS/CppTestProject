@@ -203,5 +203,10 @@ int main()
 	ECS::Registry registry;
 	ECS::Entity e = registry.Create();
 
+	registry.Emplace<TransformComponent>(e, 32.3254f);
+	registry.Emplace<TagComponent>(e, "Tag1");
 	TransformComponent& tform = registry.Get<TransformComponent>(e);
+	TagComponent& tag = registry.Get<TagComponent>(e);
+
+	registry.Destroy(e);
 }

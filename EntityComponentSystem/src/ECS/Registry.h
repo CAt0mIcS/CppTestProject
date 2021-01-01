@@ -28,9 +28,18 @@ namespace At0::ECS
 			return m_NextEntity++;
 		}
 
-		void Destroy(Entity e)
+		template<typename Component>
+		void Remove(Entity e)
 		{
 
+		}
+
+		void Destroy(Entity e)
+		{
+			for (std::unique_ptr<EntityStorage>& pool : m_Pools)
+			{
+				pool->RemoveEntity(e);
+			}
 		}
 
 		template<typename... Component>

@@ -28,11 +28,6 @@ namespace At0::ECS
 			m_Entities.emplace_back(e, compIdx);
 		}
 
-		void Remove(Entity e)
-		{
-			assert(false && "Missing implementation");
-		}
-
 		uint32_t IndexInComponentVector(Entity e) const
 		{
 			return m_Entities[e].IndexInComponentVector;
@@ -42,6 +37,8 @@ namespace At0::ECS
 		{
 			return m_Entities.size() > e;
 		}
+
+		virtual void RemoveEntity(Entity e) = 0;
 
 	private:
 		// ECS_TODO: Deleted entities shouldn't be erased from the vector (all elements behind need to be moved to fill the gap)

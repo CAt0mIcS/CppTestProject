@@ -40,6 +40,12 @@ namespace At0::ECS
 		}
 
 	private:
+		virtual void RemoveEntity(Entity e) override
+		{
+			m_Components.erase(m_Components.begin() + EntityStorage::IndexInComponentVector(e));
+		}
+
+	private:
 		std::vector<Component> m_Components;
 	};
 }
