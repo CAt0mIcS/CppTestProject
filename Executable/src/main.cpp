@@ -129,17 +129,17 @@ void SpeedTest(uint32_t num = 1)
 
 	std::cout << "\n\n=========================== RESULT =========================== \n";
 
-	std::cout << "ECS: \n\tAverage Creation Time: " << avgCreationTimeECS / num;
-	std::cout << "\n\tAverage Get Time: " << avgGetTimeECS / num;
-	std::cout << "\n\tAverage Destroy Time: " << avgDestroyTimeECS / num;
-	//std::cout << "\n\tAverage View Time: " << avgViewTimeECS / num;
+	std::cout << "ECS: \n\tAverage Creation Time: " << avgCreationTimeECS / num << "ms";
+	std::cout << "\n\tAverage Get Time: " << avgGetTimeECS / num << "ms";
+	std::cout << "\n\tAverage Destroy Time: " << avgDestroyTimeECS / num << "ms";
+	//std::cout << "\n\tAverage View Time: " << avgViewTimeECS / num << "ms";
 
 	std::cout << '\n';
 
-	std::cout << "ENTT: \n\tAverage Creation Time: " << avgCreationTimeENTT / num;
-	std::cout << "\n\tAverage Get Time: " << avgGetTimeENTT / num;
-	std::cout << "\n\tAverage Destroy Time: " << avgDestroyTimeENTT / num;
-	//std::cout << "\n\tAverage View Time: " << avgViewTimeENTT / num;
+	std::cout << "ENTT: \n\tAverage Creation Time: " << avgCreationTimeENTT / num << "ms";
+	std::cout << "\n\tAverage Get Time: " << avgGetTimeENTT / num << "ms";
+	std::cout << "\n\tAverage Destroy Time: " << avgDestroyTimeENTT / num << "ms";
+	//std::cout << "\n\tAverage View Time: " << avgViewTimeENTT / num << "ms";
 }
 
 

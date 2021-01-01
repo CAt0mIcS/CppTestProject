@@ -12,7 +12,6 @@ namespace At0::Ray::ECS
 		template<typename... Args>
 		decltype(auto) Emplace(Entity e, Args&&... args)
 		{
-
 			if (m_FreeIndices.size() > 0)
 			{
 				if constexpr (std::is_aggregate_v<Component>)
