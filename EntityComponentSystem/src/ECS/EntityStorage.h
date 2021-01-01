@@ -30,12 +30,12 @@ namespace ECS
 
 			Iterator& operator++()
 			{
-				return ++m_Idx, *this;
+				return ++m_Idx, * this;
 			}
 
 			Iterator& operator--()
 			{
-				return --m_Idx, *this;
+				return --m_Idx, * this;
 			}
 
 			Iterator& operator+=(uint32_t value)
@@ -138,6 +138,11 @@ namespace ECS
 		void Emplace(Entity entity, IndexType index)
 		{
 			m_ComponentIndex.emplace_back(entity, index);
+		}
+
+		bool Contains(Entity e) const
+		{
+			return m_ComponentIndex.size() > e;
 		}
 
 	private:

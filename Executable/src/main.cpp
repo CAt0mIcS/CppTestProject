@@ -120,29 +120,79 @@ void SpeedTest(uint32_t num = 1)
 
 int main()
 {
-	SpeedTest<5000000>(10);
+	static constexpr uint64_t arrSize = 10000000;
+	//SpeedTest<arrSize>(10);
+
+	{
+		ECS::Registry registry;
+		ECS::Entity* entities = new ECS::Entity[arrSize];
+
+		for (uint32_t i = 0; i < arrSize; ++i)
+		{
+			entities[i] = registry.Create();
+			registry.Emplace<TransformComponent>(entities[i], 32.23f);
+			registry.Emplace<SpriteRenderComponent>(entities[i], 132432);
+		}
+
+		auto start = std::chrono::high_resolution_clock::now();
+		for (uint32_t i = 0; i < arrSize; i += 10)
+		{
+			registry.Destroy(entities[i]);
+		}
+		auto end = std::chrono::high_resolution_clock::now();
+		std::cout << "ECS: Destroy: " << (end - start).count() / 1000.0f / 1000.0f << "ms\n";
+
+		start = std::chrono::high_resolution_clock::now();
+		for (uint32_t i = 0; i < arrSize; ++i)
+		{
+			if (registry.Has<TransformComponent, SpriteRenderComponent>(entities[i]))
+			{
+				auto [transform, render] = registry.Get<TransformComponent, SpriteRenderComponent>(entities[i]);
+			}
+
+			if (registry.Has<RenderComponent>(entities[i]))
+			{
+				auto& render = registry.Get<RenderComponent>(entities[i]);
+			}
+		}
+		end = std::chrono::high_resolution_clock::now();
+		std::cout << "ECS: Get&Has: " << (end - start).count() / 1000.0f / 1000.0f << "ms\n";
+	}
 
 
-	//{
-	//	entt::registry registry;
-	//	entt::entity e = registry.create();
-	//	entt::entity e2 = registry.create();
-	//	registry.emplace<TransformComponent>(e2, 3.33f);
-	//	registry.emplace<TagComponent>(e, "1st Tag");
-	//}
-	//
-	//{
-	//	ECS::Registry registry;
-	//	ECS::Entity e = registry.Create();
-	//	ECS::Entity e2 = registry.Create();
-	//	registry.Emplace<TransformComponent>(e2, 3.33f);
-	//	registry.Emplace<TagComponent>(e, "1st Tag");
+	{
+		entt::registry registry;
+		entt::entity* entities = new entt::entity[arrSize];
 
-	//	auto view = registry.View<TransformComponent, TagComponent>();
-	//	for (ECS::Entity e : view)
-	//	{
-	//		std::cout << registry.Get<TagComponent>(e).tag << '\n';
-	//	}
-	//}
+		for (uint32_t i = 0; i < arrSize; ++i)
+		{
+			entities[i] = registry.create();
+			registry.emplace<TransformComponent>(entities[i], 32.23f);
+			registry.emplace<SpriteRenderComponent>(entities[i], 132432);
+		}
 
+		auto start = std::chrono::high_resolution_clock::now();
+		for (uint32_t i = 0; i < arrSize; i += 10)
+		{
+			registry.destroy(entities[i]);
+		}
+		auto end = std::chrono::high_resolution_clock::now();
+		std::cout << "ECS: Destroy: " << (end - start).count() / 1000.0f / 1000.0f << "ms\n";
+
+		start = std::chrono::high_resolution_clock::now();
+		for (uint32_t i = 0; i < arrSize; ++i)
+		{
+			if (registry.has<TransformComponent, SpriteRenderComponent>(entities[i]))
+			{
+				auto [transform, render] = registry.get<TransformComponent, SpriteRenderComponent>(entities[i]);
+			}
+
+			if (registry.has<RenderComponent>(entities[i]))
+			{
+				auto& render = registry.get<RenderComponent>(entities[i]);
+			}
+		}
+		end = std::chrono::high_resolution_clock::now();
+		std::cout << "ENTT: Get&Has: " << (end - start).count() / 1000.0f / 1000.0f << "ms\n";
+	}
 }

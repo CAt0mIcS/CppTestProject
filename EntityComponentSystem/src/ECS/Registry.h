@@ -37,10 +37,21 @@ namespace ECS
 			return m_Entities.emplace_back((uint32_t)m_Entities.size());
 		}
 
+		void Destroy(Entity e)
+		{
+			m_Entities.erase(m_Entities.begin() + e);
+		}
+
 		template<typename... Component>
 		View<Component...> View()
 		{
 			return { Assure<Component>()... };
+		}
+
+		template<typename... Component>
+		bool Has(Entity e) const
+		{
+			return (Assure<Component>().Contains(e) && ...);
 		}
 
 	private:
@@ -51,7 +62,7 @@ namespace ECS
 		};
 
 		template<typename Component>
-		struct PoolHandler : ComponentStorage<Component>
+		struct PoolHandler : public ComponentStorage<Component>
 		{
 			template<typename... Args>
 			decltype(auto) Emplace(Entity e, Args&&... args)
@@ -67,6 +78,12 @@ namespace ECS
 
 		template<typename Component>
 		PoolHandler<Component>& Assure()
+		{
+			return const_cast<PoolHandler<Component>&>(std::as_const(*this).Assure<Component>());
+		}
+
+		template<typename Component>
+		const PoolHandler<Component>& Assure() const
 		{
 			if constexpr (HasComponentIndex<Component>::value)
 			{
@@ -104,9 +121,9 @@ namespace ECS
 		}
 
 	private:
-		std::vector<PoolData> m_Pools{};
+		mutable std::vector<PoolData> m_Pools{};
 		std::vector<Entity> m_Entities{};
-		Entity m_Destroyed{EntityNull};
+		Entity m_Destroyed{ EntityNull };
 	};
 }
 

@@ -34,6 +34,11 @@ namespace ECS
 			return const_cast<Component&>(std::as_const(*this).Get(entity));
 		}
 
+		bool Contains(Entity e) const
+		{
+			return EntityStorage::Contains(e);
+		}
+
 	private:
 		std::vector<Component> m_Instances;
 	};
