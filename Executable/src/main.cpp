@@ -146,7 +146,7 @@ void SpeedTest(uint32_t num = 1)
 
 int main()
 {
-	static constexpr uint64_t arrSize = 100000;
+	static constexpr uint64_t arrSize = 1000000;
 	SpeedTest<arrSize>(10);
 
 	//{

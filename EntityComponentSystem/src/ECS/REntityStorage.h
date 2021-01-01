@@ -4,6 +4,8 @@
 #include <vector>
 #include <assert.h>
 
+#include <algorithm>
+
 
 
 namespace At0::Ray::ECS
@@ -38,16 +40,10 @@ namespace At0::Ray::ECS
 			return m_Entities.size() > e;
 		}
 
-		virtual void RemoveEntity(Entity e)
-		{
-			for (uint32_t i = e + 1; i < m_Entities.size(); ++i)
-			{
-				--m_Entities[i].IndexInComponentVector;
-			}
-		}
+		virtual void RemoveEntity(Entity e) = 0;
 
 	private:
-		// ECS_TODO: Deleted entities shouldn't be erased from the vector (all elements behind need to be moved to fill the gap)
+		// RAY_TODO: Deleted entities shouldn't be erased from the vector (all elements behind need to be moved to fill the gap)
 		std::vector<MappedComponentIndex> m_Entities;
 	};
 }

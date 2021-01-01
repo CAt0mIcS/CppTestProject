@@ -12,16 +12,26 @@ namespace At0::Ray::ECS
 		template<typename... Args>
 		decltype(auto) Emplace(Entity e, Args&&... args)
 		{
-			if constexpr (std::is_aggregate_v<Component>)
+
+			if (m_FreeIndices.size() > 0)
 			{
-				m_Components.push_back(Component{ std::forward<Args>(args)... });
+				if constexpr (std::is_aggregate_v<Component>)
+					m_Components[m_FreeIndices.back()] = Component{ std::forward<Args>(args)... };
+				else
+					m_Components[m_FreeIndices.back()] = Component(std::forward<Args>(args)...);
+
+				m_FreeIndices.erase(m_FreeIndices.end() - 1);
+				EntityStorage::Emplace(e, (uint32_t)m_FreeIndices.back());
 			}
 			else
 			{
-				m_Components.emplace_back(std::forward<Args>(args)...);
-			}
+				if constexpr (std::is_aggregate_v<Component>)
+					m_Components.push_back(Component{ std::forward<Args>(args)... });
+				else
+					m_Components.emplace_back(std::forward<Args>(args)...);
 
-			EntityStorage::Emplace(e, (uint32_t)(m_Components.size() - 1));
+				EntityStorage::Emplace(e, (uint32_t)(m_Components.size() - 1));
+			}
 		}
 
 		void Remove(Entity e)
@@ -42,12 +52,13 @@ namespace At0::Ray::ECS
 	private:
 		virtual void RemoveEntity(Entity e) override
 		{
-			EntityStorage::RemoveEntity(e);
-			m_Components.erase(m_Components.begin() + EntityStorage::IndexInComponentVector(e));
+			uint32_t idxInCompVec = EntityStorage::IndexInComponentVector(e);
+			m_FreeIndices.emplace_back(idxInCompVec);
 		}
 
 	private:
 		std::vector<Component> m_Components;
+		std::vector<uint32_t> m_FreeIndices;
 	};
 }
 
