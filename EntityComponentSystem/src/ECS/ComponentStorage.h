@@ -1,46 +1,48 @@
 #pragma once
 
-#include "Internal.h"
 #include "EntityStorage.h"
 
 
-namespace ECS
+namespace At0::ECS
 {
 	template<typename Component>
-	struct ComponentStorage : EntityStorage
+	class ComponentStorage : public EntityStorage
 	{
 	public:
 		template<typename... Args>
-		decltype(auto) Emplace(Entity entity, Args&&... args)
+		decltype(auto) Emplace(Entity e, Args&&... args)
 		{
 			if constexpr (std::is_aggregate_v<Component>)
-				m_Instances.push_back(Component{ std::forward<Args>(args)... });
+			{
+				m_Components.push_back(Component{ std::forward<Args>(args)... });
+			}
 			else
-				m_Instances.emplace_back(std::forward<Args>(args)...);
+			{
+				m_Components.emplace_back(std::forward<Args>(args)...);
+			}
 
-			EntityStorage::Emplace(entity, (IndexType)m_Instances.size() - 1);
-
-			if constexpr (!std::is_empty_v<Component>)
-				return m_Instances.back();
+			EntityStorage::Emplace(e, (uint32_t(m_Components.size() - 1)));
 		}
 
-		const Component& Get(Entity entity) const
+		void Remove(Entity e)
 		{
-			return m_Instances[EntityStorage::Index(entity)];
+
 		}
 
-		Component& Get(Entity entity)
+		Component& Get(Entity e)
 		{
-			return const_cast<Component&>(std::as_const(*this).Get(entity));
+			return const_cast<Component&>(std::as_const(*this).Get(e));
 		}
 
-		bool Contains(Entity e) const
+		const Component& Get(Entity e) const
 		{
-			return EntityStorage::Contains(e);
+			return m_Components[EntityStorage::IndexInComponentVector(e)];
 		}
 
 	private:
-		std::vector<Component> m_Instances;
+		std::vector<Component> m_Components;
 	};
 }
+
+
 

@@ -2,19 +2,35 @@
 
 #include "Internal.h"
 #include "ComponentStorage.h"
-#include "View.h"
 
 #include <memory>
 
-namespace ECS
+
+namespace At0::ECS
 {
 	class Registry
 	{
 	public:
+		Registry()
+			: m_NextEntity(0), m_Pools{}
+		{
+
+		}
+
 		template<typename Component, typename... Args>
 		decltype(auto) Emplace(Entity e, Args&&... args)
 		{
-			return Assure<Component>().Emplace(e, std::forward<Args>(args)...);
+			return GetStorage<Component>().Emplace(e);
+		}
+
+		Entity Create()
+		{
+			return m_NextEntity++;
+		}
+
+		void Destroy(Entity e)
+		{
+
 		}
 
 		template<typename... Component>
@@ -22,7 +38,7 @@ namespace ECS
 		{
 			if constexpr (sizeof...(Component) == 1)
 			{
-				return (Assure<Component>().Get(e), ...);
+				return (GetStorage<Component>().Get(e), ...);
 			}
 			else
 			{
@@ -30,100 +46,43 @@ namespace ECS
 			}
 		}
 
-		Entity Create()
-		{
-			// TODO: Entity destruction mask
-
-			return m_Entities.emplace_back((uint32_t)m_Entities.size());
-		}
-
-		void Destroy(Entity e)
-		{
-			m_Entities.erase(m_Entities.begin() + e);
-		}
-
-		template<typename... Component>
-		View<Component...> View()
-		{
-			return { Assure<Component>()... };
-		}
-
 		template<typename... Component>
 		bool Has(Entity e) const
 		{
-			return (Assure<Component>().Contains(e) && ...);
+			return (GetStorage<Component>().Contains(e) && ...);
+		}
+
+		template<typename... Component>
+		bool Any(Entity e) const
+		{
+			return (GetStorage<Component>().Contains(e) || ...);
 		}
 
 	private:
-		struct PoolData
-		{
-			IndexType TypeID{};
-			std::unique_ptr<EntityStorage> Pool{};
-		};
-
 		template<typename Component>
-		struct PoolHandler : public ComponentStorage<Component>
+		const ComponentStorage<Component>& GetStorage() const
 		{
-			template<typename... Args>
-			decltype(auto) Emplace(Entity e, Args&&... args)
+			auto index = ComponentIndex<Component>::Value();
+
+			if (index >= m_Pools.size())
+				m_Pools.resize(((size_t)index) + 1);
+
+			if (std::unique_ptr<EntityStorage>& eStorage = m_Pools[index]; !eStorage)
 			{
-				return ComponentStorage<Component>::Emplace(e, std::forward<Args>(args)...);
+				eStorage = std::make_unique<ComponentStorage<Component>>();
 			}
 
-			Component& Get(Entity e)
-			{
-				return ComponentStorage<Component>::Get(e);
-			}
-		};
-
-		template<typename Component>
-		PoolHandler<Component>& Assure()
-		{
-			return const_cast<PoolHandler<Component>&>(std::as_const(*this).Assure<Component>());
+			return (ComponentStorage<Component>&)(*m_Pools[index]);
 		}
 
 		template<typename Component>
-		const PoolHandler<Component>& Assure() const
+		ComponentStorage<Component>& GetStorage()
 		{
-			if constexpr (HasComponentIndex<Component>::value)
-			{
-				const auto index = ComponentIndex<Component>::Value();
-
-				if (index >= m_Pools.size())
-					m_Pools.resize(index + 1);
-
-				if (auto&& pData = m_Pools[index]; !pData.Pool)
-				{
-					pData.TypeID = ComponentIndex<Component>::Value();
-					pData.Pool.reset(new PoolHandler<Component>());
-				}
-
-				return (PoolHandler<Component>&)(*m_Pools[index].Pool);
-			}
-			else
-			{
-				EntityStorage* candidate{ nullptr };
-
-				if (auto it = std::find_if(m_Pools.begin(), m_Pools.end(), [id = ComponentIndex<Component>::Value()](const auto& pData) { return id == pData.TypeID; }); it == m_Pools.cend())
-				{
-					candidate = m_Pools.emplace_back(PoolData{
-						ComponentIndex<Component>::Value(),
-						std::unique_ptr<EntityStorage>{new PoolHandler<Component>{}}
-						}
-					).Pool.get();
-				}
-				else
-				{
-					candidate = it->Pool.get();
-				}
-				return (PoolHandler<Component>&)(*candidate);
-			}
+			return const_cast<ComponentStorage<Component>&>(std::as_const(*this).GetStorage<Component>());
 		}
 
 	private:
-		mutable std::vector<PoolData> m_Pools{};
-		std::vector<Entity> m_Entities{};
-		Entity m_Destroyed{ EntityNull };
+		mutable std::vector<std::unique_ptr<EntityStorage>> m_Pools;
+		uint32_t m_NextEntity;
 	};
 }
-

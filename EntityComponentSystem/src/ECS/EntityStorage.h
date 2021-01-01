@@ -1,155 +1,50 @@
 #pragma once
 
-#include <vector>
 #include "Internal.h"
+#include <vector>
 #include <assert.h>
 
 
-namespace ECS
+
+namespace At0::ECS
 {
-	struct EntityStorage
+	class EntityStorage
 	{
 	private:
 		struct MappedComponentIndex
 		{
-			MappedComponentIndex(Entity e, IndexType idx)
-				: Entity(e), IndexInComponentVector(idx)
+			MappedComponentIndex(Entity e, uint32_t idx)
+				: IndexInComponentVector(idx), Entity(e)
 			{
 			}
 
+			uint32_t IndexInComponentVector;
 			Entity Entity;
-			IndexType IndexInComponentVector;
 		};
 
 	public:
-		class Iterator
+		void Emplace(Entity e, uint32_t compIdx)
 		{
-		public:
-			Iterator(const std::vector<MappedComponentIndex>& packed, IndexType index)
-				: m_Packed(packed), m_Idx(index) {}
-
-			Iterator& operator++()
-			{
-				return ++m_Idx, * this;
-			}
-
-			Iterator& operator--()
-			{
-				return --m_Idx, * this;
-			}
-
-			Iterator& operator+=(uint32_t value)
-			{
-				m_Idx -= value;
-				return *this;
-			}
-
-			Iterator& operator-=(uint32_t value)
-			{
-				m_Idx += value;
-				return *this;
-			}
-
-			Iterator operator+(uint32_t value) const
-			{
-				Iterator copy = *this;
-				return (copy += value);
-			}
-
-			Iterator operator-(uint32_t value) const
-			{
-				Iterator copy = *this;
-				return (copy -= value);
-			}
-
-			const Entity& operator[](size_t idx) const
-			{
-				const size_t pos = m_Idx - idx - 1;
-				return m_Packed[pos].Entity;
-			}
-
-			bool operator==(const Iterator& other) const
-			{
-				return other.m_Idx == m_Idx;
-			}
-
-			bool operator!=(const Iterator& other) const
-			{
-				return !(*this == other);
-			}
-
-			bool operator<(const Iterator& other) const
-			{
-				return m_Idx > other.m_Idx;
-			}
-
-			bool operator>(const Iterator& other) const
-			{
-				return m_Idx < other.m_Idx;
-			}
-
-			bool operator<=(const Iterator& other) const
-			{
-				return !(*this > other);
-			}
-
-			bool operator>=(const Iterator& other) const
-			{
-				return !(*this < other);
-			}
-
-			const Entity* operator->() const
-			{
-				const size_t pos = m_Idx;
-				return &m_Packed[pos].Entity;
-			}
-
-			const Entity& operator*() const
-			{
-				return *operator->();
-			}
-
-		private:
-			const std::vector<MappedComponentIndex>& m_Packed;
-			IndexType m_Idx;
-		};
-
-	public:
-		IndexType Size() const
-		{
-			return (IndexType)m_ComponentIndex.size();
+			m_Entities.emplace_back(e, compIdx);
 		}
 
-		Iterator begin() const
+		void Remove(Entity e)
 		{
-			return Iterator{ m_ComponentIndex, 0 };
+			assert(false && "Missing implementation");
 		}
 
-		Iterator end() const
+		uint32_t IndexInComponentVector(Entity e) const
 		{
-			return Iterator{ m_ComponentIndex, (IndexType)m_ComponentIndex.size() };
-		}
-
-		IndexType Index(Entity entity) const
-		{
-			return m_ComponentIndex[entity].IndexInComponentVector;
-		}
-
-		void Emplace(Entity entity, IndexType index)
-		{
-			m_ComponentIndex.emplace_back(entity, index);
+			return m_Entities[e].IndexInComponentVector;
 		}
 
 		bool Contains(Entity e) const
 		{
-			return m_ComponentIndex.size() > e;
+			return m_Entities.size() > e;
 		}
 
 	private:
-		// m_ComponentIndex[entity] == index in m_Instances;
-		std::vector<MappedComponentIndex> m_ComponentIndex;
-
+		// ECS_TODO: Deleted entities shouldn't be erased from the vector (all elements behind need to be moved to fill the gap)
+		std::vector<MappedComponentIndex> m_Entities;
 	};
 }
-
-

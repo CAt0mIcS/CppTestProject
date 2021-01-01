@@ -4,39 +4,32 @@
 #include <type_traits>
 
 
-namespace ECS
+namespace At0::ECS::Internal
 {
-	using IndexType = uint32_t;
-	using Entity = uint32_t;
-	inline constexpr uint32_t EntityNull = -1;
-
-	namespace Internal
+	struct ComponentIndex
 	{
-		struct ComponentIndex
+		static const uint32_t Value()
 		{
-			static IndexType Next()
-			{
-				static IndexType idx = 0;
-				return idx++;
-			}
-		};
-	}
+			static uint32_t next = 0;
+			return next++;
+		}
+	};
+}
 
+namespace At0::ECS
+{
+	using Entity = uint32_t;
 
 	template<typename Component>
 	struct ComponentIndex
 	{
-		static IndexType Value()
+		static const uint32_t Value()
 		{
-			static IndexType next = Internal::ComponentIndex::Next();
-			return next;
+			static const uint32_t value = Internal::ComponentIndex::Value();
+			return value;
 		}
 	};
 
-
-	// If ComponentIndex<Component>::Value() already exists for the component then the type from this function (decltype)
-	// will be converted to void and the std::true_type struct will be used because of template specialisation. If the function Value()
-	// for the specific component has not been generated, then decltype will fail and the std::false_type struct will be used.
 
 	template<typename, typename = void>
 	struct HasComponentIndex : std::false_type {};
