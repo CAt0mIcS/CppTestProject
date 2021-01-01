@@ -1,12 +1,12 @@
 #pragma once
 
-#include "Internal.h"
-#include "ComponentStorage.h"
+#include "RInternal.h"
+#include "RComponentStorage.h"
 
 #include <memory>
 
 
-namespace At0::ECS
+namespace At0::Ray::ECS
 {
 	class Registry
 	{

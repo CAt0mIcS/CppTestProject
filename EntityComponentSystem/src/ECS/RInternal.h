@@ -4,7 +4,7 @@
 #include <type_traits>
 
 
-namespace At0::ECS::Internal
+namespace At0::Ray::ECS::Internal
 {
 	struct ComponentIndex
 	{
@@ -16,7 +16,7 @@ namespace At0::ECS::Internal
 	};
 }
 
-namespace At0::ECS
+namespace At0::Ray::ECS
 {
 	using Entity = uint32_t;
 

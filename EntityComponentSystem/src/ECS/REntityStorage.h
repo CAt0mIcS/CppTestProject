@@ -1,12 +1,12 @@
 #pragma once
 
-#include "Internal.h"
+#include "RInternal.h"
 #include <vector>
 #include <assert.h>
 
 
 
-namespace At0::ECS
+namespace At0::Ray::ECS
 {
 	class EntityStorage
 	{
@@ -38,7 +38,13 @@ namespace At0::ECS
 			return m_Entities.size() > e;
 		}
 
-		virtual void RemoveEntity(Entity e) = 0;
+		virtual void RemoveEntity(Entity e)
+		{
+			for (uint32_t i = e + 1; i < m_Entities.size(); ++i)
+			{
+				--m_Entities[i].IndexInComponentVector;
+			}
+		}
 
 	private:
 		// ECS_TODO: Deleted entities shouldn't be erased from the vector (all elements behind need to be moved to fill the gap)

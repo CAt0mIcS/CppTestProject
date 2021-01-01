@@ -1,9 +1,9 @@
 #include "pch.h"
 #include "Components.h"
 
-#include "ECS\Registry.h"
+#include "ECS\RRegistry.h"
 
-using namespace At0;
+using namespace At0::Ray;
 
 
 
@@ -14,6 +14,8 @@ void SpeedTest(uint32_t num = 1)
 	float avgCreationTimeENTT = 0.0f;
 	float avgGetTimeECS = 0.0f;
 	float avgGetTimeENTT = 0.0f;
+	float avgDestroyTimeECS = 0.0f;
+	float avgDestroyTimeENTT = 0.0f;
 	float avgViewTimeECS = 0.0f;
 	float avgViewTimeENTT = 0.0f;
 	for (size_t i = 0; i <= num; ++i)
@@ -46,6 +48,15 @@ void SpeedTest(uint32_t num = 1)
 			end = std::chrono::high_resolution_clock::now();
 			avgGetTimeECS += (end - start).count() / 1000.0f / 1000.0f;
 			std::cout << "Get: " << (end - start).count() / 1000.0f / 1000.0f << "ms\n";
+
+			start = std::chrono::high_resolution_clock::now();
+			for (uint32_t i = 0; i < arrSize; ++i)
+			{
+				registry.Destroy(entities[i]);
+			}
+			end = std::chrono::high_resolution_clock::now();
+			avgDestroyTimeECS += (end - start).count() / 1000.0f / 1000.0f;
+			std::cout << "Destroy: " << (end - start).count() / 1000.0f / 1000.0f << "ms\n";
 
 			//start = std::chrono::high_resolution_clock::now();
 			//auto view = registry.View<TransformComponent, TagComponent, SpriteRenderComponent>();
@@ -89,6 +100,15 @@ void SpeedTest(uint32_t num = 1)
 			avgGetTimeENTT += (end - start).count() / 1000.0f / 1000.0f;
 			std::cout << "Get: " << (end - start).count() / 1000.0f / 1000.0f << "ms\n";
 
+			start = std::chrono::high_resolution_clock::now();
+			for (uint32_t i = 0; i < arrSize; ++i)
+			{
+				registry.destroy(entities[i]);
+			}
+			end = std::chrono::high_resolution_clock::now();
+			avgDestroyTimeENTT += (end - start).count() / 1000.0f / 1000.0f;
+			std::cout << "Destroy: " << (end - start).count() / 1000.0f / 1000.0f << "ms\n";
+
 			//start = std::chrono::high_resolution_clock::now();
 			//auto view = registry.view<TransformComponent, TagComponent, SpriteRenderComponent>();
 			//for (auto entity : view)
@@ -111,12 +131,14 @@ void SpeedTest(uint32_t num = 1)
 
 	std::cout << "ECS: \n\tAverage Creation Time: " << avgCreationTimeECS / num;
 	std::cout << "\n\tAverage Get Time: " << avgGetTimeECS / num;
+	std::cout << "\n\tAverage Destroy Time: " << avgDestroyTimeECS / num;
 	//std::cout << "\n\tAverage View Time: " << avgViewTimeECS / num;
 
 	std::cout << '\n';
 
 	std::cout << "ENTT: \n\tAverage Creation Time: " << avgCreationTimeENTT / num;
 	std::cout << "\n\tAverage Get Time: " << avgGetTimeENTT / num;
+	std::cout << "\n\tAverage Destroy Time: " << avgDestroyTimeENTT / num;
 	//std::cout << "\n\tAverage View Time: " << avgViewTimeENTT / num;
 }
 
@@ -124,8 +146,8 @@ void SpeedTest(uint32_t num = 1)
 
 int main()
 {
-	static constexpr uint64_t arrSize = 10000000;
-	//SpeedTest<arrSize>(10);
+	static constexpr uint64_t arrSize = 100000;
+	SpeedTest<arrSize>(10);
 
 	//{
 	//	ECS::Registry registry;

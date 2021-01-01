@@ -1,9 +1,9 @@
 #pragma once
 
-#include "EntityStorage.h"
+#include "REntityStorage.h"
 
 
-namespace At0::ECS
+namespace At0::Ray::ECS
 {
 	template<typename Component>
 	class ComponentStorage : public EntityStorage
@@ -21,7 +21,7 @@ namespace At0::ECS
 				m_Components.emplace_back(std::forward<Args>(args)...);
 			}
 
-			EntityStorage::Emplace(e, (uint32_t(m_Components.size() - 1)));
+			EntityStorage::Emplace(e, (uint32_t)(m_Components.size() - 1));
 		}
 
 		void Remove(Entity e)
@@ -42,6 +42,7 @@ namespace At0::ECS
 	private:
 		virtual void RemoveEntity(Entity e) override
 		{
+			EntityStorage::RemoveEntity(e);
 			m_Components.erase(m_Components.begin() + EntityStorage::IndexInComponentVector(e));
 		}
 

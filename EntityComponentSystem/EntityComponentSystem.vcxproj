@@ -19,10 +19,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\ECS\ComponentStorage.h" />
-    <ClInclude Include="src\ECS\EntityStorage.h" />
-    <ClInclude Include="src\ECS\Internal.h" />
-    <ClInclude Include="src\ECS\Registry.h" />
+    <ClInclude Include="src\ECS\RComponentStorage.h" />
+    <ClInclude Include="src\ECS\REntityStorage.h" />
+    <ClInclude Include="src\ECS\RInternal.h" />
+    <ClInclude Include="src\ECS\RRegistry.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
