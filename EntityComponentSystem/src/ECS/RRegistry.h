@@ -20,7 +20,7 @@ namespace At0::Ray::ECS
 		template<typename Component, typename... Args>
 		decltype(auto) Emplace(Entity e, Args&&... args)
 		{
-			return GetStorage<Component>().Emplace(e);
+			return GetStorage<Component>().Emplace(e, std::forward<Args>(args)...);
 		}
 
 		Entity Create()
@@ -36,9 +36,28 @@ namespace At0::Ray::ECS
 
 		void Destroy(Entity e)
 		{
+			//for (uint32_t pos = m_Pools.size(); pos; --pos)
+			//{
+			//	if (std::unique_ptr<EntityStorage>& pool = m_Pools[pos - 1]; pool && pool->Contains(e))
+			//	{
+			//		pool->RemoveEntity(e);
+			//	}
+			//}
+
 			for (std::unique_ptr<EntityStorage>& pool : m_Pools)
 			{
-				pool->RemoveEntity(e);
+				if (pool->Contains(e))
+					pool->RemoveEntity(e);
+			}
+		}
+
+		template<typename... Component>
+		void Erase(Entity e)
+		{
+			for (std::unique_ptr<EntityStorage>& pool : m_Pools)
+			{
+				if (pool->Contains(e))
+					(((ComponentStorage<Component>&)(*pool)).Remove(e), ...);
 			}
 		}
 

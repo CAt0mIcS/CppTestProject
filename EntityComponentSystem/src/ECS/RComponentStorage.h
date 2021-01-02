@@ -19,8 +19,8 @@ namespace At0::Ray::ECS
 				else
 					m_Components[m_FreeIndices.back()] = Component(std::forward<Args>(args)...);
 
-				m_FreeIndices.erase(m_FreeIndices.end() - 1);
 				EntityStorage::Emplace(e, (uint32_t)m_FreeIndices.back());
+				m_FreeIndices.erase(m_FreeIndices.end() - 1);
 			}
 			else
 			{
@@ -35,7 +35,7 @@ namespace At0::Ray::ECS
 
 		void Remove(Entity e)
 		{
-
+			m_FreeIndices.emplace_back(EntityStorage::IndexInComponentVector(e));
 		}
 
 		Component& Get(Entity e)
@@ -51,8 +51,8 @@ namespace At0::Ray::ECS
 	private:
 		virtual void RemoveEntity(Entity e) override
 		{
-			uint32_t idxInCompVec = EntityStorage::IndexInComponentVector(e);
-			m_FreeIndices.emplace_back(idxInCompVec);
+			// RAY_TODO: Also erase entity in EntityStorage
+			m_FreeIndices.emplace_back(EntityStorage::IndexInComponentVector(e));
 		}
 
 	private:
