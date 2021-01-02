@@ -12,7 +12,7 @@ namespace At0::Ray::ECS
 	{
 	public:
 		Registry()
-			: m_Pools{}
+			: m_Entities{}, m_FreeEntities{}, m_Pools{}
 		{
 
 		}
@@ -123,7 +123,7 @@ namespace At0::Ray::ECS
 
 	private:
 		mutable std::vector<std::unique_ptr<EntityStorage>> m_Pools;
-		std::vector<Entity> m_Entities;
 		std::vector<uint32_t> m_FreeEntities;
+		std::vector<Entity> m_Entities;
 	};
 }

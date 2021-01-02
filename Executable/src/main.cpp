@@ -228,6 +228,32 @@ void UsageTest()
 			throw std::runtime_error(oss.str());
 		}
 	}
+
+
+	for (uint32_t i = 0; i < arrSize; ++i)
+	{
+		if (i % 20 == 0)
+		{
+			registry.Destroy(entities[i]);
+		}
+	}
+
+	for (uint32_t i = 0; i < arrSize; ++i)
+	{
+		entities[i] = registry.Create();
+		registry.Emplace<TransformComponent>(entities[i], (float)i);
+	}
+
+	for (uint32_t i = 0; i < arrSize; ++i)
+	{
+		TransformComponent& tform = registry.Get<TransformComponent>(entities[i]);
+		if (tform.x != i)
+		{
+			std::ostringstream oss;
+			oss << tform.x << " != " << i << " (e=" << entities[i] << ")\n";
+			throw std::runtime_error(oss.str());
+		}
+	}
 }
 
 
@@ -235,9 +261,9 @@ void UsageTest()
 
 int main()
 {
-	static constexpr uint64_t arrSize = 1000000;
+	static constexpr uint64_t arrSize = 10000000;
 	SpeedTest<arrSize>(10);
-	UsageTest<10>();
+	UsageTest<arrSize>();
 
 	//{
 	//	ECS::Registry registry;
