@@ -14,40 +14,57 @@ namespace At0::Ray::ECS
 		struct MappedComponentIndex
 		{
 			MappedComponentIndex(Entity e, uint32_t idx)
-				: IndexInComponentVector(idx), Entity(e)
-			{
-			}
+				: Entity(e), IndexInComponentVector(idx) {}
 
-			uint32_t IndexInComponentVector;
 			Entity Entity;
+			uint32_t IndexInComponentVector;
 		};
 
 	public:
-		void Emplace(Entity e, uint32_t compIdx)
+		void Emplace(Entity e, uint32_t idxInCompVec)
 		{
-			m_Entities.emplace_back(e, compIdx);
+			m_Packed.emplace_back(e, idxInCompVec);
+			m_Sparse.emplace_back(m_NumElements);
+			++m_NumElements;
 		}
 
-		uint32_t IndexInComponentVector(Entity e) const
+		void Delete(Entity e)
 		{
-			return m_Entities[e].IndexInComponentVector;
+			assert(Contains(e), "[EntityStorage::Delete] Entity (ID={0}) not stored.");
+			MappedComponentIndex temp = m_Packed.back();
+			m_Packed[m_Sparse[e]] = temp;
+			m_Sparse[temp.IndexInComponentVector] = m_Sparse[e];
+
+			--m_NumElements;
+		}
+
+		void Clear()
+		{
+			m_NumElements = 0;
 		}
 
 		bool Contains(Entity e) const
 		{
-			return m_Entities.size() > e;
+			return e < m_Sparse.size() && m_Sparse[e] < m_NumElements&& m_Packed[m_Sparse[e]].Entity == e;
 		}
 
 		virtual void RemoveEntity(Entity e) = 0;
 
 	protected:
-		void SetComponentIndex(Entity e, uint32_t compIdx)
+		uint32_t IndexInComponentVector(Entity e) const
 		{
-			m_Entities[e].IndexInComponentVector = compIdx;
+			return m_Packed[m_Sparse[e]].IndexInComponentVector;
+		}
+
+		void SetComponentIndex(Entity e, uint32_t idx)
+		{
+			m_Packed[m_Sparse[e]].IndexInComponentVector = idx;
 		}
 
 	private:
-		// RAY_TODO: Deleted entities shouldn't be erased from the vector (all elements behind need to be moved to fill the gap)
-		std::vector<MappedComponentIndex> m_Entities;
+		std::vector<MappedComponentIndex> m_Packed{};
+		std::vector<uint32_t> m_Sparse{};
+
+		uint32_t m_NumElements{ 0 };
 	};
 }

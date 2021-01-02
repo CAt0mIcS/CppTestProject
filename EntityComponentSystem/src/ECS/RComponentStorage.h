@@ -53,6 +53,7 @@ namespace At0::Ray::ECS
 		{
 			// RAY_TODO: Also erase entity in EntityStorage
 			m_FreeIndices.emplace_back(EntityStorage::IndexInComponentVector(e));
+			EntityStorage::Delete(e);
 		}
 
 	private:

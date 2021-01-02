@@ -189,7 +189,7 @@ template<size_t arrSize = 1000>
 void UsageTest()
 {
 	ECS::Registry registry;
-	ECS::Entity* entities = new ECS::Entity[arrSize];
+	std::array<ECS::Entity, arrSize> entities{};
 
 	for (uint32_t i = 0; i < arrSize; ++i)
 	{
@@ -216,6 +216,9 @@ void UsageTest()
 	for (uint32_t i = 0; i < arrSize; ++i)
 	{
 		registry.Emplace<TransformComponent>(entities[i], (float)i);
+
+		if (i % 10 == 0)
+			registry.Emplace<RenderComponent>(entities[i], i);
 	}
 
 	for (uint32_t i = 0; i < arrSize; ++i)
@@ -226,6 +229,18 @@ void UsageTest()
 			std::ostringstream oss;
 			oss << tform.x << " != " << i << " (e=" << entities[i] << ")\n";
 			throw std::runtime_error(oss.str());
+		}
+
+		if (registry.Has<RenderComponent>(entities[i]))
+		{
+			RenderComponent& renderComp = registry.Get<RenderComponent>(entities[i]);
+
+			if (renderComp.RendererID != i)
+			{
+				std::ostringstream oss;
+				oss << renderComp.RendererID << " != " << i << " (e=" << entities[i] << ")\n";
+				throw std::runtime_error(oss.str());
+			}
 		}
 	}
 
@@ -240,29 +255,44 @@ void UsageTest()
 
 	for (uint32_t i = 0; i < arrSize; ++i)
 	{
-		entities[i] = registry.Create();
-		registry.Emplace<TransformComponent>(entities[i], (float)i);
+		if (i % 20 == 0)
+		{
+			entities[i] = registry.Create();
+			registry.Emplace<TransformComponent>(entities[i], (float)i);
+		}
 	}
+
+	//for (uint32_t i = 0; i < arrSize; ++i)
+	//{
+	//	TransformComponent& tform = registry.Get<TransformComponent>(entities[i]);
+	//	if (tform.x != i)
+	//	{
+	//		std::ostringstream oss;
+	//		oss << tform.x << " != " << i << " (e=" << entities[i] << ")\n";
+	//		throw std::runtime_error(oss.str());
+	//	}
+	//}
 
 	for (uint32_t i = 0; i < arrSize; ++i)
 	{
-		TransformComponent& tform = registry.Get<TransformComponent>(entities[i]);
-		if (tform.x != i)
+		if (registry.Has<TransformComponent>(entities[i]))
 		{
-			std::ostringstream oss;
-			oss << tform.x << " != " << i << " (e=" << entities[i] << ")\n";
-			throw std::runtime_error(oss.str());
+			auto& tform = registry.Get<TransformComponent>(entities[i]);
+			if (tform.x != i)
+			{
+				std::ostringstream oss;
+				oss << tform.x << " != " << i << " (e=" << entities[i] << ")\n";
+				throw std::runtime_error(oss.str());
+			}
 		}
 	}
 }
 
 
-
-
 int main()
 {
-	static constexpr uint64_t arrSize = 10000000;
-	SpeedTest<arrSize>(10);
+	static constexpr uint64_t arrSize = 1000000;
+	SpeedTest<arrSize>(1);
 	UsageTest<arrSize>();
 
 	//{

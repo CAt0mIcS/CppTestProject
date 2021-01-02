@@ -20,6 +20,7 @@ namespace At0::Ray::ECS
 		template<typename Component, typename... Args>
 		decltype(auto) Emplace(Entity e, Args&&... args)
 		{
+			assert(IsValid(e), "[Registry::Emplace] Entity (ID={0}) is invalid.", e);
 			return GetStorage<Component>().Emplace(e, std::forward<Args>(args)...);
 		}
 
@@ -38,25 +39,24 @@ namespace At0::Ray::ECS
 			}
 		}
 
-		template<typename Component>
+		template<typename... Component>
 		void Remove(Entity e)
 		{
+			assert(IsValid(e), "[Registry::Remove] Entity (ID={0}) is invalid.", e);
+			(GetStorage<Component>().Remove(e), ...);
+		}
 
+		bool IsValid(Entity e) const
+		{
+			return std::find(m_FreeEntities.begin(), m_FreeEntities.end(), e) == m_FreeEntities.end();
 		}
 
 		void Destroy(Entity e)
 		{
-			//for (uint32_t pos = m_Pools.size(); pos; --pos)
-			//{
-			//	if (std::unique_ptr<EntityStorage>& pool = m_Pools[pos - 1]; pool && pool->Contains(e))
-			//	{
-			//		pool->RemoveEntity(e);
-			//	}
-			//}
-
+			assert(IsValid(e), "[Registry::Destroy] Entity (ID={0}) is invalid.", e);
 			for (std::unique_ptr<EntityStorage>& pool : m_Pools)
 			{
-				if (pool->Contains(e))
+				if (pool && pool->Contains(e))
 					pool->RemoveEntity(e);
 			}
 
@@ -66,6 +66,7 @@ namespace At0::Ray::ECS
 		template<typename... Component>
 		void Erase(Entity e)
 		{
+			assert(IsValid(e), "[Registry::Erase] Entity (ID={0}) is invalid.", e);
 			for (std::unique_ptr<EntityStorage>& pool : m_Pools)
 			{
 				if (pool->Contains(e))
@@ -76,6 +77,7 @@ namespace At0::Ray::ECS
 		template<typename... Component>
 		decltype(auto) Get(Entity e)
 		{
+			assert(IsValid(e), "[Registry::Get] Entity (ID={0}) is invalid.", e);
 			if constexpr (sizeof...(Component) == 1)
 			{
 				return (GetStorage<Component>().Get(e), ...);
@@ -89,12 +91,14 @@ namespace At0::Ray::ECS
 		template<typename... Component>
 		bool Has(Entity e) const
 		{
+			assert(IsValid(e), "[Registry::Has] Entity (ID={0}) is invalid.", e);
 			return (GetStorage<Component>().Contains(e) && ...);
 		}
 
 		template<typename... Component>
 		bool Any(Entity e) const
 		{
+			assert(IsValid(e), "[Registry::Any] Entity (ID={0}) is invalid.", e);
 			return (GetStorage<Component>().Contains(e) || ...);
 		}
 
