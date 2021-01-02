@@ -185,11 +185,59 @@ void SpeedTest(uint32_t num = 1)
 }
 
 
+template<size_t arrSize = 1000>
+void UsageTest()
+{
+	ECS::Registry registry;
+	ECS::Entity* entities = new ECS::Entity[arrSize];
+
+	for (uint32_t i = 0; i < arrSize; ++i)
+	{
+		entities[i] = registry.Create();
+		registry.Emplace<TransformComponent>(entities[i], (float)i);
+	}
+
+	for (uint32_t i = 0; i < arrSize; ++i)
+	{
+		TransformComponent& tform = registry.Get<TransformComponent>(entities[i]);
+		if (tform.x != i)
+		{
+			std::ostringstream oss;
+			oss << tform.x << " != " << i << " (e=" << entities[i] << ")\n";
+			throw std::runtime_error(oss.str());
+		}
+	}
+
+	for (uint32_t i = 0; i < arrSize; ++i)
+	{
+		registry.Erase<TransformComponent>(entities[i]);
+	}
+
+	for (uint32_t i = 0; i < arrSize; ++i)
+	{
+		registry.Emplace<TransformComponent>(entities[i], (float)i);
+	}
+
+	for (uint32_t i = 0; i < arrSize; ++i)
+	{
+		TransformComponent& tform = registry.Get<TransformComponent>(entities[i]);
+		if (tform.x != i)
+		{
+			std::ostringstream oss;
+			oss << tform.x << " != " << i << " (e=" << entities[i] << ")\n";
+			throw std::runtime_error(oss.str());
+		}
+	}
+}
+
+
+
 
 int main()
 {
-	static constexpr uint64_t arrSize = 10000000;
+	static constexpr uint64_t arrSize = 1000000;
 	SpeedTest<arrSize>(10);
+	UsageTest<10>();
 
 	//{
 	//	ECS::Registry registry;
@@ -263,14 +311,4 @@ int main()
 	//	end = std::chrono::high_resolution_clock::now();
 	//	std::cout << "ENTT: Get&Has: " << (end - start).count() / 1000.0f / 1000.0f << "ms\n";
 	//}
-
-	ECS::Registry registry;
-	ECS::Entity e = registry.Create();
-
-	registry.Emplace<TransformComponent>(e, 32.3254f);
-	registry.Emplace<TagComponent>(e, "Tag1");
-	TransformComponent& tform = registry.Get<TransformComponent>(e);
-	TagComponent& tag = registry.Get<TagComponent>(e);
-
-	registry.Destroy(e);
 }

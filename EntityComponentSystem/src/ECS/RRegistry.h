@@ -12,7 +12,7 @@ namespace At0::Ray::ECS
 	{
 	public:
 		Registry()
-			: m_NextEntity(0), m_Pools{}
+			: m_Pools{}
 		{
 
 		}
@@ -25,7 +25,17 @@ namespace At0::Ray::ECS
 
 		Entity Create()
 		{
-			return m_NextEntity++;
+			if (m_FreeEntities.size() > 0)
+			{
+				uint32_t index = m_FreeEntities.back();
+				m_Entities[index] = index;
+				m_FreeEntities.erase(m_FreeEntities.end() - 1);
+				return index;
+			}
+			else
+			{
+				return m_Entities.emplace_back((Entity)m_Entities.size());
+			}
 		}
 
 		template<typename Component>
@@ -49,6 +59,8 @@ namespace At0::Ray::ECS
 				if (pool->Contains(e))
 					pool->RemoveEntity(e);
 			}
+
+			m_FreeEntities.emplace_back(e);
 		}
 
 		template<typename... Component>
@@ -111,6 +123,7 @@ namespace At0::Ray::ECS
 
 	private:
 		mutable std::vector<std::unique_ptr<EntityStorage>> m_Pools;
-		uint32_t m_NextEntity;
+		std::vector<Entity> m_Entities;
+		std::vector<uint32_t> m_FreeEntities;
 	};
 }

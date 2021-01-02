@@ -1,11 +1,9 @@
 #pragma once
 
 #include "RInternal.h"
+
 #include <vector>
 #include <assert.h>
-
-#include <algorithm>
-
 
 
 namespace At0::Ray::ECS
@@ -41,6 +39,12 @@ namespace At0::Ray::ECS
 		}
 
 		virtual void RemoveEntity(Entity e) = 0;
+
+	protected:
+		void SetComponentIndex(Entity e, uint32_t compIdx)
+		{
+			m_Entities[e].IndexInComponentVector = compIdx;
+		}
 
 	private:
 		// RAY_TODO: Deleted entities shouldn't be erased from the vector (all elements behind need to be moved to fill the gap)

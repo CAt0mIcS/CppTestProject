@@ -19,7 +19,7 @@ namespace At0::Ray::ECS
 				else
 					m_Components[m_FreeIndices.back()] = Component(std::forward<Args>(args)...);
 
-				EntityStorage::Emplace(e, (uint32_t)m_FreeIndices.back());
+				EntityStorage::SetComponentIndex(e, (uint32_t)m_FreeIndices.back());
 				m_FreeIndices.erase(m_FreeIndices.end() - 1);
 			}
 			else
