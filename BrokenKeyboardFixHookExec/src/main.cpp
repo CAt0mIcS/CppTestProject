@@ -10,6 +10,7 @@ void(*HookAttachFn)();
 void(*HookDetachFn)();
 uint32_t(*GetWCounter)();
 char* (*DebugInfo)();
+void(*SetUpperThreshold)(uint64_t);
 
 Key prevKey = (Key)0;
 uint64_t msOfLastPress = 0;
@@ -63,37 +64,38 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 }
 
 
-int APIENTRY wWinMain(HINSTANCE, HINSTANCE, PWSTR, int)
-{
-	AllocConsole();
-	freopen("CONOUT$", "w", stdout);
-
-	HMODULE hLib = LoadLibrary(L"BrokenKeyboardFixHook.dll");
-	HookAttachFn = (void(*)())GetProcAddress(hLib, "AttachHook");
-	HookDetachFn = (void(*)())GetProcAddress(hLib, "DetachHook");
-	GetWCounter = (uint32_t(*)())GetProcAddress(hLib, "GetWCounter");
-	DebugInfo = (char* (*)())GetProcAddress(hLib, "DebugInfo");
-
-	WNDCLASS wc{};
-	wc.lpfnWndProc = WndProc;
-	wc.hInstance = GetModuleHandle(NULL);
-	wc.lpszClassName = L"CLASSNAME";
-
-	RegisterClass(&wc);
-	HWND hWnd = CreateWindow(L"CLASSNAME", L"W", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, 0, 0, 0, 0);
-	ShowWindow(hWnd, SW_SHOWDEFAULT);
-
-	HookAttachFn();
-
-	MSG msg{};
-	while (GetMessage(&msg, 0, 0, 0))
-	{
-		TranslateMessage(&msg);
-		DispatchMessageW(&msg);
-	}
-
-	HookDetachFn();
-}
+//int APIENTRY wWinMain(HINSTANCE, HINSTANCE, PWSTR, int)
+//{
+//	AllocConsole();
+//	freopen("CONOUT$", "w", stdout);
+//
+//	HMODULE hLib = LoadLibrary(L"BrokenKeyboardFixHook.dll");
+//	HookAttachFn = (void(*)())GetProcAddress(hLib, "AttachHook");
+//	HookDetachFn = (void(*)())GetProcAddress(hLib, "DetachHook");
+//	GetWCounter = (uint32_t(*)())GetProcAddress(hLib, "GetWCounter");
+//	DebugInfo = (char* (*)())GetProcAddress(hLib, "DebugInfo");
+//	SetUpperThreshold = (void(*)(uint64_t))GetProcAddress(hLib, "SetUpperThreshold");
+//
+//	WNDCLASS wc{};
+//	wc.lpfnWndProc = WndProc;
+//	wc.hInstance = GetModuleHandle(NULL);
+//	wc.lpszClassName = L"CLASSNAME";
+//
+//	RegisterClass(&wc);
+//	HWND hWnd = CreateWindow(L"CLASSNAME", L"W", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, 0, 0, 0, 0);
+//	ShowWindow(hWnd, SW_SHOWDEFAULT);
+//
+//	HookAttachFn();
+//
+//	MSG msg{};
+//	while (GetMessage(&msg, 0, 0, 0))
+//	{
+//		TranslateMessage(&msg);
+//		DispatchMessageW(&msg);
+//	}
+//
+//	HookDetachFn();
+//}
 
 
 #include <stdio.h>
@@ -154,36 +156,35 @@ HWND WINAPI CreateTrackbar(
 
 
 
-HHOOK hHook{ NULL };
-uint32_t upperThreshold = 100;
-//uint32_t lowerThreshold = 60;
+//HHOOK hHook{ NULL };
+uint32_t upperThreshold = 150;
 
-LRESULT CALLBACK KeyboardHook(int code, WPARAM wParam, LPARAM lParam)
-{
-	if (wParam == WM_KEYDOWN)
-	{
-		KBDLLHOOKSTRUCT* pHook = (KBDLLHOOKSTRUCT*)lParam;
-		Key key = GetKeycodeMap()[pHook->scanCode];
-		uint64_t now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count();
-
-		// Trying to detect repeated keys
-		std::cout << now - msOfLastPress << '\n';
-		//if (now - msOfLastPress < lowerThreshold)
-		//	return CallNextHookEx(hHook, code, wParam, lParam);
-
-		if (prevKey == key && now - msOfLastPress < upperThreshold)
-		{
-			//std::cout << "---------- Skipping Key ----------\n";
-			return -1;
-		}
-
-		if (prevKey == key)
-			msOfLastPress = now;
-		prevKey = key;
-	}
-
-	return CallNextHookEx(hHook, code, wParam, lParam);
-}
+//LRESULT CALLBACK KeyboardHook(int code, WPARAM wParam, LPARAM lParam)
+//{
+//	if (wParam == WM_KEYDOWN)
+//	{
+//		KBDLLHOOKSTRUCT* pHook = (KBDLLHOOKSTRUCT*)lParam;
+//		Key key = GetKeycodeMap()[pHook->scanCode];
+//		uint64_t now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count();
+//
+//		// Trying to detect repeated keys
+//		std::cout << now - msOfLastPress << '\n';
+//		//if (now - msOfLastPress < lowerThreshold)
+//		//	return CallNextHookEx(hHook, code, wParam, lParam);
+//
+//		if (prevKey == key && now - msOfLastPress < upperThreshold)
+//		{
+//			//std::cout << "---------- Skipping Key ----------\n";
+//			return -1;
+//		}
+//
+//		if (prevKey == key)
+//			msOfLastPress = now;
+//		prevKey = key;
+//	}
+//
+//	return CallNextHookEx(hHook, code, wParam, lParam);
+//}
 
 
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -192,7 +193,7 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 	case WM_DESTROY:
 	{
-		UnhookWindowsHookEx(hHook);
+		HookDetachFn();
 		PostQuitMessage(0);
 		return 0;
 	}
@@ -201,6 +202,7 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		if (LOWORD(wParam) == SB_THUMBPOSITION || LOWORD(wParam) == SB_THUMBTRACK)
 		{
 			upperThreshold = HIWORD(wParam);
+			SetUpperThreshold(upperThreshold);
 			InvalidateRect(hWnd, nullptr, TRUE);
 			UpdateWindow(hWnd);
 		}
@@ -253,45 +255,45 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 }
 
 
-//int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int)
-//{
-//	//AllocConsole();
-//	//freopen("CONOUT$", "w", stdout);
-//
-//	hHook = SetWindowsHookEx(WH_KEYBOARD_LL, KeyboardHook, NULL, 0);
-//	if (!hHook)
-//	{
-//		MessageBox(NULL, L"Failed to set hook", L"Error", MB_OK | MB_ICONERROR);
-//		exit(-1);
-//	}
-//
-//	WNDCLASS wc{};
-//	wc.lpfnWndProc = WindowProc;
-//	wc.hInstance = hInstance;
-//	wc.lpszClassName = L"MAINWINDOWCLASS";
-//
-//	RegisterClass(&wc);
-//	HWND hWnd = CreateWindow(L"MAINWINDOWCLASS", L"Broken Keyboard Fix Hook", WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX, CW_USEDEFAULT, CW_USEDEFAULT, 350, 120, 0, 0, hInstance, 0);
-//
-//	HWND trackbar = CreateTrackbar(hWnd, 0, 200, 0, 200);
-//	SendMessage(trackbar, TBM_SETPOS, TRUE, upperThreshold);
-//
-//	NOTIFYICONDATA dt{};
-//	dt.cbSize = sizeof(dt);
-//	dt.hWnd = hWnd;
-//	dt.uFlags = NIF_MESSAGE | NIF_TIP;
-//	dt.uCallbackMessage = SHELLICON_CALLBACK_ID;
-//	wcscpy(dt.szTip, L"Broken Keyboard Fix Hook");
-//	dt.uID = 0x3f;
-//
-//	Shell_NotifyIcon(NIM_ADD, &dt);
-//
-//	MSG msg{};
-//	while (GetMessage(&msg, NULL, 0, 0))
-//	{
-//		TranslateMessage(&msg);
-//		DispatchMessage(&msg);
-//	}
-//
-//	return 0;
-//}
+int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int)
+{
+	HMODULE hLib = LoadLibrary(L"BrokenKeyboardFixHook-Win32.dll");
+	HookAttachFn = (void(*)())GetProcAddress(hLib, "AttachHook");
+	HookDetachFn = (void(*)())GetProcAddress(hLib, "DetachHook");
+	GetWCounter = (uint32_t(*)())GetProcAddress(hLib, "GetWCounter");
+	DebugInfo = (char* (*)())GetProcAddress(hLib, "DebugInfo");
+	SetUpperThreshold = (void(*)(uint64_t))GetProcAddress(hLib, "SetUpperThreshold");
+
+	WNDCLASS wc{};
+	wc.lpfnWndProc = WindowProc;
+	wc.hInstance = hInstance;
+	wc.lpszClassName = L"FixBrokenKeyboardUsingHookAdjustmentWindow(Win32)";
+
+	RegisterClass(&wc);
+	HWND hWnd = CreateWindow(L"FixBrokenKeyboardUsingHookAdjustmentWindow(Win32)", L"Broken Keyboard Fix Hook (Win32)", WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX, CW_USEDEFAULT, CW_USEDEFAULT, 350, 120, 0, 0, hInstance, 0);
+
+	HWND trackbar = CreateTrackbar(hWnd, 0, 250, 0, 200);
+	SendMessage(trackbar, TBM_SETPOS, TRUE, upperThreshold);
+
+	HookAttachFn();
+
+	NOTIFYICONDATA dt{};
+	dt.cbSize = sizeof(dt);
+	dt.hWnd = hWnd;
+	dt.uFlags = NIF_MESSAGE | NIF_TIP | NIF_ICON;
+	dt.uCallbackMessage = SHELLICON_CALLBACK_ID;
+	dt.hIcon = LoadIcon(NULL, IDI_SHIELD);
+	wcscpy(dt.szTip, L"Broken Keyboard Fix Hook (Win32)");
+	dt.uID = 0x3f;
+
+	Shell_NotifyIcon(NIM_ADD, &dt);
+
+	MSG msg{};
+	while (GetMessage(&msg, NULL, 0, 0))
+	{
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
+
+	return 0;
+}

@@ -11,7 +11,7 @@
 #pragma comment(linker, "/SECTION:.SHARED,RWS")
 #pragma data_seg(".SHARED")
 HHOOK hKeyboardHook = 0;
-uint32_t wCounter = 0;
+//uint32_t wCounter = 0;
 #pragma data_seg()
 
 //
@@ -20,6 +20,7 @@ uint32_t wCounter = 0;
 HMODULE hInstance = 0;
 Key prevKey = (Key)0;
 uint64_t msOfLastPress = 0;
+uint64_t upperThreshold = 150;
 
 
 BOOL APIENTRY DllMain(HMODULE hModule,
@@ -41,12 +42,11 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 	return TRUE;
 }
 
-char debugInfo[256];
+//char debugInfo[256];
 LRESULT __declspec(dllexport) CALLBACK KeyboardProc(int code, WPARAM wParam, LPARAM lParam)
 {
 	if (code >= HC_ACTION)
 	{
-		uint64_t upperThreshold = 150;
 		//MSG& msg = *(MSG*)lParam;
 		bool pressed = (HIWORD(lParam) & KF_UP) ? false : true;
 		//if (msg.message == WM_KEYDOWN)
@@ -62,21 +62,21 @@ LRESULT __declspec(dllexport) CALLBACK KeyboardProc(int code, WPARAM wParam, LPA
 			Key key = GetKeycodeMap()[scancode];
 			uint64_t now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count();
 
-			std::ostringstream oss;
-			oss << "Now: " << now << "\nMsLastPress: " << msOfLastPress << "\nDiff: " << now - msOfLastPress << "\nTreshold: " << upperThreshold;
-			strcpy(debugInfo, oss.str().c_str());
+			//std::ostringstream oss;
+			//oss << "Now: " << now << "\nMsLastPress: " << msOfLastPress << "\nDiff: " << now - msOfLastPress << "\nTreshold: " << upperThreshold;
+			//strcpy(debugInfo, oss.str().c_str());
 
 			if (prevKey == key && now - msOfLastPress < upperThreshold)
 			{
 				//std::cout << "---------- Skipping Key ----------\n";
 				//msg.message = WM_NULL;
-				--wCounter;
+				//--wCounter;
 				return 0;
 			}
 
 			msOfLastPress = now;
 			prevKey = key;
-			++wCounter;
+			//++wCounter;
 		}
 	}
 	return CallNextHookEx(hKeyboardHook, code, wParam, lParam);
@@ -98,16 +98,17 @@ extern "C"
 
 	__declspec(dllexport) uint32_t GetWCounter()
 	{
-		return wCounter;
+		//return wCounter;
+		return 0;
 	}
 
 	__declspec(dllexport) void SetUpperThreshold(uint64_t threshold)
 	{
-		// upperThreshold = threshold;
+		upperThreshold = threshold;
 	}
 
-	__declspec(dllexport) char* DebugInfo()
-	{
-		return debugInfo;
-	}
+	//__declspec(dllexport) char* DebugInfo()
+	//{
+	//	return debugInfo;
+	//}
 }
