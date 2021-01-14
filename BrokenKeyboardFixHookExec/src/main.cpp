@@ -7,10 +7,10 @@
 
 void(*HookAttachFn)();
 void(*HookDetachFn)();
+uint32_t(*GetWCounter)();
 
 Key prevKey = (Key)0;
 uint64_t msOfLastPress = 0;
-int wWritten = 0;
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	switch (uMsg)
@@ -40,13 +40,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 		//prevKey = key;
 		//std::cout << KeyToString(key) << '\n';
-		++wWritten;
 
 		HDC hDC = GetDC(hWnd);
 		RECT rc;
 		GetClientRect(hWnd, &rc);
 		SetTextColor(hDC, 0x00000000);
-		DrawTextA(hDC, std::to_string(wWritten).c_str(), -1, &rc, DT_CENTER);
+		DrawTextA(hDC, std::to_string(GetWCounter()).c_str(), -1, &rc, DT_CENTER);
 		ReleaseDC(hWnd, hDC);
 
 		break;
@@ -57,33 +56,33 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 }
 
 
-//int main()
-//{
-//	HMODULE hLib = LoadLibrary(L"BrokenKeyboardFixHook.dll");
-//	HookAttachFn = (void(*)())GetProcAddress(hLib, "AttachHook");
-//	HookDetachFn = (void(*)())GetProcAddress(hLib, "DetachHook");
-//
-//
-//	WNDCLASS wc{};
-//	wc.lpfnWndProc = WndProc;
-//	wc.hInstance = GetModuleHandle(NULL);
-//	wc.lpszClassName = L"CLASSNAME";
-//
-//	RegisterClass(&wc);
-//	HWND hWnd = CreateWindow(L"CLASSNAME", L"W", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, 0, 0, 0, 0);
-//	ShowWindow(hWnd, SW_SHOWDEFAULT);
-//
-//	HookAttachFn();
-//
-//	MSG msg{};
-//	while (GetMessage(&msg, 0, 0, 0))
-//	{
-//		TranslateMessage(&msg);
-//		DispatchMessageW(&msg);
-//	}
-//
-//	HookDetachFn();
-//}
+int APIENTRY wWinMain(HINSTANCE, HINSTANCE, PWSTR, int)
+{
+	HMODULE hLib = LoadLibrary(L"BrokenKeyboardFixHook.dll");
+	HookAttachFn = (void(*)())GetProcAddress(hLib, "AttachHook");
+	HookDetachFn = (void(*)())GetProcAddress(hLib, "DetachHook");
+	GetWCounter = (uint32_t(*)())GetProcAddress(hLib, "GetWCounter");
+
+	WNDCLASS wc{};
+	wc.lpfnWndProc = WndProc;
+	wc.hInstance = GetModuleHandle(NULL);
+	wc.lpszClassName = L"CLASSNAME";
+
+	RegisterClass(&wc);
+	HWND hWnd = CreateWindow(L"CLASSNAME", L"W", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, 0, 0, 0, 0);
+	ShowWindow(hWnd, SW_SHOWDEFAULT);
+
+	HookAttachFn();
+
+	MSG msg{};
+	while (GetMessage(&msg, 0, 0, 0))
+	{
+		TranslateMessage(&msg);
+		DispatchMessageW(&msg);
+	}
+
+	HookDetachFn();
+}
 
 
 #include <stdio.h>
@@ -243,45 +242,45 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 }
 
 
-int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int)
-{
-	//AllocConsole();
-	//freopen("CONOUT$", "w", stdout);
-
-	hHook = SetWindowsHookEx(WH_KEYBOARD_LL, KeyboardHook, NULL, 0);
-	if (!hHook)
-	{
-		MessageBox(NULL, L"Failed to set hook", L"Error", MB_OK | MB_ICONERROR);
-		exit(-1);
-	}
-
-	WNDCLASS wc{};
-	wc.lpfnWndProc = WindowProc;
-	wc.hInstance = hInstance;
-	wc.lpszClassName = L"MAINWINDOWCLASS";
-
-	RegisterClass(&wc);
-	HWND hWnd = CreateWindow(L"MAINWINDOWCLASS", L"Broken Keyboard Fix Hook", WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX, CW_USEDEFAULT, CW_USEDEFAULT, 350, 120, 0, 0, hInstance, 0);
-
-	HWND trackbar = CreateTrackbar(hWnd, 0, 200, 0, 200);
-	SendMessage(trackbar, TBM_SETPOS, TRUE, upperThreshold);
-
-	NOTIFYICONDATA dt{};
-	dt.cbSize = sizeof(dt);
-	dt.hWnd = hWnd;
-	dt.uFlags = NIF_MESSAGE | NIF_TIP;
-	dt.uCallbackMessage = SHELLICON_CALLBACK_ID;
-	wcscpy(dt.szTip, L"Broken Keyboard Fix Hook");
-	dt.uID = 0x3f;
-
-	Shell_NotifyIcon(NIM_ADD, &dt);
-
-	MSG msg{};
-	while (GetMessage(&msg, NULL, 0, 0))
-	{
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
-	}
-
-	return 0;
-}
+//int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int)
+//{
+//	//AllocConsole();
+//	//freopen("CONOUT$", "w", stdout);
+//
+//	hHook = SetWindowsHookEx(WH_KEYBOARD_LL, KeyboardHook, NULL, 0);
+//	if (!hHook)
+//	{
+//		MessageBox(NULL, L"Failed to set hook", L"Error", MB_OK | MB_ICONERROR);
+//		exit(-1);
+//	}
+//
+//	WNDCLASS wc{};
+//	wc.lpfnWndProc = WindowProc;
+//	wc.hInstance = hInstance;
+//	wc.lpszClassName = L"MAINWINDOWCLASS";
+//
+//	RegisterClass(&wc);
+//	HWND hWnd = CreateWindow(L"MAINWINDOWCLASS", L"Broken Keyboard Fix Hook", WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX, CW_USEDEFAULT, CW_USEDEFAULT, 350, 120, 0, 0, hInstance, 0);
+//
+//	HWND trackbar = CreateTrackbar(hWnd, 0, 200, 0, 200);
+//	SendMessage(trackbar, TBM_SETPOS, TRUE, upperThreshold);
+//
+//	NOTIFYICONDATA dt{};
+//	dt.cbSize = sizeof(dt);
+//	dt.hWnd = hWnd;
+//	dt.uFlags = NIF_MESSAGE | NIF_TIP;
+//	dt.uCallbackMessage = SHELLICON_CALLBACK_ID;
+//	wcscpy(dt.szTip, L"Broken Keyboard Fix Hook");
+//	dt.uID = 0x3f;
+//
+//	Shell_NotifyIcon(NIM_ADD, &dt);
+//
+//	MSG msg{};
+//	while (GetMessage(&msg, NULL, 0, 0))
+//	{
+//		TranslateMessage(&msg);
+//		DispatchMessage(&msg);
+//	}
+//
+//	return 0;
+//}
