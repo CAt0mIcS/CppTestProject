@@ -46,18 +46,19 @@ LRESULT __declspec(dllexport) CALLBACK KeyboardProc(int code, WPARAM wParam, LPA
 {
 	if (code >= HC_ACTION)
 	{
-		uint64_t upperThreshold = 100;
-		MSG& msg = *(MSG*)lParam;
-		//bool pressed = (HIWORD(msg.lParam) & KF_UP) ? false : true;
-		if (msg.message == WM_KEYDOWN)
+		uint64_t upperThreshold = 150;
+		//MSG& msg = *(MSG*)lParam;
+		bool pressed = (HIWORD(lParam) & KF_UP) ? false : true;
+		//if (msg.message == WM_KEYDOWN)
+		if (pressed)
 		{
 			// Repeated keydown message
-			if ((HIWORD(msg.lParam) & KF_REPEAT))
+			if ((HIWORD(lParam) & KF_REPEAT))
 			{
 				return CallNextHookEx(hKeyboardHook, code, wParam, lParam);
 			}
 
-			int scancode = (HIWORD(msg.lParam) & (KF_EXTENDED | 0xff));
+			int scancode = (HIWORD(lParam) & (KF_EXTENDED | 0xff));
 			Key key = GetKeycodeMap()[scancode];
 			uint64_t now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count();
 
@@ -68,9 +69,9 @@ LRESULT __declspec(dllexport) CALLBACK KeyboardProc(int code, WPARAM wParam, LPA
 			if (prevKey == key && now - msOfLastPress < upperThreshold)
 			{
 				//std::cout << "---------- Skipping Key ----------\n";
-				msg.message = WM_NULL;
+				//msg.message = WM_NULL;
 				--wCounter;
-				//return -1;
+				return 0;
 			}
 
 			msOfLastPress = now;
@@ -86,7 +87,7 @@ extern "C"
 {
 	__declspec(dllexport) void AttachHook()
 	{
-		hKeyboardHook = SetWindowsHookEx(WH_GETMESSAGE, KeyboardProc, hInstance, 0);
+		hKeyboardHook = SetWindowsHookEx(WH_KEYBOARD, KeyboardProc, hInstance, 0);
 	}
 
 	__declspec(dllexport) void DetachHook()
