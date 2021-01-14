@@ -1,6 +1,7 @@
 #include <Windows.h>
 #include <iostream>
 #include <chrono>
+#include <sstream>
 
 #include "../../BrokenKeyboardFixHook/src/KeyCodes.h"
 
@@ -8,11 +9,22 @@
 void(*HookAttachFn)();
 void(*HookDetachFn)();
 uint32_t(*GetWCounter)();
+char* (*DebugInfo)();
 
 Key prevKey = (Key)0;
 uint64_t msOfLastPress = 0;
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+	HDC hDC = GetDC(hWnd);
+	RECT rc;
+	GetClientRect(hWnd, &rc);
+	SetTextColor(hDC, 0x00000000);
+	std::ostringstream oss;
+	oss << DebugInfo() << "\nKey presses: " << GetWCounter();
+	FillRect(hDC, &rc, CreateSolidBrush(RGB(255, 255, 255)));
+	DrawTextA(hDC, oss.str().c_str(), -1, &rc, DT_CENTER);
+	ReleaseDC(hWnd, hDC);
+
 	switch (uMsg)
 	{
 	case WM_DESTROY:
@@ -41,12 +53,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		//prevKey = key;
 		//std::cout << KeyToString(key) << '\n';
 
-		HDC hDC = GetDC(hWnd);
-		RECT rc;
-		GetClientRect(hWnd, &rc);
-		SetTextColor(hDC, 0x00000000);
-		DrawTextA(hDC, std::to_string(GetWCounter()).c_str(), -1, &rc, DT_CENTER);
-		ReleaseDC(hWnd, hDC);
+
 
 		break;
 	}
@@ -58,10 +65,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 int APIENTRY wWinMain(HINSTANCE, HINSTANCE, PWSTR, int)
 {
+	AllocConsole();
+	freopen("CONOUT$", "w", stdout);
+
 	HMODULE hLib = LoadLibrary(L"BrokenKeyboardFixHook.dll");
 	HookAttachFn = (void(*)())GetProcAddress(hLib, "AttachHook");
 	HookDetachFn = (void(*)())GetProcAddress(hLib, "DetachHook");
 	GetWCounter = (uint32_t(*)())GetProcAddress(hLib, "GetWCounter");
+	DebugInfo = (char* (*)())GetProcAddress(hLib, "DebugInfo");
 
 	WNDCLASS wc{};
 	wc.lpfnWndProc = WndProc;
