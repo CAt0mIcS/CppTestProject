@@ -263,15 +263,21 @@ int main()
 
 	VertexData vData(std::move(layout), positions.size());
 
-	vData[0].Set<VertexLayout::Position3D>(positions[0]);
-	vData[0].Set<VertexLayout::Normal>(normals[0]);
+	for (uint32_t i = 0; i < positions.size(); ++i)
+	{
+		vData[i].Set<VertexLayout::Position3D>(positions[i]);
+		vData[i].Set<VertexLayout::Normal>(normals[i]);
+	}
 
-	vData[1].Set<VertexLayout::Position3D>(positions[1]);
-	vData[1].Set<VertexLayout::Normal>(normals[1]);
 
-	auto& pos = vData[0].Attribute<VertexLayout::Position3D>();
-	auto& normal = vData[0].Attribute<VertexLayout::Normal>();
+	for (uint32_t i = 0; i < positions.size(); ++i)
+	{
+		assert(vData[i].Attribute<VertexLayout::Position3D>().x == positions[i].x);
+		assert(vData[i].Attribute<VertexLayout::Position3D>().y == positions[i].y);
+		assert(vData[i].Attribute<VertexLayout::Position3D>().z == positions[i].z);
 
-	auto& pos2 = vData[1].Attribute<VertexLayout::Position3D>();
-	auto& normal2 = vData[1].Attribute<VertexLayout::Normal>();
+		assert(vData[i].Attribute<VertexLayout::Normal>().x == normals[i].x);
+		assert(vData[i].Attribute<VertexLayout::Normal>().y == normals[i].y);
+		assert(vData[i].Attribute<VertexLayout::Normal>().z == normals[i].z);
+	}
 }
