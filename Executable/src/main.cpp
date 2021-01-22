@@ -15,7 +15,7 @@ using namespace At0::Ray;
 // Count
 
 
-// Describes what VertexBuffer::m_Data looks like
+// Describes what VertexData::m_Data looks like
 class VertexLayout
 {
 public:
@@ -111,15 +111,15 @@ public:
 		return *this;
 	}
 
-	uint32_t Size() const
+	size_t SizeBytes() const
 	{
 		return QueryNextOffset();
 	}
 
 	template<ElementType Type>
-	uint32_t QueryOffset() const
+	size_t QueryOffset() const
 	{
-		uint32_t offset = 0;
+		size_t offset = 0;
 		for (const Element& elem : m_Elements)
 		{
 			offset += elem.Offset();
@@ -135,10 +135,10 @@ public:
 	class Element
 	{
 	public:
-		Element(ElementType type, uint32_t offset)
+		Element(ElementType type, size_t offset)
 			: m_Type(type), m_Offset(offset) {}
 
-		uint32_t Offset() const
+		size_t Offset() const
 		{
 			return m_Offset;
 		}
@@ -149,20 +149,24 @@ public:
 		}
 
 	private:
-		uint32_t m_Offset;
+		size_t m_Offset;
 		ElementType m_Type;
 	};
 
 private:
-	uint32_t QueryNextOffset() const
+	size_t QueryNextOffset() const
 	{
-		uint32_t offset = 0;
+		size_t offset = 0;
 		for (const Element& elem : m_Elements)
 		{
 			offset += elem.Offset();
 		}
 
-		return offset + m_Elements.size() > 0 ? SizeOf(m_Elements.back().Type()) : 0;
+		//return offset + m_Elements.size() > 0 ? SizeOf(m_Elements.back().Type()) : 0;
+		if (m_Elements.size() > 0)
+			offset += SizeOf(m_Elements.back().Type());
+
+		return offset;
 	}
 
 private:
@@ -170,10 +174,10 @@ private:
 };
 
 
-// Basically a view into VertexBuffer::m_Data
+// Basically a view into VertexData::m_Data
 class Vertex
 {
-	friend class VertexBuffer;
+	friend class VertexData;
 public:
 
 	template<VertexLayout::ElementType Type>
@@ -183,7 +187,7 @@ public:
 	}
 
 	template<VertexLayout::ElementType Type>
-	auto& Set(typename VertexLayout::Map<Type>::SysType&& data)
+	auto& Set(const typename VertexLayout::Map<Type>::SysType& data)
 	{
 		using SysType = typename VertexLayout::Map<Type>::SysType;
 
@@ -201,19 +205,29 @@ private:
 	const VertexLayout& m_Layout;
 };
 
-
-class VertexBuffer
+// Use std::array? and size template?
+class VertexData
 {
 public:
-	VertexBuffer(VertexLayout layout, uint32_t numVertices = 1)
+	VertexData(VertexLayout layout, size_t numVertices)
 		: m_Layout(std::move(layout))
 	{
-		m_Data.resize(m_Layout.Size() * numVertices);
+		m_Data.resize(m_Layout.SizeBytes() * numVertices);
+	}
+
+	size_t SizeBytes() const
+	{
+		return m_Data.size();
+	}
+
+	size_t Size() const
+	{
+		return m_Data.size() / m_Layout.SizeBytes();
 	}
 
 	Vertex operator[](size_t id)
 	{
-		return { m_Data.data() + id, m_Layout };
+		return { m_Data.data() + (m_Layout.SizeBytes() * id), m_Layout };
 	}
 
 private:
@@ -231,10 +245,33 @@ int main()
 	//layout.Append<VertexLayout::Position3D, VertexLayout::Normal>();
 	layout.Append<VertexLayout::Position3D, VertexLayout::Normal>();
 
-	VertexBuffer vBuff(std::move(layout));
-	Vertex v = vBuff[0];
-	v.Set<VertexLayout::Normal>({ 1.0f, 1.0f, 1.0f });
-	v.Set<VertexLayout::Position3D>({ 2.0f, 2.0f, 2.0f });
-	Float3& pos = v.Attribute<VertexLayout::Position3D>();
-	Float3& normal = v.Attribute<VertexLayout::Normal>();
+	std::vector<Float3> positions
+	{
+		{1.0f, 1.0f, 1.0f},
+		{0.0f, -1.0f, 1.0f},
+		{-1.0f, 0.0f, 0.5f},
+		{0.5f, 0.5f, 0.0f}
+	};
+
+	std::vector<Float3> normals
+	{
+		{2.0f, 2.0f, 2.0f},
+		{2.0f, -2.0f, 2.0f},
+		{-2.0f, 2.0f, 2.5f},
+		{2.5f, 2.5f, 2.0f}
+	};
+
+	VertexData vData(std::move(layout), positions.size());
+
+	vData[0].Set<VertexLayout::Position3D>(positions[0]);
+	vData[0].Set<VertexLayout::Normal>(normals[0]);
+
+	vData[1].Set<VertexLayout::Position3D>(positions[1]);
+	vData[1].Set<VertexLayout::Normal>(normals[1]);
+
+	auto& pos = vData[0].Attribute<VertexLayout::Position3D>();
+	auto& normal = vData[0].Attribute<VertexLayout::Normal>();
+
+	auto& pos2 = vData[1].Attribute<VertexLayout::Position3D>();
+	auto& normal2 = vData[1].Attribute<VertexLayout::Normal>();
 }
