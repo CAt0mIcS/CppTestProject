@@ -8,6 +8,7 @@
 #include <GLFW/glfw3.h>
 
 #include <iostream>
+#include <random>
 
 
 // settings
@@ -22,22 +23,22 @@ const char* vertexShaderSource = "#version 450 core\n"
 "}\0";
 const char* fragmentShaderSource = "#version 450 core\n"
 
-//"layout(binding = 0, std140) uniform type_TriangleColor\n"
-//"{\n"
-//"	vec3 color;\n"
-//"} TriangleColor;\n"
-
-"struct TriangleColor\n"
+"uniform type_TriangleColor\n"
 "{\n"
 "	vec3 color;\n"
-"};\n"
-"uniform TriangleColor TCol;\n"
-"\n"
+"} TriangleColor;\n"
+
+//"struct TriangleColor\n"
+//"{\n"
+//"	vec3 color;\n"
+//"};\n"
+//"uniform TriangleColor TCol;\n"
+//"\n"
 
 "out vec4 FragColor;\n"
 "void main()\n"
 "{\n"
-"   FragColor = vec4(TCol.color, 1.0);\n"
+"   FragColor = vec4(TriangleColor.color, 1.0);\n"
 "}\n\0";
 
 
@@ -141,16 +142,41 @@ int main()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 
+	uint32_t buffer;
+	glGenBuffers(1, &buffer);
+	glBindBuffer(GL_UNIFORM_BUFFER, buffer);
+
+	srand((uint32_t)time(0));
+	std::mt19937 mtEngine;
+	std::uniform_real_distribution<float> dist(0.0f, 1.0f);
+
+	float color[] = { 1.0f, dist(mtEngine), dist(mtEngine) };
+	float increments[] = { 0.05f, 0.05f, 0.05f };
+
 	while (!glfwWindowShouldClose(window))
 	{
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
+		if (color[0] > 1.0f || color[0] < 0.0f)
+			increments[0] = -increments[0];
+
+		if (color[1] > 1.0f || color[1] < 0.0f)
+			increments[1] = -increments[1];
+
+		if (color[2] > 1.0f || color[2] < 0.0f)
+			increments[2] = -increments[2];
+
+		color[0] += increments[0];
+		color[1] += increments[1];
+		color[2] += increments[2];
 
 		glUseProgram(shaderProgram);
-		int location = glGetUniformLocation(shaderProgram, "TCol.color");
-		if (location != -1)
-			glUniform3f(location, 1.0f, 0.0f, 0.0f);
+
+		int blockIndex = glGetUniformBlockIndex(shaderProgram, "type_TriangleColor");
+		glUniformBlockBinding(shaderProgram, blockIndex, 1);
+		glBindBufferBase(GL_UNIFORM_BUFFER, 1, buffer);
+		glBufferData(GL_UNIFORM_BUFFER, sizeof(color), color, GL_DYNAMIC_DRAW);
 
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
