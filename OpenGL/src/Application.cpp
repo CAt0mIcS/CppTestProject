@@ -14,17 +14,30 @@
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
-const char* vertexShaderSource = "#version 330 core\n"
+const char* vertexShaderSource = "#version 450 core\n"
 "layout (location = 0) in vec3 aPos;\n"
 "void main()\n"
 "{\n"
 "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
 "}\0";
-const char* fragmentShaderSource = "#version 330 core\n"
+const char* fragmentShaderSource = "#version 450 core\n"
+
+//"layout(binding = 0, std140) uniform type_TriangleColor\n"
+//"{\n"
+//"	vec3 color;\n"
+//"} TriangleColor;\n"
+
+"struct TriangleColor\n"
+"{\n"
+"	vec3 color;\n"
+"};\n"
+"uniform TriangleColor TCol;\n"
+"\n"
+
 "out vec4 FragColor;\n"
 "void main()\n"
 "{\n"
-"   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+"   FragColor = vec4(TCol.color, 1.0);\n"
 "}\n\0";
 
 
@@ -42,7 +55,7 @@ int main()
 		std::cout << "Failed to create GLFW window" << std::endl;
 		glfwTerminate();
 		return -1;
-}
+	}
 
 	glfwMakeContextCurrent(window);
 
@@ -135,6 +148,10 @@ int main()
 
 
 		glUseProgram(shaderProgram);
+		int location = glGetUniformLocation(shaderProgram, "TCol.color");
+		if (location != -1)
+			glUniform3f(location, 1.0f, 0.0f, 0.0f);
+
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
 
