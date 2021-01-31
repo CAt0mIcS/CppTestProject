@@ -47,6 +47,16 @@ set(SRC
     "Sources/Utils/RLogger.h"
     "Sources/Utils/RLogger.cpp"
 
+    # Graphics
+    "Sources/Graphics/Graphics.h"
+    "Sources/Graphics/Graphics.cpp"
+    "Sources/Graphics/VulkanInstance.h"
+    "Sources/Graphics/VulkanInstance.cpp"
+    "Sources/Graphics/PhysicalDevice.h"
+    "Sources/Graphics/PhysicalDevice.cpp"
+    "Sources/Graphics/LogicalDevice.h"
+    "Sources/Graphics/LogicalDevice.cpp"
+
     "Sources/main.cpp"
     "Sources/Window.h"
     "Sources/Window.cpp"
