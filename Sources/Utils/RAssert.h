@@ -4,8 +4,8 @@
 
 	// clang-format off
 #include "RLogger.h"
-#include "../Utils/RSerialize.h"
-#include "../Utils/RString.h"
+#include "RSerialize.h"
+#include "RString.h"
 
 #include <assert.h>
 // clang-format on
@@ -39,15 +39,15 @@ namespace At0::VulkanTesting
 	#define RAY_WIDE(x) RAY_WIDEC2(x)
 
 	#ifdef _WIN32
-		#define RAY_ASSERT(condition, msg, ...)                                                   \
-			if (!(condition))                                                                     \
-			_wassert(::At0::VulkanTesting::RlAssert::AssertW(msg, __VA_ARGS__).c_str(), RAY_WIDE(__FILE__), \
-				(unsigned int)__LINE__)
+		#define RAY_ASSERT(condition, msg, ...)                                         \
+			if (!(condition))                                                           \
+			_wassert(::At0::VulkanTesting::RlAssert::AssertW(msg, __VA_ARGS__).c_str(), \
+				RAY_WIDE(__FILE__), (unsigned int)__LINE__)
 	#elif defined(__linux__)
 		#define RAY_ASSERT(condition, msg, ...)                                           \
 			if (!(condition))                                                             \
-			__assert(::At0::VulkanTesting::RlAssert::AssertA(msg, ##__VA_ARGS__).c_str(), __FILE__, \
-				(unsigned int)__LINE__)
+			__assert(::At0::VulkanTesting::RlAssert::AssertA(msg, ##__VA_ARGS__).c_str(), \
+				__FILE__, (unsigned int)__LINE__)
 	#endif
 
 	#define RAY_MEXPECTS(expected, msg, ...) \

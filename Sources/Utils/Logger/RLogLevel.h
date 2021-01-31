@@ -6,7 +6,7 @@
 #endif
 
 
-namespace At0::Ray
+namespace At0::VulkanTesting
 {
 	/// <summary>
 	/// Defines logging severity levels
@@ -55,4 +55,4 @@ namespace At0::Ray
 		/// </summary>
 		None
 	};
-}  // namespace At0::Ray
+}  // namespace At0::VulkanTesting

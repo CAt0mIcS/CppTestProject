@@ -1,0 +1,52 @@
+AccessModifierOffset: -4
+SortIncludes: false
+AlignAfterOpenBracket: DontAlign
+AlignEscapedNewlines: Left
+AllowAllParametersOfDeclarationOnNextLine: false
+AllowShortBlocksOnASingleLine: false
+AllowShortCaseLabelsOnASingleLine: true
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+AlwaysBreakTemplateDeclarations: true
+AlignOperands: true
+AlignTrailingComments: true
+BreakAfterJavaFieldAnnotations: true
+BreakBeforeBraces: Allman
+BreakInheritanceList: AfterColon
+BreakBeforeInheritanceComma: false
+BreakBeforeTernaryOperators: false
+BreakConstructorInitializers: BeforeColon
+SpaceBeforeCpp11BracedList: false
+SpaceAfterTemplateKeyword: false
+UseCRLF: true
+ColumnLimit: 100
+IndentWrappedFunctionNames: true
+CommentPragmas:  '^/'
+Cpp11BracedListStyle: false
+FixNamespaceComments: true
+SpacesBeforeTrailingComments: 2
+AlignEscapedNewlines: Left
+AlignOperands: true
+BreakStringLiterals: true
+AlignTrailingComments: true
+AllowAllConstructorInitializersOnNextLine: true
+IncludeBlocks: Regroup
+IncludeCategories:
+  - Regex: '^<.*\.h>'
+    Priority: 2
+  - Regex: '^<.*'
+    Priority: 1
+  - Regex: '.*'
+    Priority: 3
+IndentWidth: 4
+Language: Cpp
+MaxEmptyLinesToKeep: 2
+NamespaceIndentation: All
+PointerAlignment: Left
+SpaceBeforeParens: ControlStatements
+Standard: Cpp11
+TabWidth: 4
+UseTab: Always
+IndentPPDirectives: BeforeHash
+AllowAllArgumentsOnNextLine: true

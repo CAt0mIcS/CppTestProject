@@ -3,6 +3,33 @@ cmake_minimum_required(VERSION 3.16)
 project("VulkanTesting")
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
+# Set all output directories of a specific target
+macro(SetOutputDirectory target dir)
+    if(MSVC)
+        foreach(OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES})
+            set(OUTCFGLOW "${OUTPUTCONFIG}")
+            string( TOUPPER "${OUTPUTCONFIG}" OUTPUTCONFIG )
+
+            set(${target}_OUTPUTPATH_${OUTCFGLOW} "${CMAKE_BINARY_DIR}/bin/${OUTCFGLOW}/${dir}")
+
+            set_target_properties("${target}" PROPERTIES 
+                LIBRARY_OUTPUT_DIRECTORY_${OUTPUTCONFIG} "${${target}_OUTPUTPATH_${OUTCFGLOW}}"
+                RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} "${${target}_OUTPUTPATH_${OUTCFGLOW}}"
+                ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG} "${${target}_OUTPUTPATH_${OUTCFGLOW}}"
+            )
+        endforeach()
+    else()
+        set(${target}_OUTPUTPATH_${CMAKE_BUILD_TYPE} "${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}/${dir}")
+        set_target_properties("${target}" PROPERTIES
+            ARCHIVE_OUTPUT_DIRECTORY "${${target}_OUTPUTPATH_${CMAKE_BUILD_TYPE}}"
+            LIBRARY_OUTPUT_DIRECTORY "${${target}_OUTPUTPATH_${CMAKE_BUILD_TYPE}}"
+            RUNTIME_OUTPUT_DIRECTORY "${${target}_OUTPUTPATH_${CMAKE_BUILD_TYPE}}"
+        )
+    endif()
+endmacro()
+
+add_subdirectory("Extern")
+
 set(SRC
     "Sources/Utils/Logger/Formatters/RBracketFormatter.h"
     "Sources/Utils/Logger/Formatters/RDateTimeFormatter.h"
@@ -31,8 +58,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 find_package("Vulkan" REQUIRED FATAL_ERROR)
 
 add_executable("VulkanTesting" "${SRC}")
-target_include_directories("VulkanTesting" PRIVATE "${Vulkan_INCLUDE_DIRS}")
-target_link_libraries("VulkanTesting" PRIVATE "${Vulkan_LIBRARIES}")
+target_include_directories("VulkanTesting" PRIVATE "${Vulkan_INCLUDE_DIRS}" "${CMAKE_SOURCE_DIR}/Extern/glfw/include")
+target_link_libraries("VulkanTesting" PRIVATE "${Vulkan_LIBRARIES}" "glfw")
 
 # ------------------------------------------------------------------------------------------------
 # Set the startup project for VS
@@ -53,30 +80,5 @@ foreach(source IN ITEMS ${SRC})
     source_group("${groupPath}" FILES "${source}")
 endforeach()
 
-
-# Set all output directories of a specific target
-macro(SetOutputDirectory target dir)
-    if(MSVC)
-        foreach(OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES})
-            set(OUTCFGLOW "${OUTPUTCONFIG}")
-            string( TOUPPER "${OUTPUTCONFIG}" OUTPUTCONFIG )
-
-            set(${target}_OUTPUTPATH_${OUTCFGLOW} "${CMAKE_BINARY_DIR}/bin/${OUTCFGLOW}/${dir}")
-
-            set_target_properties("${target}" PROPERTIES 
-                LIBRARY_OUTPUT_DIRECTORY_${OUTPUTCONFIG} "${${target}_OUTPUTPATH_${OUTCFGLOW}}"
-                RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} "${${target}_OUTPUTPATH_${OUTCFGLOW}}"
-                ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG} "${${target}_OUTPUTPATH_${OUTCFGLOW}}"
-            )
-        endforeach()
-    else()
-        set(${target}_OUTPUTPATH_${CMAKE_BUILD_TYPE} "${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}/${dir}")
-        set_target_properties("${target}" PROPERTIES
-            ARCHIVE_OUTPUT_DIRECTORY "${${target}_OUTPUTPATH_${CMAKE_BUILD_TYPE}}"
-            LIBRARY_OUTPUT_DIRECTORY "${${target}_OUTPUTPATH_${CMAKE_BUILD_TYPE}}"
-            RUNTIME_OUTPUT_DIRECTORY "${${target}_OUTPUTPATH_${CMAKE_BUILD_TYPE}}"
-        )
-    endif()
-endmacro()
 
 SetOutputDirectory("VulkanTesting" "")
