@@ -1,6 +1,7 @@
 ﻿#include "Window.h"
 
 #include "Utils/RAssert.h"
+#include "Utils/RException.h"
 
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
@@ -26,6 +27,13 @@ namespace At0::VulkanTesting
 		uint32_t count = 0;
 		const char** data = glfwGetRequiredInstanceExtensions(&count);
 		return std::make_pair(data, count);
+	}
+
+	void Window::CreateSurface(
+		VkInstance instance, const VkAllocationCallbacks* allocator, VkSurfaceKHR* surface)
+	{
+		RAY_VK_THROW_FAILED(glfwCreateWindowSurface(instance, m_hWnd, allocator, surface),
+			"Failed to create glfw window surface.");
 	}
 
 	Window::Window()

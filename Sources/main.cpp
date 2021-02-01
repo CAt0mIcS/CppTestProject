@@ -7,7 +7,9 @@ using namespace At0::VulkanTesting;
 
 int main()
 {
+	Log::SetLogLevel(LogLevel::Trace);
 	Log::Open("../VulkanTesting.log");
+
 	Window::Create();
 	Graphics::Create();
 

@@ -64,6 +64,8 @@ set(SRC
     "Sources/Graphics/PhysicalDevice.cpp"
     "Sources/Graphics/LogicalDevice.h"
     "Sources/Graphics/LogicalDevice.cpp"
+    "Sources/Graphics/Surface.h"
+    "Sources/Graphics/Surface.cpp"
 
     "Sources/main.cpp"
     "Sources/Window.h"

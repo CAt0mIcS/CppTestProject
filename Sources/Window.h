@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include <memory>
+#include <vulkan/vulkan_core.h>
 
 struct GLFWwindow;
 
@@ -12,12 +13,13 @@ namespace At0::VulkanTesting
 
 	public:
 		static void Create();
-
 		static Window& Get() { return *s_Instance; }
 
 		bool Update();
 
 		std::pair<const char**, uint32_t> GetInstanceExtensions() const;
+		void CreateSurface(
+			VkInstance instance, const VkAllocationCallbacks* allocator, VkSurfaceKHR* surface);
 
 	private:
 		Window();
