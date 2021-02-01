@@ -1,4 +1,4 @@
-#include "Window.h"
+﻿#include "Window.h"
 
 #include "Utils/RAssert.h"
 
@@ -21,6 +21,13 @@ namespace At0::VulkanTesting
 		return !glfwWindowShouldClose(m_hWnd);
 	}
 
+	std::pair<const char**, uint32_t> Window::GetInstanceExtensions() const
+	{
+		uint32_t count = 0;
+		const char** data = glfwGetRequiredInstanceExtensions(&count);
+		return std::make_pair(data, count);
+	}
+
 	Window::Window()
 	{
 		RAY_MEXPECTS(glfwInit(), "Failed to initialize GLFW.");
@@ -29,4 +36,4 @@ namespace At0::VulkanTesting
 		m_hWnd = glfwCreateWindow(960, 540, "Vulkan Testing", nullptr, nullptr);
 		glfwShowWindow(m_hWnd);
 	}
-}
+}  // namespace At0::VulkanTesting
