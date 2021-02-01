@@ -1,4 +1,4 @@
-#include "Window.h"
+﻿#include "Window.h"
 #include "Utils/RLogger.h"
 #include "Graphics/Graphics.h"
 
