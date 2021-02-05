@@ -35,6 +35,7 @@ namespace At0::VulkanTesting
 		};
 #else
 		bool m_ValidationLayerEnabled = false;
+		inline static const std::vector<const char*> s_ValidationLayers = {};
 #endif
 	};
 }  // namespace At0::VulkanTesting

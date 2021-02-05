@@ -38,7 +38,8 @@ namespace At0::VulkanTesting
 
 	Window::Window()
 	{
-		RAY_MEXPECTS(glfwInit(), "Failed to initialize GLFW.");
+		int success = glfwInit();
+		RAY_MEXPECTS(success, "Failed to initialize GLFW.");
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
 		m_hWnd = glfwCreateWindow(960, 540, "Vulkan Testing", nullptr, nullptr);
