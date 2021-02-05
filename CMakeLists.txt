@@ -66,6 +66,10 @@ set(SRC
     "Sources/Graphics/LogicalDevice.cpp"
     "Sources/Graphics/Surface.h"
     "Sources/Graphics/Surface.cpp"
+    "Sources/Graphics/Commands/CommandBuffer.h"
+    "Sources/Graphics/Commands/CommandBuffer.cpp"
+    "Sources/Graphics/Commands/CommandPool.h"
+    "Sources/Graphics/Commands/CommandPool.cpp"
 
     "Sources/main.cpp"
     "Sources/Window.h"

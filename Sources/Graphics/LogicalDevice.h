@@ -20,6 +20,16 @@ namespace At0::VulkanTesting
 
 		static const std::vector<const char*>& DeviceExtensions() { return s_DeviceExtensions; }
 
+		uint32_t GetGraphicsFamily() const { return m_GraphicsFamily; }
+		uint32_t GetPresentFamily() const { return m_PresentFamily; }
+		uint32_t GetComputeFamily() const { return m_ComputeFamily; }
+		uint32_t GetTransferFamily() const { return m_TransferFamily; }
+
+		VkQueue GetGraphicsQueue() const { return m_GraphicsQueue; }
+		VkQueue GetPresentQueue() const { return m_PresentQueue; }
+		VkQueue GetComputeQueue() const { return m_ComputeQueue; }
+		VkQueue GetTransferQueue() const { return m_TransferQueue; }
+
 	private:
 		void CreateQueueIndices();
 		void CreateLogicalDevice();

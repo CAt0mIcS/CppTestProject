@@ -6,6 +6,7 @@
 #include "PhysicalDevice.h"
 #include "Surface.h"
 #include "LogicalDevice.h"
+#include "Commands/CommandPool.h"
 
 #include <vulkan/vulkan.h>
 
@@ -25,6 +26,7 @@ namespace At0::VulkanTesting
 		m_Surface = std::make_unique<Surface>(m_Instance.get(), m_PhysicalDevice.get());
 		m_LogicalDevice = std::make_unique<LogicalDevice>(
 			m_Instance.get(), m_PhysicalDevice.get(), m_Surface.get());
+		m_CommandPool = std::make_unique<CommandPool>(m_LogicalDevice.get());
 	}
 	Graphics::~Graphics() {}
 }  // namespace At0::VulkanTesting
