@@ -20,6 +20,7 @@ namespace At0::VulkanTesting
 		std::pair<const char**, uint32_t> GetInstanceExtensions() const;
 		void CreateSurface(
 			VkInstance instance, const VkAllocationCallbacks* allocator, VkSurfaceKHR* surface);
+		void GetSize(int* width, int* height) const;
 
 	private:
 		Window();

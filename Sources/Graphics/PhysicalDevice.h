@@ -11,7 +11,7 @@ namespace At0::VulkanTesting
 	class PhysicalDevice
 	{
 	public:
-		PhysicalDevice(const VulkanInstance* instance);
+		PhysicalDevice();
 		~PhysicalDevice();
 
 		operator const VkPhysicalDevice&() const { return m_Device; }
@@ -22,8 +22,6 @@ namespace At0::VulkanTesting
 		VkPhysicalDevice SelectPhysicalDevice(const std::vector<VkPhysicalDevice>& devices) const;
 
 	private:
-		const VulkanInstance& m_Instance;
-
 		VkPhysicalDeviceFeatures m_Features;
 		VkPhysicalDevice m_Device;
 	};

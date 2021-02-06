@@ -36,6 +36,11 @@ namespace At0::VulkanTesting
 			"Failed to create glfw window surface.");
 	}
 
+	void Window::GetSize(int* width, int* height) const
+	{
+		glfwGetWindowSize(m_hWnd, width, height);
+	}
+
 	Window::Window()
 	{
 		int success = glfwInit();

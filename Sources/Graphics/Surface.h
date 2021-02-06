@@ -11,17 +11,12 @@ namespace At0::VulkanTesting
 	class Surface
 	{
 	public:
-		Surface(const VulkanInstance* instance, const PhysicalDevice* device);
+		Surface();
 		~Surface();
 
 		operator const VkSurfaceKHR&() const { return m_Surface; }
 
 	private:
 		VkSurfaceKHR m_Surface;
-		VkSurfaceFormatKHR m_Format;
-		VkSurfaceCapabilitiesKHR m_Capabilities;
-
-		const VulkanInstance& m_Instance;
-		const PhysicalDevice& m_PhysicalDevice;
 	};
 }  // namespace At0::VulkanTesting

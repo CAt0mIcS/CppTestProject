@@ -13,8 +13,11 @@ int main()
 		Log::SetLogLevel(LogLevel::Trace);
 		Log::Open("../VulkanTesting.log");
 
+		// Create window
 		Window::Create();
-		Graphics::Create();
+
+		// Create graphics
+		Graphics::Get();
 
 		while (Window::Get().Update())
 		{

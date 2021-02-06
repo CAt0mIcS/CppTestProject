@@ -2,6 +2,16 @@
 
 #include <memory>
 #include "../Utils/RAssert.h"
+#include "../Utils/RException.h"
+
+#include "Commands/CommandBuffer.h"
+#include "Commands/CommandPool.h"
+#include "Framebuffer.h"
+#include "VulkanInstance.h"
+#include "PhysicalDevice.h"
+#include "Surface.h"
+#include "LogicalDevice.h"
+#include "Swapchain.h"
 
 
 namespace At0::VulkanTesting
@@ -11,6 +21,7 @@ namespace At0::VulkanTesting
 	class LogicalDevice;
 	class Surface;
 	class CommandPool;
+	class Swapchain;
 
 	class Graphics
 	{
@@ -18,12 +29,7 @@ namespace At0::VulkanTesting
 
 	public:
 		~Graphics();
-		static void Create();
-		static Graphics& Get()
-		{
-			RAY_MEXPECTS(s_Instance, "Instance not created.");
-			return *s_Instance;
-		}
+		static Graphics& Get();
 
 		const VulkanInstance& GetInstance() const { return *m_Instance; }
 		const PhysicalDevice& GetPhysicalDevice() const { return *m_PhysicalDevice; }
@@ -42,5 +48,6 @@ namespace At0::VulkanTesting
 		std::unique_ptr<Surface> m_Surface;
 		std::unique_ptr<LogicalDevice> m_LogicalDevice;
 		std::unique_ptr<CommandPool> m_CommandPool;
+		std::unique_ptr<Swapchain> m_Swapchain;
 	};
 }  // namespace At0::VulkanTesting

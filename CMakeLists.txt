@@ -70,6 +70,8 @@ set(SRC
     "Sources/Graphics/Renderpass.cpp"
     "Sources/Graphics/Framebuffer.h"
     "Sources/Graphics/Framebuffer.cpp"
+    "Sources/Graphics/Swapchain.h"
+    "Sources/Graphics/Swapchain.cpp"
     "Sources/Graphics/Commands/CommandBuffer.h"
     "Sources/Graphics/Commands/CommandBuffer.cpp"
     "Sources/Graphics/Commands/CommandPool.h"

@@ -1,6 +1,5 @@
 ﻿#include "PhysicalDevice.h"
-#include "VulkanInstance.h"
-#include "LogicalDevice.h"
+#include "Graphics.h"
 #include "../Utils/RLogger.h"
 #include "../Utils/RException.h"
 #include "../Utils/RAssert.h"
@@ -11,7 +10,7 @@
 
 namespace At0::VulkanTesting
 {
-	PhysicalDevice::PhysicalDevice(const VulkanInstance* instance) : m_Instance(*instance)
+	PhysicalDevice::PhysicalDevice()
 	{
 		m_Device = SelectPhysicalDevice(FindPhysicalDevices());
 		if (!m_Device)
@@ -25,10 +24,11 @@ namespace At0::VulkanTesting
 	std::vector<VkPhysicalDevice> PhysicalDevice::FindPhysicalDevices() const
 	{
 		uint32_t physicalDeviceCount;
-		vkEnumeratePhysicalDevices(m_Instance, &physicalDeviceCount, nullptr);
+		vkEnumeratePhysicalDevices(Graphics::Get().GetInstance(), &physicalDeviceCount, nullptr);
 
 		std::vector<VkPhysicalDevice> devices(physicalDeviceCount);
-		vkEnumeratePhysicalDevices(m_Instance, &physicalDeviceCount, devices.data());
+		vkEnumeratePhysicalDevices(
+			Graphics::Get().GetInstance(), &physicalDeviceCount, devices.data());
 
 		return devices;
 	}

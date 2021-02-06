@@ -13,20 +13,24 @@
 
 namespace At0::VulkanTesting
 {
-	void Graphics::Create()
-	{
-		if (!s_Instance)
-			s_Instance = std::make_unique<Graphics>();
-	}
-
 	Graphics::Graphics()
 	{
+		s_Instance = std::unique_ptr<Graphics>(this);
+
 		m_Instance = std::make_unique<VulkanInstance>();
-		m_PhysicalDevice = std::make_unique<PhysicalDevice>(m_Instance.get());
-		m_Surface = std::make_unique<Surface>(m_Instance.get(), m_PhysicalDevice.get());
-		m_LogicalDevice = std::make_unique<LogicalDevice>(
-			m_Instance.get(), m_PhysicalDevice.get(), m_Surface.get());
-		m_CommandPool = std::make_unique<CommandPool>(m_LogicalDevice.get());
+		m_Surface = std::make_unique<Surface>();
+		m_PhysicalDevice = std::make_unique<PhysicalDevice>();
+		m_LogicalDevice = std::make_unique<LogicalDevice>();
+		m_Swapchain = std::make_unique<Swapchain>();
 	}
+
 	Graphics::~Graphics() {}
+
+	Graphics& Graphics::Get()
+	{
+		if (!s_Instance)
+			std::make_unique<Graphics>();
+
+		return *s_Instance;
+	}
 }  // namespace At0::VulkanTesting

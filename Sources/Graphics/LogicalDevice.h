@@ -12,8 +12,7 @@ namespace At0::VulkanTesting
 	class LogicalDevice
 	{
 	public:
-		LogicalDevice(const VulkanInstance* instance, const PhysicalDevice* physicalDevice,
-			const Surface* surface);
+		LogicalDevice();
 		~LogicalDevice();
 
 		operator const VkDevice&() const { return m_Device; }
@@ -36,9 +35,6 @@ namespace At0::VulkanTesting
 
 	private:
 		static const std::vector<const char*> s_DeviceExtensions;
-		const PhysicalDevice& m_PhysicalDevice;
-		const Surface& m_Surface;
-		const VulkanInstance& m_Instance;
 
 		VkDevice m_Device;
 
