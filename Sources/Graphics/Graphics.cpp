@@ -15,7 +15,7 @@ namespace At0::VulkanTesting
 {
 	Graphics::Graphics()
 	{
-		s_Instance = std::unique_ptr<Graphics>(this);
+		s_Instance = this;
 
 		m_Instance = std::make_unique<VulkanInstance>();
 		m_Surface = std::make_unique<Surface>();
@@ -24,12 +24,25 @@ namespace At0::VulkanTesting
 		m_Swapchain = std::make_unique<Swapchain>();
 	}
 
-	Graphics::~Graphics() {}
+	Graphics::~Graphics()
+	{
+		// not production level code here...
+		if (s_Instance)
+		{
+			delete s_Instance;
+			s_Instance = nullptr;
+		}
+
+		m_Swapchain.reset();
+		m_LogicalDevice.reset();
+		m_Surface.reset();
+		m_Instance.reset();
+	}
 
 	Graphics& Graphics::Get()
 	{
 		if (!s_Instance)
-			std::make_unique<Graphics>();
+			new Graphics();
 
 		return *s_Instance;
 	}

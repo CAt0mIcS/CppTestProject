@@ -41,7 +41,7 @@ namespace At0::VulkanTesting
 		Graphics();
 
 	private:
-		inline static std::unique_ptr<Graphics> s_Instance = nullptr;
+		inline static Graphics* s_Instance = nullptr;
 
 		std::unique_ptr<VulkanInstance> m_Instance;
 		std::unique_ptr<PhysicalDevice> m_PhysicalDevice;

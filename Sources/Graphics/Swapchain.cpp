@@ -9,15 +9,62 @@ namespace At0::VulkanTesting
 {
 	Swapchain::Swapchain()
 	{
+		SupportDetails supportDetails = QuerySwapchainSupport();
+		VkSurfaceFormatKHR surfaceFormat = ChooseSurfaceFormat(supportDetails.Formats);
+		VkPresentModeKHR presentMode = ChoosePresentMode(supportDetails.PresentModes);
+		m_Extent = ChooseExtent(supportDetails.Capabilities);
+
+		uint32_t imageCount = supportDetails.Capabilities.minImageCount + 1;
+		// Make sure we don't exceed the max image count
+		if (supportDetails.Capabilities.maxImageCount > 0 &&
+			imageCount > supportDetails.Capabilities.maxImageCount)
+		{
+			imageCount = supportDetails.Capabilities.maxImageCount;
+		}
+
 		VkSwapchainCreateInfoKHR createInfo{};
 		createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+		createInfo.surface = Graphics::Get().GetSurface();
+		createInfo.minImageCount = imageCount;
+		createInfo.imageFormat = surfaceFormat.format;
+		createInfo.imageColorSpace = surfaceFormat.colorSpace;
+		createInfo.imageExtent = m_Extent;
+		createInfo.imageArrayLayers = 1;
+		createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+
+		// Queue families
+		uint32_t queueFamilyIndices[] = { Graphics::Get().GetLogicalDevice().GetGraphicsFamily(),
+			Graphics::Get().GetLogicalDevice().GetPresentFamily() };
+
+		if (Graphics::Get().GetLogicalDevice().GetGraphicsFamily() !=
+			Graphics::Get().GetLogicalDevice().GetPresentFamily())
+		{
+			createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
+			createInfo.queueFamilyIndexCount = 2;
+			createInfo.pQueueFamilyIndices = queueFamilyIndices;
+		}
+		else
+		{
+			createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+			createInfo.queueFamilyIndexCount = 0;
+			createInfo.pQueueFamilyIndices = nullptr;
+		}
+
+		createInfo.preTransform = supportDetails.Capabilities.currentTransform;
+		createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+		createInfo.presentMode = presentMode;
+		createInfo.clipped = VK_TRUE;
+		createInfo.oldSwapchain = VK_NULL_HANDLE;
 
 		RAY_VK_THROW_FAILED(vkCreateSwapchainKHR(Graphics::Get().GetLogicalDevice(), &createInfo,
 								nullptr, &m_Swapchain),
 			"Failed to create the swapchain.");
 	}
 
-	Swapchain::~Swapchain() {}
+	Swapchain::~Swapchain()
+	{
+		vkDestroySwapchainKHR(Graphics::Get().GetLogicalDevice(), m_Swapchain, nullptr);
+	}
 
 	Swapchain::SupportDetails Swapchain::QuerySwapchainSupport()
 	{
