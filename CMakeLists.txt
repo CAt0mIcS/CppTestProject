@@ -66,6 +66,10 @@ set(SRC
     "Sources/Graphics/LogicalDevice.cpp"
     "Sources/Graphics/Surface.h"
     "Sources/Graphics/Surface.cpp"
+    "Sources/Graphics/Renderpass.h"
+    "Sources/Graphics/Renderpass.cpp"
+    "Sources/Graphics/Framebuffer.h"
+    "Sources/Graphics/Framebuffer.cpp"
     "Sources/Graphics/Commands/CommandBuffer.h"
     "Sources/Graphics/Commands/CommandBuffer.cpp"
     "Sources/Graphics/Commands/CommandPool.h"
@@ -82,7 +86,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 find_package("Vulkan" REQUIRED FATAL_ERROR)
 
 add_executable("VulkanTesting" "${SRC}")
-target_include_directories("VulkanTesting" PRIVATE "${Vulkan_INCLUDE_DIRS}" "${CMAKE_SOURCE_DIR}/Extern/glfw/include")
+target_include_directories("VulkanTesting" PRIVATE "${Vulkan_INCLUDE_DIRS}" "${CMAKE_SOURCE_DIR}/Extern/glfw/include" "Sources")
 target_link_libraries("VulkanTesting" PRIVATE "${Vulkan_LIBRARIES}" "glfw")
 
 # ------------------------------------------------------------------------------------------------
