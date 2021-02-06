@@ -12,6 +12,7 @@ namespace At0::VulkanTesting
 	{
 		SupportDetails supportDetails = QuerySwapchainSupport();
 		VkSurfaceFormatKHR surfaceFormat = ChooseSurfaceFormat(supportDetails.Formats);
+		m_Format = surfaceFormat.format;
 		VkPresentModeKHR presentMode = ChoosePresentMode(supportDetails.PresentModes);
 		m_Extent = ChooseExtent(supportDetails.Capabilities);
 
@@ -60,10 +61,27 @@ namespace At0::VulkanTesting
 		RAY_VK_THROW_FAILED(vkCreateSwapchainKHR(Graphics::Get().GetLogicalDevice(), &createInfo,
 								nullptr, &m_Swapchain),
 			"Failed to create the swapchain.");
+
+		// Retrieve swapchain images
+		uint32_t swapchainImages;
+		vkGetSwapchainImagesKHR(
+			Graphics::Get().GetLogicalDevice(), m_Swapchain, &swapchainImages, nullptr);
+
+		m_Images.resize(swapchainImages);
+		vkGetSwapchainImagesKHR(
+			Graphics::Get().GetLogicalDevice(), m_Swapchain, &swapchainImages, m_Images.data());
+
+		// Create image views
+		for (VkImage image : m_Images)
+		{
+			m_ImageViews.emplace_back(image, m_Format);
+		}
 	}
 
 	Swapchain::~Swapchain()
 	{
+		// Destroy image views before swapchain (not neccessary I think)
+		m_ImageViews.clear();
 		vkDestroySwapchainKHR(Graphics::Get().GetLogicalDevice(), m_Swapchain, nullptr);
 	}
 

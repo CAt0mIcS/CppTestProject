@@ -76,6 +76,8 @@ set(SRC
     "Sources/Graphics/Commands/CommandBuffer.cpp"
     "Sources/Graphics/Commands/CommandPool.h"
     "Sources/Graphics/Commands/CommandPool.cpp"
+    "Sources/Graphics/Images/ImageView.h"
+    "Sources/Graphics/Images/ImageView.cpp"
 
     "Sources/main.cpp"
     "Sources/Window.h"
