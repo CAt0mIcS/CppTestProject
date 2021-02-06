@@ -21,6 +21,7 @@ namespace At0::VulkanTesting
 		void CreateSurface(
 			VkInstance instance, const VkAllocationCallbacks* allocator, VkSurfaceKHR* surface);
 		void GetSize(int* width, int* height) const;
+		void GetFramebufferSize(int* width, int* height) const;
 
 	private:
 		Window();

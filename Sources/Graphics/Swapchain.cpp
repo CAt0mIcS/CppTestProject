@@ -2,6 +2,7 @@
 #include "Graphics.h"
 #include "Window.h"
 
+#include <algorithm>
 #include <vulkan/vulkan.h>
 
 
@@ -15,7 +16,7 @@ namespace At0::VulkanTesting
 		m_Extent = ChooseExtent(supportDetails.Capabilities);
 
 		uint32_t imageCount = supportDetails.Capabilities.minImageCount + 1;
-		// Make sure we don't exceed the max image count
+		// Make sure we don't exceed the max image count. 0 means that there is no maximum limit
 		if (supportDetails.Capabilities.maxImageCount > 0 &&
 			imageCount > supportDetails.Capabilities.maxImageCount)
 		{
@@ -97,7 +98,7 @@ namespace At0::VulkanTesting
 	{
 		for (const auto& format : formats)
 		{
-			if (format.format == VK_FORMAT_R8G8B8A8_SRGB &&
+			if (format.format == VK_FORMAT_B8G8R8A8_SRGB &&
 				format.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR)
 				return format;
 		}
@@ -124,9 +125,11 @@ namespace At0::VulkanTesting
 		else
 		{
 			int width, height;
-			Window::Get().GetSize(&width, &height);
+			Window::Get().GetFramebufferSize(&width, &height);
 
 			VkExtent2D extent = { (uint32_t)width, (uint32_t)height };
+
+			// Clamp values to allowed minimum and maximum implementation extents supported
 			extent.width = std::max(capabilities.minImageExtent.width,
 				std::min(capabilities.maxImageExtent.width, extent.width));
 			extent.height = std::max(capabilities.minImageExtent.height,

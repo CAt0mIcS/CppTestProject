@@ -41,6 +41,11 @@ namespace At0::VulkanTesting
 		glfwGetWindowSize(m_hWnd, width, height);
 	}
 
+	void Window::GetFramebufferSize(int* width, int* height) const
+	{
+		glfwGetFramebufferSize(m_hWnd, width, height);
+	}
+
 	Window::Window()
 	{
 		int success = glfwInit();
