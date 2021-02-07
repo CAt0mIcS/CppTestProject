@@ -3,30 +3,7 @@ cmake_minimum_required(VERSION 3.16)
 project("VulkanTesting")
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-# Set all output directories of a specific target
-macro(SetOutputDirectory target dir)
-    if(MSVC)
-        foreach(OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES})
-            set(OUTCFGLOW "${OUTPUTCONFIG}")
-            string( TOUPPER "${OUTPUTCONFIG}" OUTPUTCONFIG )
-
-            set(${target}_OUTPUTPATH_${OUTCFGLOW} "${CMAKE_BINARY_DIR}/bin/${OUTCFGLOW}/${dir}")
-
-            set_target_properties("${target}" PROPERTIES 
-                LIBRARY_OUTPUT_DIRECTORY_${OUTPUTCONFIG} "${${target}_OUTPUTPATH_${OUTCFGLOW}}"
-                RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} "${${target}_OUTPUTPATH_${OUTCFGLOW}}"
-                ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG} "${${target}_OUTPUTPATH_${OUTCFGLOW}}"
-            )
-        endforeach()
-    else()
-        set(${target}_OUTPUTPATH_${CMAKE_BUILD_TYPE} "${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}/${dir}")
-        set_target_properties("${target}" PROPERTIES
-            ARCHIVE_OUTPUT_DIRECTORY "${${target}_OUTPUTPATH_${CMAKE_BUILD_TYPE}}"
-            LIBRARY_OUTPUT_DIRECTORY "${${target}_OUTPUTPATH_${CMAKE_BUILD_TYPE}}"
-            RUNTIME_OUTPUT_DIRECTORY "${${target}_OUTPUTPATH_${CMAKE_BUILD_TYPE}}"
-        )
-    endif()
-endmacro()
+include("CMake/Macros.cmake")
 
 # ------------------------------------------------------------------------------------------------
 # Set common options
@@ -78,6 +55,10 @@ set(SRC
     "Sources/Graphics/Commands/CommandPool.cpp"
     "Sources/Graphics/Images/ImageView.h"
     "Sources/Graphics/Images/ImageView.cpp"
+    "Sources/Graphics/Pipeline/Pipeline.h"
+    "Sources/Graphics/Pipeline/Pipeline.cpp"
+    "Sources/Graphics/Pipeline/Shader.h"
+    "Sources/Graphics/Pipeline/Shader.cpp"
 
     "Sources/main.cpp"
     "Sources/Window.h"
@@ -114,3 +95,4 @@ endforeach()
 
 
 SetOutputDirectory("VulkanTesting" "")
+SetWorkingDirectory("VulkanTesting" "${CMAKE_SOURCE_DIR}/")

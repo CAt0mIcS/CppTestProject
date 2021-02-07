@@ -12,17 +12,11 @@
 #include "Surface.h"
 #include "LogicalDevice.h"
 #include "Swapchain.h"
+#include "Pipeline/Pipeline.h"
 
 
 namespace At0::VulkanTesting
 {
-	class VulkanInstance;
-	class PhysicalDevice;
-	class LogicalDevice;
-	class Surface;
-	class CommandPool;
-	class Swapchain;
-
 	class Graphics
 	{
 		friend std::unique_ptr<Graphics> std::make_unique<Graphics>();
@@ -49,5 +43,6 @@ namespace At0::VulkanTesting
 		std::unique_ptr<LogicalDevice> m_LogicalDevice;
 		std::unique_ptr<CommandPool> m_CommandPool;
 		std::unique_ptr<Swapchain> m_Swapchain;
+		std::unique_ptr<GraphicsPipeline> m_GraphicsPipeline;
 	};
 }  // namespace At0::VulkanTesting

@@ -2,11 +2,8 @@
 #include "../Utils/RLogger.h"
 #include "../Utils/RException.h"
 #include "../Utils/RAssert.h"
-#include "VulkanInstance.h"
-#include "PhysicalDevice.h"
-#include "Surface.h"
-#include "LogicalDevice.h"
-#include "Commands/CommandPool.h"
+
+#include "Pipeline/Shader.h"
 
 #include <vulkan/vulkan.h>
 
@@ -22,6 +19,10 @@ namespace At0::VulkanTesting
 		m_PhysicalDevice = std::make_unique<PhysicalDevice>();
 		m_LogicalDevice = std::make_unique<LogicalDevice>();
 		m_Swapchain = std::make_unique<Swapchain>();
+
+		Shader shader("Resources/Shaders/VertexShader.spv", "Resources/Shaders/FragmentShader.spv");
+
+		m_GraphicsPipeline = std::make_unique<GraphicsPipeline>(std::move(shader));
 	}
 
 	Graphics::~Graphics()
