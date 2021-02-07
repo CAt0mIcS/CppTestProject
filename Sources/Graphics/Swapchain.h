@@ -23,6 +23,7 @@ namespace At0::VulkanTesting
 		~Swapchain();
 
 		SupportDetails QuerySwapchainSupport();
+		VkFormat GetFormat() const { return m_Format; }
 
 	private:
 		VkSurfaceFormatKHR ChooseSurfaceFormat(

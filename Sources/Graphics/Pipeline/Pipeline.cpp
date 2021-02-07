@@ -7,7 +7,7 @@
 
 namespace At0::VulkanTesting
 {
-	GraphicsPipeline::GraphicsPipeline(Shader&& shader)
+	GraphicsPipeline::GraphicsPipeline(Shader&& shader, const Renderpass& renderpass)
 	{
 		// ---------------------------------------------------------------------------------------
 		// Vertex Shader Stage
@@ -133,11 +133,36 @@ namespace At0::VulkanTesting
 		RAY_VK_THROW_FAILED(vkCreatePipelineLayout(Graphics::Get().GetLogicalDevice(),
 								&pipelineLayoutInfo, nullptr, &m_Layout),
 			"Failed to create pipeline layout.");
+
+		// ---------------------------------------------------------------------------------------
+		// Pipeline
+		VkGraphicsPipelineCreateInfo pipelineInfo{};
+		pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+		pipelineInfo.stageCount = std::size(shaderStages);
+		pipelineInfo.pStages = shaderStages;
+		pipelineInfo.pVertexInputState = &vertexInputInfo;
+		pipelineInfo.pInputAssemblyState = &inputAssembler;
+		pipelineInfo.pViewportState = &viewportState;
+		pipelineInfo.pRasterizationState = &rasterizer;
+		pipelineInfo.pMultisampleState = &multisampling;
+		pipelineInfo.pDepthStencilState = nullptr;
+		pipelineInfo.pColorBlendState = &colorBlending;
+		pipelineInfo.pDynamicState = nullptr;
+		pipelineInfo.layout = m_Layout;
+		pipelineInfo.renderPass = renderpass;
+		pipelineInfo.subpass = 0;  // Index of subpass used with pipeline
+
+		pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
+		pipelineInfo.basePipelineIndex = -1;
+
+		RAY_VK_THROW_FAILED(vkCreateGraphicsPipelines(Graphics::Get().GetLogicalDevice(),
+								VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_Pipeline),
+			"Failed to create graphics pipeline.");
 	}
 
 	GraphicsPipeline::~GraphicsPipeline()
 	{
-		vkDestroyPipelineLayout(Graphics::Get().GetLogicalDevice(), m_Layout, nullptr);
 		vkDestroyPipeline(Graphics::Get().GetLogicalDevice(), m_Pipeline, nullptr);
+		vkDestroyPipelineLayout(Graphics::Get().GetLogicalDevice(), m_Layout, nullptr);
 	}
 }  // namespace At0::VulkanTesting

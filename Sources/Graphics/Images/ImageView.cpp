@@ -1,4 +1,4 @@
-#include "ImageView.h"
+﻿#include "ImageView.h"
 #include "Graphics/Graphics.h"
 
 #include <vulkan/vulkan.h>
@@ -31,6 +31,7 @@ namespace At0::VulkanTesting
 
 	ImageView::~ImageView()
 	{
-		vkDestroyImageView(Graphics::Get().GetLogicalDevice(), m_View, nullptr);
+		if (m_View)
+			vkDestroyImageView(Graphics::Get().GetLogicalDevice(), m_View, nullptr);
 	}
 }  // namespace At0::VulkanTesting

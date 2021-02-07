@@ -24,7 +24,7 @@ namespace At0::VulkanTesting
 		}
 		// Fragment shader
 		{
-			std::vector<char> code = ReadShader(vertexShaderFilepath);
+			std::vector<char> code = ReadShader(fragmentShaderFilepath);
 
 			VkShaderModuleCreateInfo createInfo{};
 			createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;

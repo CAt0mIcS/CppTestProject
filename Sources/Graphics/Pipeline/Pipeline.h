@@ -6,11 +6,12 @@
 namespace At0::VulkanTesting
 {
 	class Shader;
+	class Renderpass;
 
 	class GraphicsPipeline
 	{
 	public:
-		GraphicsPipeline(Shader&& shader);
+		GraphicsPipeline(Shader&& shader, const Renderpass& renderpass);
 		~GraphicsPipeline();
 
 	private:

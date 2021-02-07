@@ -13,6 +13,7 @@
 #include "LogicalDevice.h"
 #include "Swapchain.h"
 #include "Pipeline/Pipeline.h"
+#include "Renderpass/Renderpass.h"
 
 
 namespace At0::VulkanTesting
@@ -29,6 +30,7 @@ namespace At0::VulkanTesting
 		const PhysicalDevice& GetPhysicalDevice() const { return *m_PhysicalDevice; }
 		const LogicalDevice& GetLogicalDevice() const { return *m_LogicalDevice; }
 		const Surface& GetSurface() const { return *m_Surface; }
+		const Swapchain& GetSwapchain() const { return *m_Swapchain; }
 		const CommandPool& GetCommandPool() const { return *m_CommandPool; }
 
 	private:
@@ -44,5 +46,6 @@ namespace At0::VulkanTesting
 		std::unique_ptr<CommandPool> m_CommandPool;
 		std::unique_ptr<Swapchain> m_Swapchain;
 		std::unique_ptr<GraphicsPipeline> m_GraphicsPipeline;
+		std::unique_ptr<Renderpass> m_Renderpass;
 	};
 }  // namespace At0::VulkanTesting

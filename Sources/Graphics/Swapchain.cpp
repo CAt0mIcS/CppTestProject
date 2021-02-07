@@ -72,9 +72,10 @@ namespace At0::VulkanTesting
 			Graphics::Get().GetLogicalDevice(), m_Swapchain, &swapchainImages, m_Images.data());
 
 		// Create image views
-		for (VkImage image : m_Images)
+		m_ImageViews.resize(m_Images.size());
+		for (uint32_t i = 0; i < m_ImageViews.size(); ++i)
 		{
-			m_ImageViews.emplace_back(image, m_Format);
+			m_ImageViews[i] = { m_Images[i], m_Format };
 		}
 	}
 
