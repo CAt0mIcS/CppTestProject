@@ -11,7 +11,7 @@ int main()
 	try
 	{
 		Log::SetLogLevel(LogLevel::Trace);
-		Log::Open("../VulkanTesting.log");
+		Log::Open("build/VulkanTesting.log");
 
 		// Create window
 		Window::Create();
