@@ -24,6 +24,9 @@ namespace At0::VulkanTesting
 
 		SupportDetails QuerySwapchainSupport();
 		VkFormat GetFormat() const { return m_Format; }
+		const VkExtent2D& GetExtent() const { return m_Extent; }
+		uint32_t GetNumberOfImages() const { return m_ImageViews.size(); }
+		const VkImageView& GetImageView(uint32_t i) const { return m_ImageViews[i]; }
 
 	private:
 		VkSurfaceFormatKHR ChooseSurfaceFormat(

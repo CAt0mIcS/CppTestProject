@@ -1,20 +1,21 @@
 ﻿#pragma once
 
 #include <vulkan/vulkan_core.h>
+#include <vector>
 
 
 namespace At0::VulkanTesting
 {
-	class LogicalDevice;
+	class Renderpass;
 
 	class Framebuffer
 	{
 	public:
-		Framebuffer(const LogicalDevice* device);
+		Framebuffer() = default;
+		Framebuffer(std::vector<VkImageView> attachments);
 		~Framebuffer();
 
 	private:
-		VkFramebuffer m_Framebuffer;
-		const LogicalDevice& m_LogicalDevice;
+		VkFramebuffer m_Framebuffer = nullptr;
 	};
 }  // namespace At0::VulkanTesting

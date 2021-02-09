@@ -14,6 +14,7 @@
 #include "Swapchain.h"
 #include "Pipeline/Pipeline.h"
 #include "Renderpass/Renderpass.h"
+#include "Framebuffer.h"
 
 
 namespace At0::VulkanTesting
@@ -32,9 +33,12 @@ namespace At0::VulkanTesting
 		const Surface& GetSurface() const { return *m_Surface; }
 		const Swapchain& GetSwapchain() const { return *m_Swapchain; }
 		const CommandPool& GetCommandPool() const { return *m_CommandPool; }
+		const Renderpass& GetRenderpass() const { return *m_Renderpass; }
 
 	private:
 		Graphics();
+		void CreateGraphicsPipeline();
+		void CreateFramebuffers();
 
 	private:
 		inline static Graphics* s_Instance = nullptr;
@@ -47,5 +51,7 @@ namespace At0::VulkanTesting
 		std::unique_ptr<Swapchain> m_Swapchain;
 		std::unique_ptr<GraphicsPipeline> m_GraphicsPipeline;
 		std::unique_ptr<Renderpass> m_Renderpass;
+
+		std::vector<Framebuffer> m_Framebuffers;
 	};
 }  // namespace At0::VulkanTesting

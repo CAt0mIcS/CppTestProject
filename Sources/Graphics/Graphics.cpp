@@ -20,7 +20,12 @@ namespace At0::VulkanTesting
 		m_LogicalDevice = std::make_unique<LogicalDevice>();
 		m_Swapchain = std::make_unique<Swapchain>();
 
+		CreateGraphicsPipeline();
+		CreateFramebuffers();
+	}
 
+	void Graphics::CreateGraphicsPipeline()
+	{
 		Attachment attachment;
 
 		std::vector<VkAttachmentReference> attachmentReferences;
@@ -39,6 +44,15 @@ namespace At0::VulkanTesting
 		m_GraphicsPipeline = std::make_unique<GraphicsPipeline>(std::move(shader), *m_Renderpass);
 	}
 
+	void Graphics::CreateFramebuffers()
+	{
+		m_Framebuffers.resize(m_Swapchain->GetNumberOfImages());
+		for (uint32_t i = 0; i < m_Swapchain->GetNumberOfImages(); ++i)
+		{
+			m_Framebuffers[i] = { { m_Swapchain->GetImageView(i) } };
+		}
+	}
+
 	Graphics::~Graphics()
 	{
 		// not production level code here...
@@ -48,6 +62,7 @@ namespace At0::VulkanTesting
 			s_Instance = nullptr;
 		}
 
+		m_Framebuffers.clear();
 		m_GraphicsPipeline.reset();
 		m_Renderpass.reset();
 		m_Swapchain.reset();

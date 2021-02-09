@@ -31,7 +31,8 @@ namespace At0::VulkanTesting
 
 	ImageView::~ImageView()
 	{
-		if (m_View)
-			vkDestroyImageView(Graphics::Get().GetLogicalDevice(), m_View, nullptr);
+		// VT_TODO: Destroy image
+		// if (m_View)
+		// vkDestroyImageView(Graphics::Get().GetLogicalDevice(), m_View, nullptr);
 	}
 }  // namespace At0::VulkanTesting
