@@ -72,5 +72,8 @@ namespace At0::VulkanTesting
 
 		// We may be using the frame #0 objects while frame #0 is still in-flight
 		std::array<VkFence, s_MaxFramesInFlight> m_InFlightFences;
+
+		// We need to track for each swap chain image if a frame in flight is currently using it
+		std::vector<VkFence> m_ImagesInFlight;
 	};
 }  // namespace At0::VulkanTesting

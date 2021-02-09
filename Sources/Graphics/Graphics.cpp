@@ -91,6 +91,8 @@ namespace At0::VulkanTesting
 
 	void Graphics::CreateSyncObjects()
 	{
+		m_ImagesInFlight.resize(m_Swapchain->GetNumberOfImages(), VK_NULL_HANDLE);
+
 		VkSemaphoreCreateInfo semaphoreCreateInfo{};
 		semaphoreCreateInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 
@@ -155,11 +157,18 @@ namespace At0::VulkanTesting
 		// which means that the command buffer finished executing
 		vkWaitForFences(
 			*m_LogicalDevice, 1, &m_InFlightFences[m_CurrentFrame], VK_TRUE, UINT64_MAX);
-		vkResetFences(*m_LogicalDevice, 1, &m_InFlightFences[m_CurrentFrame]);
 
 		uint32_t imageIndex;
 		vkAcquireNextImageKHR(*m_LogicalDevice, *m_Swapchain, UINT64_MAX,
 			m_ImageAvailableSemaphore[m_CurrentFrame], VK_NULL_HANDLE, &imageIndex);
+
+		// Check if a previous frame is using this image (i.e. there is its fence to wait on)
+		if (m_ImagesInFlight[imageIndex] != VK_NULL_HANDLE)
+			vkWaitForFences(
+				*m_LogicalDevice, 1, &m_ImagesInFlight[imageIndex], VK_TRUE, UINT64_MAX);
+
+		// Mark the image as now being in use by this frame
+		m_ImagesInFlight[imageIndex] = m_InFlightFences[m_CurrentFrame];
 
 		VkSubmitInfo submitInfo{};
 		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -174,6 +183,8 @@ namespace At0::VulkanTesting
 		submitInfo.pCommandBuffers = &buffer;
 		submitInfo.signalSemaphoreCount = 1;
 		submitInfo.pSignalSemaphores = &m_RenderFinishedSemaphore[m_CurrentFrame];
+
+		vkResetFences(*m_LogicalDevice, 1, &m_InFlightFences[m_CurrentFrame]);
 
 		// Fence will be signaled once the command buffer finishes executing
 		RAY_VK_THROW_FAILED(vkQueueSubmit(m_LogicalDevice->GetGraphicsQueue(), 1, &submitInfo,
