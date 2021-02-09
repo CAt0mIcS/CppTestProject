@@ -1,6 +1,8 @@
 ﻿#pragma once
 
 #include <memory>
+#include <array>
+
 #include "../Utils/RAssert.h"
 #include "../Utils/RException.h"
 
@@ -42,9 +44,12 @@ namespace At0::VulkanTesting
 		void CreateGraphicsPipeline();
 		void CreateFramebuffers();
 		void CreateCommandPoolAndBuffers();
-		void CreateSemaphores();
+		void CreateSyncObjects();
 
 	private:
+		// specifies the maximum amount of images which we can work on concurrently
+		static constexpr uint8_t s_MaxFramesInFlight = 2;
+		uint64_t m_CurrentFrame = 0;
 		inline static Graphics* s_Instance = nullptr;
 
 		std::unique_ptr<VulkanInstance> m_Instance;
@@ -59,10 +64,13 @@ namespace At0::VulkanTesting
 
 		std::vector<Framebuffer> m_Framebuffers;
 
-		// Signal that an image has been acquired and is ready for rendering
-		VkSemaphore m_ImageAvailableSemaphore;
+		// Signal that an image has been acquired and is ready for rendering (1 semaphore / frame)
+		std::array<VkSemaphore, s_MaxFramesInFlight> m_ImageAvailableSemaphore;
 
-		// Signal that rendering is finished and ready for presentation
-		VkSemaphore m_RenderFinishedSemaphore;
+		// Signal that rendering is finished and ready for presentation (1 semaphore / frame)
+		std::array<VkSemaphore, s_MaxFramesInFlight> m_RenderFinishedSemaphore;
+
+		// We may be using the frame #0 objects while frame #0 is still in-flight
+		std::array<VkFence, s_MaxFramesInFlight> m_InFlightFences;
 	};
 }  // namespace At0::VulkanTesting

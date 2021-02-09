@@ -23,7 +23,7 @@ namespace At0::VulkanTesting
 		CreateGraphicsPipeline();
 		CreateFramebuffers();
 		CreateCommandPoolAndBuffers();
-		CreateSemaphores();
+		CreateSyncObjects();
 	}
 
 	void Graphics::CreateGraphicsPipeline()
@@ -89,18 +89,29 @@ namespace At0::VulkanTesting
 		}
 	}
 
-	void Graphics::CreateSemaphores()
+	void Graphics::CreateSyncObjects()
 	{
-		VkSemaphoreCreateInfo createInfo{};
-		createInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+		VkSemaphoreCreateInfo semaphoreCreateInfo{};
+		semaphoreCreateInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 
-		RAY_VK_THROW_FAILED(
-			vkCreateSemaphore(*m_LogicalDevice, &createInfo, nullptr, &m_ImageAvailableSemaphore),
-			"Failed to create semaphore.");
+		VkFenceCreateInfo fenceCreateInfo{};
+		fenceCreateInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+		fenceCreateInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
-		RAY_VK_THROW_FAILED(
-			vkCreateSemaphore(*m_LogicalDevice, &createInfo, nullptr, &m_RenderFinishedSemaphore),
-			"Failed to create semaphore.");
+		for (uint32_t i = 0; i < s_MaxFramesInFlight; ++i)
+		{
+			RAY_VK_THROW_FAILED(vkCreateSemaphore(*m_LogicalDevice, &semaphoreCreateInfo, nullptr,
+									&m_ImageAvailableSemaphore[i]),
+				"Failed to create semaphore.");
+
+			RAY_VK_THROW_FAILED(vkCreateSemaphore(*m_LogicalDevice, &semaphoreCreateInfo, nullptr,
+									&m_RenderFinishedSemaphore[i]),
+				"Failed to create semaphore.");
+
+			RAY_VK_THROW_FAILED(
+				vkCreateFence(*m_LogicalDevice, &fenceCreateInfo, nullptr, &m_InFlightFences[i]),
+				"Failed to create fence.");
+		}
 	}
 
 	Graphics::~Graphics()
@@ -114,8 +125,12 @@ namespace At0::VulkanTesting
 			s_Instance = nullptr;
 		}
 
-		vkDestroySemaphore(*m_LogicalDevice, m_ImageAvailableSemaphore, nullptr);
-		vkDestroySemaphore(*m_LogicalDevice, m_RenderFinishedSemaphore, nullptr);
+		for (uint32_t i = 0; i < s_MaxFramesInFlight; ++i)
+		{
+			vkDestroySemaphore(*m_LogicalDevice, m_ImageAvailableSemaphore[i], nullptr);
+			vkDestroySemaphore(*m_LogicalDevice, m_RenderFinishedSemaphore[i], nullptr);
+			vkDestroyFence(*m_LogicalDevice, m_InFlightFences[i], nullptr);
+		}
 
 		m_Framebuffers.clear();
 		m_GraphicsPipeline.reset();
@@ -136,32 +151,39 @@ namespace At0::VulkanTesting
 
 	void Graphics::Update()
 	{
+		// Wait for fence in vkQueueSubmit to signal,
+		// which means that the command buffer finished executing
+		vkWaitForFences(
+			*m_LogicalDevice, 1, &m_InFlightFences[m_CurrentFrame], VK_TRUE, UINT64_MAX);
+		vkResetFences(*m_LogicalDevice, 1, &m_InFlightFences[m_CurrentFrame]);
+
 		uint32_t imageIndex;
-		vkAcquireNextImageKHR(*m_LogicalDevice, *m_Swapchain, UINT64_MAX, m_ImageAvailableSemaphore,
-			VK_NULL_HANDLE, &imageIndex);
+		vkAcquireNextImageKHR(*m_LogicalDevice, *m_Swapchain, UINT64_MAX,
+			m_ImageAvailableSemaphore[m_CurrentFrame], VK_NULL_HANDLE, &imageIndex);
 
 		VkSubmitInfo submitInfo{};
 		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
 		VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
 		submitInfo.waitSemaphoreCount = 1;
-		submitInfo.pWaitSemaphores = &m_ImageAvailableSemaphore;
+		submitInfo.pWaitSemaphores = &m_ImageAvailableSemaphore[m_CurrentFrame];
 		submitInfo.pWaitDstStageMask = waitStages;
 		submitInfo.commandBufferCount = 1;
 
 		VkCommandBuffer buffer = *m_CommandBuffers[imageIndex].get();
 		submitInfo.pCommandBuffers = &buffer;
 		submitInfo.signalSemaphoreCount = 1;
-		submitInfo.pSignalSemaphores = &m_RenderFinishedSemaphore;
+		submitInfo.pSignalSemaphores = &m_RenderFinishedSemaphore[m_CurrentFrame];
 
-		RAY_VK_THROW_FAILED(
-			vkQueueSubmit(m_LogicalDevice->GetGraphicsQueue(), 1, &submitInfo, VK_NULL_HANDLE),
+		// Fence will be signaled once the command buffer finishes executing
+		RAY_VK_THROW_FAILED(vkQueueSubmit(m_LogicalDevice->GetGraphicsQueue(), 1, &submitInfo,
+								m_InFlightFences[m_CurrentFrame]),
 			"Failed to submit to queue.");
 
 		VkPresentInfoKHR presentInfo{};
 		presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
 		presentInfo.waitSemaphoreCount = 1;
-		presentInfo.pWaitSemaphores = &m_RenderFinishedSemaphore;
+		presentInfo.pWaitSemaphores = &m_RenderFinishedSemaphore[m_CurrentFrame];
 
 		VkSwapchainKHR swapchain = *m_Swapchain.get();
 		presentInfo.swapchainCount = 1;
@@ -169,5 +191,8 @@ namespace At0::VulkanTesting
 		presentInfo.pImageIndices = &imageIndex;
 		presentInfo.pResults = nullptr;	 // Optional
 		vkQueuePresentKHR(m_LogicalDevice->GetPresentQueue(), &presentInfo);
+
+		// Loop around every time s_MaxFramesInFlight is surpassed
+		m_CurrentFrame = (m_CurrentFrame + 1) % s_MaxFramesInFlight;
 	}
 }  // namespace At0::VulkanTesting
