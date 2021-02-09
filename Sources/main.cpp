@@ -21,6 +21,7 @@ int main()
 
 		while (Window::Get().Update())
 		{
+			Graphics::Get().Update();
 		}
 	}
 	catch (Exception& e)

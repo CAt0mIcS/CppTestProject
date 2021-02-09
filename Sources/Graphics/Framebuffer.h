@@ -15,6 +15,8 @@ namespace At0::VulkanTesting
 		Framebuffer(std::vector<VkImageView> attachments);
 		~Framebuffer();
 
+		operator const VkFramebuffer&() const { return m_Framebuffer; }
+
 	private:
 		VkFramebuffer m_Framebuffer = nullptr;
 	};

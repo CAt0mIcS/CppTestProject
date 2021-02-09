@@ -22,6 +22,8 @@ namespace At0::VulkanTesting
 		Swapchain();
 		~Swapchain();
 
+		operator const VkSwapchainKHR&() const { return m_Swapchain; }
+
 		SupportDetails QuerySwapchainSupport();
 		VkFormat GetFormat() const { return m_Format; }
 		const VkExtent2D& GetExtent() const { return m_Extent; }

@@ -24,7 +24,7 @@ namespace At0::VulkanTesting
 
 	Framebuffer::~Framebuffer()
 	{
-		if (m_Framebuffer)
-			vkDestroyFramebuffer(Graphics::Get().GetLogicalDevice(), m_Framebuffer, nullptr);
+		// if (m_Framebuffer)
+		//	vkDestroyFramebuffer(Graphics::Get().GetLogicalDevice(), m_Framebuffer, nullptr);
 	}
 }  // namespace At0::VulkanTesting

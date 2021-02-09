@@ -14,6 +14,8 @@ namespace At0::VulkanTesting
 		GraphicsPipeline(Shader&& shader, const Renderpass& renderpass);
 		~GraphicsPipeline();
 
+		operator const VkPipeline&() const { return m_Pipeline; }
+
 	private:
 		VkPipeline m_Pipeline;
 		VkPipelineLayout m_Layout;

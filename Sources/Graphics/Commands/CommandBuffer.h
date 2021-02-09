@@ -15,6 +15,8 @@ namespace At0::VulkanTesting
 		void Begin();
 		void End();
 
+		operator const VkCommandBuffer&() const { return m_CommandBuffer; }
+
 	private:
 		VkCommandBuffer m_CommandBuffer;
 		bool m_Running = false;

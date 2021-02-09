@@ -27,6 +27,8 @@ namespace At0::VulkanTesting
 		~Graphics();
 		static Graphics& Get();
 
+		void Update();
+
 		const VulkanInstance& GetInstance() const { return *m_Instance; }
 		const PhysicalDevice& GetPhysicalDevice() const { return *m_PhysicalDevice; }
 		const LogicalDevice& GetLogicalDevice() const { return *m_LogicalDevice; }
@@ -39,6 +41,8 @@ namespace At0::VulkanTesting
 		Graphics();
 		void CreateGraphicsPipeline();
 		void CreateFramebuffers();
+		void CreateCommandPoolAndBuffers();
+		void CreateSemaphores();
 
 	private:
 		inline static Graphics* s_Instance = nullptr;
@@ -47,11 +51,18 @@ namespace At0::VulkanTesting
 		std::unique_ptr<PhysicalDevice> m_PhysicalDevice;
 		std::unique_ptr<Surface> m_Surface;
 		std::unique_ptr<LogicalDevice> m_LogicalDevice;
-		std::unique_ptr<CommandPool> m_CommandPool;
 		std::unique_ptr<Swapchain> m_Swapchain;
 		std::unique_ptr<GraphicsPipeline> m_GraphicsPipeline;
 		std::unique_ptr<Renderpass> m_Renderpass;
+		std::unique_ptr<CommandPool> m_CommandPool;
+		std::vector<std::unique_ptr<CommandBuffer>> m_CommandBuffers;
 
 		std::vector<Framebuffer> m_Framebuffers;
+
+		// Signal that an image has been acquired and is ready for rendering
+		VkSemaphore m_ImageAvailableSemaphore;
+
+		// Signal that rendering is finished and ready for presentation
+		VkSemaphore m_RenderFinishedSemaphore;
 	};
 }  // namespace At0::VulkanTesting

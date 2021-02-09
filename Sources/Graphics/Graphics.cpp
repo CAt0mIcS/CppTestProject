@@ -22,6 +22,8 @@ namespace At0::VulkanTesting
 
 		CreateGraphicsPipeline();
 		CreateFramebuffers();
+		CreateCommandPoolAndBuffers();
+		CreateSemaphores();
 	}
 
 	void Graphics::CreateGraphicsPipeline()
@@ -53,14 +55,67 @@ namespace At0::VulkanTesting
 		}
 	}
 
+	void Graphics::CreateCommandPoolAndBuffers()
+	{
+		m_CommandPool = std::make_unique<CommandPool>();
+		m_CommandBuffers.resize(m_Framebuffers.size());
+
+		uint32_t i = 0;
+		for (std::unique_ptr<CommandBuffer>& cmdBuff : m_CommandBuffers)
+		{
+			cmdBuff = std::make_unique<CommandBuffer>();
+
+			// Prerecorded commands
+			cmdBuff->Begin();
+
+			VkRenderPassBeginInfo renderPassInfo{};
+			renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+			renderPassInfo.renderPass = *m_Renderpass;
+			renderPassInfo.framebuffer = m_Framebuffers[i];
+			renderPassInfo.renderArea.offset = { 0, 0 };
+			renderPassInfo.renderArea.extent = m_Swapchain->GetExtent();
+			VkClearValue clearColor{ 0.0f, 0.0f, 0.0f, 1.0f };
+			renderPassInfo.clearValueCount = 1;
+			renderPassInfo.pClearValues = &clearColor;
+			vkCmdBeginRenderPass(*cmdBuff, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+
+			vkCmdBindPipeline(*cmdBuff, VK_PIPELINE_BIND_POINT_GRAPHICS, *m_GraphicsPipeline);
+			vkCmdDraw(*cmdBuff, 3, 1, 0, 0);
+
+			vkCmdEndRenderPass(*cmdBuff);
+
+			cmdBuff->End();
+			++i;
+		}
+	}
+
+	void Graphics::CreateSemaphores()
+	{
+		VkSemaphoreCreateInfo createInfo{};
+		createInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+
+		RAY_VK_THROW_FAILED(
+			vkCreateSemaphore(*m_LogicalDevice, &createInfo, nullptr, &m_ImageAvailableSemaphore),
+			"Failed to create semaphore.");
+
+		RAY_VK_THROW_FAILED(
+			vkCreateSemaphore(*m_LogicalDevice, &createInfo, nullptr, &m_RenderFinishedSemaphore),
+			"Failed to create semaphore.");
+	}
+
 	Graphics::~Graphics()
 	{
+		vkDeviceWaitIdle(*m_LogicalDevice);
+
 		// not production level code here...
 		if (s_Instance)
 		{
 			delete s_Instance;
 			s_Instance = nullptr;
 		}
+
+		vkDestroySemaphore(*m_LogicalDevice, m_ImageAvailableSemaphore, nullptr);
+		vkDestroySemaphore(*m_LogicalDevice, m_RenderFinishedSemaphore, nullptr);
 
 		m_Framebuffers.clear();
 		m_GraphicsPipeline.reset();
@@ -77,5 +132,42 @@ namespace At0::VulkanTesting
 			new Graphics();
 
 		return *s_Instance;
+	}
+
+	void Graphics::Update()
+	{
+		uint32_t imageIndex;
+		vkAcquireNextImageKHR(*m_LogicalDevice, *m_Swapchain, UINT64_MAX, m_ImageAvailableSemaphore,
+			VK_NULL_HANDLE, &imageIndex);
+
+		VkSubmitInfo submitInfo{};
+		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+
+		VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+		submitInfo.waitSemaphoreCount = 1;
+		submitInfo.pWaitSemaphores = &m_ImageAvailableSemaphore;
+		submitInfo.pWaitDstStageMask = waitStages;
+		submitInfo.commandBufferCount = 1;
+
+		VkCommandBuffer buffer = *m_CommandBuffers[imageIndex].get();
+		submitInfo.pCommandBuffers = &buffer;
+		submitInfo.signalSemaphoreCount = 1;
+		submitInfo.pSignalSemaphores = &m_RenderFinishedSemaphore;
+
+		RAY_VK_THROW_FAILED(
+			vkQueueSubmit(m_LogicalDevice->GetGraphicsQueue(), 1, &submitInfo, VK_NULL_HANDLE),
+			"Failed to submit to queue.");
+
+		VkPresentInfoKHR presentInfo{};
+		presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+		presentInfo.waitSemaphoreCount = 1;
+		presentInfo.pWaitSemaphores = &m_RenderFinishedSemaphore;
+
+		VkSwapchainKHR swapchain = *m_Swapchain.get();
+		presentInfo.swapchainCount = 1;
+		presentInfo.pSwapchains = &swapchain;
+		presentInfo.pImageIndices = &imageIndex;
+		presentInfo.pResults = nullptr;	 // Optional
+		vkQueuePresentKHR(m_LogicalDevice->GetPresentQueue(), &presentInfo);
 	}
 }  // namespace At0::VulkanTesting

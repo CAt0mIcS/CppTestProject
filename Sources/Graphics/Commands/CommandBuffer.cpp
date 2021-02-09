@@ -14,8 +14,8 @@ namespace At0::VulkanTesting
 		allocInfo.commandPool = Graphics::Get().GetCommandPool();
 		allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 		allocInfo.commandBufferCount = 1;
-		RAY_VK_THROW_FAILED(
-			vkAllocateCommandBuffers(Graphics::Get().GetLogicalDevice(), nullptr, &m_CommandBuffer),
+		RAY_VK_THROW_FAILED(vkAllocateCommandBuffers(
+								Graphics::Get().GetLogicalDevice(), &allocInfo, &m_CommandBuffer),
 			"Failed to allocate command buffers.");
 	}
 
