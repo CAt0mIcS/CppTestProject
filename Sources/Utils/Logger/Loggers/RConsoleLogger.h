@@ -2,6 +2,7 @@
 
 #include "RBaseLogger.h"
 #include <iostream>
+#include <cstring>
 
 
 namespace At0::VulkanTesting

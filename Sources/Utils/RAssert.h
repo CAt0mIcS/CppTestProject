@@ -2,7 +2,7 @@
 
 #ifndef NDEBUG
 
-	// clang-format off
+// clang-format off
 #include "RLogger.h"
 #include "RSerialize.h"
 #include "RString.h"
@@ -28,7 +28,7 @@ namespace At0::VulkanTesting
 		template<typename... Args>
 		static std::string AssertA(const std::string& str, Args&&... args)
 		{
-			std::string assertStr = String::ConvertUtf8(str, std::forward<Args>(args)...);
+			std::string assertStr = SerializeString(str, std::forward<Args>(args)...);
 			Log::Critical("Assertion Failed with Message: {0}", assertStr);
 			return assertStr;
 		}
@@ -44,14 +44,15 @@ namespace At0::VulkanTesting
 			_wassert(::At0::VulkanTesting::RlAssert::AssertW(msg, __VA_ARGS__).c_str(), \
 				RAY_WIDE(__FILE__), (unsigned int)__LINE__)
 	#elif defined(__linux__)
-		#define RAY_ASSERT(condition, msg, ...)                                           \
-			if (!(condition))                                                             \
-			__assert(::At0::VulkanTesting::RlAssert::AssertA(msg, ##__VA_ARGS__).c_str(), \
+		#define RAY_ASSERT(condition, msg, ...)                                                  \
+			if (!(condition))                                                                    \
+			__assert(                                                                            \
+				::At0::VulkanTesting::RlAssert::AssertA(msg __VA_OPT__(, ) __VA_ARGS__).c_str(), \
 				__FILE__, (unsigned int)__LINE__)
 	#endif
 
 	#define RAY_MEXPECTS(expected, msg, ...) \
-		RAY_ASSERT(expected, "[Expected] " #expected ":\n" msg, ##__VA_ARGS__)
+		RAY_ASSERT(expected, "[Expected] " #expected ":\n" msg __VA_OPT__(, ) __VA_ARGS__)
 	#define RAY_EXPECTS(expected) RAY_ASSERT(expected, "[Expected] {0}", #expected)
 
 #else

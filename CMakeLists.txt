@@ -100,3 +100,13 @@ endforeach()
 
 SetOutputDirectory("VulkanTesting" "")
 SetWorkingDirectory("VulkanTesting" "${CMAKE_SOURCE_DIR}/")
+
+if(UNIX)
+add_custom_command(TARGET "VulkanTesting" POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    "${CMAKE_SOURCE_DIR}/Resources"
+    "$<$<CONFIG:DEBUG>:${CMAKE_BINARY_DIR}/bin/Debug/Resources>"
+    "$<$<CONFIG:RELEASE>:${CMAKE_BINARY_DIR}/bin/Release/Resources>"
+    "$<$<CONFIG:RELWITHDEBINFO>:${CMAKE_BINARY_DIR}/bin/RelWithDebInfo/Resources>"
+)
+endif()

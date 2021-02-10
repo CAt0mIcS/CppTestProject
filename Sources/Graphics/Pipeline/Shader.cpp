@@ -47,8 +47,9 @@ namespace At0::VulkanTesting
 	{
 		std::ifstream reader(filepath.data(), std::ios::ate | std::ios::binary);
 
+		std::cout << std::filesystem::absolute(filepath.data()) << '\n';
 		size_t filesize = (size_t)reader.tellg();
-		RAY_MEXPECTS(filesize != 0, "Shader file not found");
+		RAY_MEXPECTS(filesize != 0 && filesize != SIZE_MAX, "Shader file not found");
 		std::vector<char> code(filesize);
 
 		reader.seekg(0);

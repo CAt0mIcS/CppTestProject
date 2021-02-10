@@ -5,6 +5,9 @@
 #include <vector>
 #include <sstream>
 
+#include "../../RString.h"
+#include "../../RSerialize.h"
+
 #include "../Formatters/RBracketFormatter.h"
 #include "../Formatters/RLogLevelFormatter.h"
 #include "../Formatters/RDateTimeFormatter.h"
@@ -37,7 +40,7 @@ namespace At0::VulkanTesting
 		/// <summary>
 		/// Opens the stream to write to
 		/// </summary>
-		virtual void Open(const char* filepath) {};
+		virtual void Open(const char* filepath){};
 
 		/// <summary>
 		/// Flushes the output stream
@@ -47,7 +50,7 @@ namespace At0::VulkanTesting
 		/// <summary>
 		/// Closes the output stream
 		/// </summary>
-		virtual void Close() {};
+		virtual void Close(){};
 
 		/// <summary>
 		/// Logs a trace message, will only be logged if the loglevel is trace
@@ -159,7 +162,7 @@ namespace At0::VulkanTesting
 				return;
 
 			Log(FormatMessage(
-				String::ConvertUtf8(str), LogMessageType::Trace, std::forward<Args>(args)...),
+					String::ConvertUtf8(str), LogMessageType::Trace, std::forward<Args>(args)...),
 				LogMessageType::Trace);
 		}
 
@@ -176,7 +179,7 @@ namespace At0::VulkanTesting
 				return;
 
 			Log(FormatMessage(
-				String::ConvertUtf8(str), LogMessageType::Debug, std::forward<Args>(args)...),
+					String::ConvertUtf8(str), LogMessageType::Debug, std::forward<Args>(args)...),
 				LogMessageType::Debug);
 		}
 
@@ -193,7 +196,7 @@ namespace At0::VulkanTesting
 				return;
 
 			Log(FormatMessage(String::ConvertUtf8(str), LogMessageType::Information,
-				std::forward<Args>(args)...),
+					std::forward<Args>(args)...),
 				LogMessageType::Information);
 		}
 
@@ -210,7 +213,7 @@ namespace At0::VulkanTesting
 				return;
 
 			Log(FormatMessage(
-				String::ConvertUtf8(str), LogMessageType::Warning, std::forward<Args>(args)...),
+					String::ConvertUtf8(str), LogMessageType::Warning, std::forward<Args>(args)...),
 				LogMessageType::Warning);
 		}
 
@@ -227,7 +230,7 @@ namespace At0::VulkanTesting
 				return;
 
 			Log(FormatMessage(
-				String::ConvertUtf8(str), LogMessageType::Error, std::forward<Args>(args)...),
+					String::ConvertUtf8(str), LogMessageType::Error, std::forward<Args>(args)...),
 				LogMessageType::Error);
 		}
 
@@ -244,7 +247,7 @@ namespace At0::VulkanTesting
 				return;
 
 			Log(FormatMessage(String::ConvertUtf8(str), LogMessageType::Critical,
-				std::forward<Args>(args)...),
+					std::forward<Args>(args)...),
 				LogMessageType::Critical);
 		}
 

@@ -44,7 +44,9 @@ namespace At0::VulkanTesting
 			long long ms;
 			{
 				std::scoped_lock lock(s_ChronoMutex);
-				ms = (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()) % 1000)
+				ms = (std::chrono::duration_cast<std::chrono::milliseconds>(
+						  std::chrono::high_resolution_clock::now().time_since_epoch()) %
+					  1000)
 						 .count();
 			}
 			std::ostringstream oss;

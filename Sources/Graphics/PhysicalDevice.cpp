@@ -23,8 +23,10 @@ namespace At0::VulkanTesting
 
 	std::vector<VkPhysicalDevice> PhysicalDevice::FindPhysicalDevices() const
 	{
-		uint32_t physicalDeviceCount;
+		uint32_t physicalDeviceCount = 0;
 		vkEnumeratePhysicalDevices(Graphics::Get().GetInstance(), &physicalDeviceCount, nullptr);
+
+		RAY_MEXPECTS(physicalDeviceCount != 0, "Failed to find suitable GPU");
 
 		std::vector<VkPhysicalDevice> devices(physicalDeviceCount);
 		vkEnumeratePhysicalDevices(
