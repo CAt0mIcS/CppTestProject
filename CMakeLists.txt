@@ -19,7 +19,7 @@ set(SRC
     "Sources/Utils/Logger/Formatters/RBracketFormatter.h"
     "Sources/Utils/Logger/Formatters/RDateTimeFormatter.h"
     "Sources/Utils/Logger/Formatters/RFormatter.h"
-    "Sources/Utils/Logger/Formatters/RlogLevelFormatter.h"
+    "Sources/Utils/Logger/Formatters/RLogLevelFormatter.h"
     "Sources/Utils/Logger/Formatters/RNullTerminatorFormatter.h"
     "Sources/Utils/Logger/Loggers/RBaseLogger.h"
     "Sources/Utils/Logger/Loggers/RFileLogger.h"
