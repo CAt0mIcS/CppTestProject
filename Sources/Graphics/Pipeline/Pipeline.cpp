@@ -160,6 +160,9 @@ namespace At0::VulkanTesting
 		RAY_VK_THROW_FAILED(vkCreateGraphicsPipelines(Graphics::Get().GetLogicalDevice(),
 								VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_Pipeline),
 			"Failed to create graphics pipeline.");
+
+		vkDestroyShaderModule(Graphics::Get().GetLogicalDevice(), vShaderModule, nullptr);
+		vkDestroyShaderModule(Graphics::Get().GetLogicalDevice(), fShaderModule, nullptr);
 	}
 
 	GraphicsPipeline::~GraphicsPipeline()
