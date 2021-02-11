@@ -1,20 +1,26 @@
 ﻿#pragma once
 
 #include <vulkan/vulkan_core.h>
+#include <string_view>
+#include <vector>
 
 
 namespace At0::VulkanTesting
 {
-	class Shader;
 	class Renderpass;
 
 	class GraphicsPipeline
 	{
 	public:
-		GraphicsPipeline(Shader&& shader, const Renderpass& renderpass);
+		GraphicsPipeline(const Renderpass& renderpass, std::string_view vShaderFilepath,
+			std::string_view fShaderFilepath);
 		~GraphicsPipeline();
 
 		operator const VkPipeline&() const { return m_Pipeline; }
+
+	private:
+		static VkShaderModule CreateShader(std::vector<char> src);
+		static std::vector<char> ReadShader(std::string_view filepath);
 
 	private:
 		VkPipeline m_Pipeline;

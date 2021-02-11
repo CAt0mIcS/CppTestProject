@@ -2,19 +2,21 @@
 #include "Graphics/Graphics.h"
 #include "Window.h"
 
-#include "Shader.h"
-
 
 namespace At0::VulkanTesting
 {
-	GraphicsPipeline::GraphicsPipeline(Shader&& shader, const Renderpass& renderpass)
+	GraphicsPipeline::GraphicsPipeline(const Renderpass& renderpass,
+		std::string_view vShaderFilepath, std::string_view fShaderFilepath)
 	{
+		VkShaderModule vShaderModule = CreateShader(ReadShader(vShaderFilepath));
+		VkShaderModule fShaderModule = CreateShader(ReadShader(fShaderFilepath));
+
 		// ---------------------------------------------------------------------------------------
 		// Vertex Shader Stage
 		VkPipelineShaderStageCreateInfo vShaderCreateInfo{};
 		vShaderCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 		vShaderCreateInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
-		vShaderCreateInfo.module = shader.GetVertexShaderModule();
+		vShaderCreateInfo.module = vShaderModule;
 		vShaderCreateInfo.pName = "main";
 
 		// ---------------------------------------------------------------------------------------
@@ -22,7 +24,7 @@ namespace At0::VulkanTesting
 		VkPipelineShaderStageCreateInfo pShaderCreateInfo{};
 		pShaderCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 		pShaderCreateInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
-		pShaderCreateInfo.module = shader.GetFragmentShaderModule();
+		pShaderCreateInfo.module = fShaderModule;
 		pShaderCreateInfo.pName = "main";
 
 		VkPipelineShaderStageCreateInfo shaderStages[] = { vShaderCreateInfo, pShaderCreateInfo };
@@ -164,5 +166,36 @@ namespace At0::VulkanTesting
 	{
 		vkDestroyPipeline(Graphics::Get().GetLogicalDevice(), m_Pipeline, nullptr);
 		vkDestroyPipelineLayout(Graphics::Get().GetLogicalDevice(), m_Layout, nullptr);
+	}
+
+	VkShaderModule GraphicsPipeline::CreateShader(std::vector<char> src)
+	{
+		VkShaderModule shaderModule;
+
+		VkShaderModuleCreateInfo createInfo{};
+		createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+		createInfo.codeSize = src.size();
+		createInfo.pCode = reinterpret_cast<uint32_t*>(src.data());
+
+		RAY_VK_THROW_FAILED(vkCreateShaderModule(Graphics::Get().GetLogicalDevice(), &createInfo,
+								nullptr, &shaderModule),
+			"Failed to create fragment shader module.");
+
+		return shaderModule;
+	}
+
+	std::vector<char> GraphicsPipeline::ReadShader(std::string_view filepath)
+	{
+		std::ifstream reader(filepath.data(), std::ios::ate | std::ios::binary);
+
+		size_t filesize = (size_t)reader.tellg();
+		RAY_MEXPECTS(filesize != 0 && filesize != SIZE_MAX, "Shader file not found");
+		std::vector<char> code(filesize);
+
+		reader.seekg(0);
+		reader.read(code.data(), filesize);
+		reader.close();
+
+		return code;
 	}
 }  // namespace At0::VulkanTesting

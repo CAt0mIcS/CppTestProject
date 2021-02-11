@@ -3,8 +3,6 @@
 #include "../Utils/RException.h"
 #include "../Utils/RAssert.h"
 
-#include "Pipeline/Shader.h"
-
 #include <vulkan/vulkan.h>
 
 
@@ -41,9 +39,9 @@ namespace At0::VulkanTesting
 		m_Renderpass = std::make_unique<Renderpass>(
 			std::vector<VkAttachmentDescription>{ attachment.GetDescription() },
 			std::vector<VkSubpassDescription>{ subpass.GetDescription() });
-		Shader shader("Resources/Shaders/VertexShader.spv", "Resources/Shaders/FragmentShader.spv");
 
-		m_GraphicsPipeline = std::make_unique<GraphicsPipeline>(std::move(shader), *m_Renderpass);
+		m_GraphicsPipeline = std::make_unique<GraphicsPipeline>(*m_Renderpass,
+			"Resources/Shaders/VertexShader.vert.spv", "Resources/Shaders/FragmentShader.frag.spv");
 	}
 
 	void Graphics::CreateFramebuffers()
@@ -153,14 +151,17 @@ namespace At0::VulkanTesting
 
 	void Graphics::Update()
 	{
-		// Wait for fence in vkQueueSubmit to signal,
+		// Wait for fence in vkQueueSubmit to become signaled,
 		// which means that the command buffer finished executing
 		vkWaitForFences(
 			*m_LogicalDevice, 1, &m_InFlightFences[m_CurrentFrame], VK_TRUE, UINT64_MAX);
 
+		// Index representing the index of the next image to draw (0-2 in this case)
 		uint32_t imageIndex;
 		vkAcquireNextImageKHR(*m_LogicalDevice, *m_Swapchain, UINT64_MAX,
-			m_ImageAvailableSemaphore[m_CurrentFrame], VK_NULL_HANDLE, &imageIndex);
+			m_ImageAvailableSemaphore[m_CurrentFrame],	//  Signalled by this function when an image
+														//  is acquired
+			VK_NULL_HANDLE, &imageIndex);
 
 		// Check if a previous frame is using this image (i.e. there is its fence to wait on)
 		if (m_ImagesInFlight[imageIndex] != VK_NULL_HANDLE)
@@ -175,14 +176,17 @@ namespace At0::VulkanTesting
 
 		VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
 		submitInfo.waitSemaphoreCount = 1;
-		submitInfo.pWaitSemaphores = &m_ImageAvailableSemaphore[m_CurrentFrame];
+		submitInfo.pWaitSemaphores =
+			&m_ImageAvailableSemaphore[m_CurrentFrame];	 // Wait until image was acquired
 		submitInfo.pWaitDstStageMask = waitStages;
 		submitInfo.commandBufferCount = 1;
 
 		VkCommandBuffer buffer = *m_CommandBuffers[imageIndex].get();
 		submitInfo.pCommandBuffers = &buffer;
 		submitInfo.signalSemaphoreCount = 1;
-		submitInfo.pSignalSemaphores = &m_RenderFinishedSemaphore[m_CurrentFrame];
+		submitInfo.pSignalSemaphores =
+			&m_RenderFinishedSemaphore[m_CurrentFrame];	 // Signal when rendering finished and
+														 // presentation can happen
 
 		vkResetFences(*m_LogicalDevice, 1, &m_InFlightFences[m_CurrentFrame]);
 
@@ -194,7 +198,9 @@ namespace At0::VulkanTesting
 		VkPresentInfoKHR presentInfo{};
 		presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
 		presentInfo.waitSemaphoreCount = 1;
-		presentInfo.pWaitSemaphores = &m_RenderFinishedSemaphore[m_CurrentFrame];
+		presentInfo.pWaitSemaphores =
+			&m_RenderFinishedSemaphore[m_CurrentFrame];	 // Wait for rendering to finish so that
+														 // presentation can happen
 
 		VkSwapchainKHR swapchain = *m_Swapchain.get();
 		presentInfo.swapchainCount = 1;
@@ -204,6 +210,7 @@ namespace At0::VulkanTesting
 		vkQueuePresentKHR(m_LogicalDevice->GetPresentQueue(), &presentInfo);
 
 		// Loop around every time s_MaxFramesInFlight is surpassed
+		// (clamped between 0 and 1 in this case)
 		m_CurrentFrame = (m_CurrentFrame + 1) % s_MaxFramesInFlight;
 	}
 }  // namespace At0::VulkanTesting

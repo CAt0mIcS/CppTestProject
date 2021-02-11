@@ -67,3 +67,39 @@ function(SetWorkingDirectory target dir)
     )
     endif()
 endfunction()
+
+# Set specific glsl shaders to automatically compile to SpirV
+# Use an optional 3rd argument to specify the name of the custom target created
+function(CompileGLSLShaders target shaders)
+    if (${CMAKE_HOST_SYSTEM_PROCESSOR} STREQUAL "AMD64")
+      set(GLSL_VALIDATOR "$ENV{VULKAN_SDK}/Bin/glslangValidator.exe")
+    else()
+      set(GLSL_VALIDATOR "$ENV{VULKAN_SDK}/Bin32/glslangValidator.exe")
+    endif()
+
+    foreach(GLSL ${shaders})
+        get_filename_component(FILE_NAME "${GLSL}" NAME)
+        get_filename_component(SHADEROUTDIR "${GLSL}" DIRECTORY)
+        set(SPIRV "${SHADEROUTDIR}/${FILE_NAME}.spv")
+        add_custom_command(
+            OUTPUT ${SPIRV}
+            COMMAND ${GLSL_VALIDATOR} -V ${GLSL} -o ${SPIRV}
+            DEPENDS ${GLSL})
+        list(APPEND SPIRV_BINARY_FILES ${SPIRV})
+    endforeach(GLSL)
+
+    if("${ARGC}" STREQUAL "2")
+        add_custom_target(
+            "CompileShaders" 
+            DEPENDS "${SPIRV_BINARY_FILES}"
+        )
+    add_dependencies("${target}" "CompileShaders")
+    else()
+        add_custom_target(
+            "${ARGN}" 
+            DEPENDS "${SPIRV_BINARY_FILES}"
+        )
+    add_dependencies("${target}" "${ARGN}")
+    endif()
+
+    endfunction()

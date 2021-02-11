@@ -55,8 +55,6 @@ set(SRC
     "Sources/Graphics/Images/ImageView.cpp"
     "Sources/Graphics/Pipeline/Pipeline.h"
     "Sources/Graphics/Pipeline/Pipeline.cpp"
-    "Sources/Graphics/Pipeline/Shader.h"
-    "Sources/Graphics/Pipeline/Shader.cpp"
     "Sources/Graphics/Renderpass/Renderpass.h"
     "Sources/Graphics/Renderpass/Renderpass.cpp"
     "Sources/Graphics/Renderpass/Subpass.h"
@@ -69,12 +67,17 @@ set(SRC
     "Sources/Window.cpp"
 )
 
+set(SHADERS
+    "${CMAKE_SOURCE_DIR}/Resources/Shaders/VertexShader.vert"
+    "${CMAKE_SOURCE_DIR}/Resources/Shaders/FragmentShader.frag"
+)
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 find_package("Vulkan" REQUIRED FATAL_ERROR)
 
-add_executable("VulkanTesting" "${SRC}")
+add_executable("VulkanTesting" "${SRC}" "${SHADERS}")
 target_include_directories("VulkanTesting" PRIVATE "${Vulkan_INCLUDE_DIRS}" "${CMAKE_SOURCE_DIR}/Extern/glfw/include" "Sources")
 target_link_libraries("VulkanTesting" PRIVATE "${Vulkan_LIBRARIES}" "glfw")
 
@@ -100,6 +103,10 @@ endforeach()
 
 SetOutputDirectory("VulkanTesting" "")
 SetWorkingDirectory("VulkanTesting" "${CMAKE_SOURCE_DIR}/")
+
+# -------------------------------------------------------------------------------
+# Recompile shaders automatically
+CompileGLSLShaders("VulkanTesting" "${SHADERS}" "CustomShaderCompiler")
 
 if(UNIX)
 add_custom_command(TARGET "VulkanTesting" POST_BUILD

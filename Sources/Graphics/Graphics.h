@@ -47,7 +47,8 @@ namespace At0::VulkanTesting
 		void CreateSyncObjects();
 
 	private:
-		// specifies the maximum amount of images which we can work on concurrently
+		// Specifies the maximum amount of images which we can work on concurrently
+		// (1 image is presenting, the other 2 of triple buffering can be worked on)
 		static constexpr uint8_t s_MaxFramesInFlight = 2;
 		uint64_t m_CurrentFrame = 0;
 		inline static Graphics* s_Instance = nullptr;
