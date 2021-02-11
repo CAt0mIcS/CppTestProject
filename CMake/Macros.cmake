@@ -71,10 +71,14 @@ endfunction()
 # Set specific glsl shaders to automatically compile to SpirV
 # Use an optional 3rd argument to specify the name of the custom target created
 function(CompileGLSLShaders target shaders)
+    if(WIN32)
     if (${CMAKE_HOST_SYSTEM_PROCESSOR} STREQUAL "AMD64")
-      set(GLSL_VALIDATOR "$ENV{VULKAN_SDK}/Bin/glslangValidator.exe")
+        set(GLSL_VALIDATOR "$ENV{VULKAN_SDK}/Bin/glslangValidator.exe")
     else()
-      set(GLSL_VALIDATOR "$ENV{VULKAN_SDK}/Bin32/glslangValidator.exe")
+        set(GLSL_VALIDATOR "$ENV{VULKAN_SDK}/Bin32/glslangValidator.exe")
+    endif()
+    elseif(UNIX)
+        set(GLSL_VALIDATOR "/usr/bin/glslangValidator")
     endif()
 
     foreach(GLSL ${shaders})
