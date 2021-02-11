@@ -24,6 +24,7 @@ namespace At0::VulkanTesting
 	class Graphics
 	{
 		friend std::unique_ptr<Graphics> std::make_unique<Graphics>();
+		friend class Window;
 
 	public:
 		~Graphics();
@@ -45,6 +46,8 @@ namespace At0::VulkanTesting
 		void CreateFramebuffers();
 		void CreateCommandPoolAndBuffers();
 		void CreateSyncObjects();
+		void RecreateSwapchain();
+		void CleanupSwapchain();
 
 	private:
 		// Specifies the maximum amount of images which we can work on concurrently
@@ -76,5 +79,7 @@ namespace At0::VulkanTesting
 
 		// We need to track for each swap chain image if a frame in flight is currently using it
 		std::vector<VkFence> m_ImagesInFlight;
+
+		bool m_FramebufferResized = false;
 	};
 }  // namespace At0::VulkanTesting

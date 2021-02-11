@@ -158,10 +158,19 @@ namespace At0::VulkanTesting
 
 		// Index representing the index of the next image to draw (0-2 in this case)
 		uint32_t imageIndex;
-		vkAcquireNextImageKHR(*m_LogicalDevice, *m_Swapchain, UINT64_MAX,
+		VkResult result = vkAcquireNextImageKHR(*m_LogicalDevice, *m_Swapchain, UINT64_MAX,
 			m_ImageAvailableSemaphore[m_CurrentFrame],	//  Signalled by this function when an image
 														//  is acquired
 			VK_NULL_HANDLE, &imageIndex);
+
+		if (result == VK_ERROR_OUT_OF_DATE_KHR)
+		{
+			RecreateSwapchain();
+			return;
+		}
+		else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
+			RAY_THROW_RUNTIME("Failed to acquire next swapchain image.");
+
 
 		// Check if a previous frame is using this image (i.e. there is its fence to wait on)
 		if (m_ImagesInFlight[imageIndex] != VK_NULL_HANDLE)
@@ -207,10 +216,40 @@ namespace At0::VulkanTesting
 		presentInfo.pSwapchains = &swapchain;
 		presentInfo.pImageIndices = &imageIndex;
 		presentInfo.pResults = nullptr;	 // Optional
-		vkQueuePresentKHR(m_LogicalDevice->GetPresentQueue(), &presentInfo);
+		result = vkQueuePresentKHR(m_LogicalDevice->GetPresentQueue(), &presentInfo);
+
+		if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR ||
+			m_FramebufferResized)
+			RecreateSwapchain();
+		else if (result != VK_SUCCESS)
+			RAY_THROW_RUNTIME("Failed to present swap chain image!");
 
 		// Loop around every time s_MaxFramesInFlight is surpassed
 		// (clamped between 0 and 1 in this case)
 		m_CurrentFrame = (m_CurrentFrame + 1) % s_MaxFramesInFlight;
+	}
+
+	void Graphics::RecreateSwapchain()
+	{
+		vkDeviceWaitIdle(*m_LogicalDevice);
+
+		CleanupSwapchain();
+		m_Swapchain = std::make_unique<Swapchain>();
+
+		CreateGraphicsPipeline();
+		CreateFramebuffers();
+		CreateCommandPoolAndBuffers();
+		CreateSyncObjects();
+
+		m_FramebufferResized = false;
+	}
+
+	void Graphics::CleanupSwapchain()
+	{
+		m_Framebuffers.clear();
+		m_CommandBuffers.clear();
+		m_GraphicsPipeline.reset();
+		m_Renderpass.reset();
+		m_Swapchain.reset();
 	}
 }  // namespace At0::VulkanTesting

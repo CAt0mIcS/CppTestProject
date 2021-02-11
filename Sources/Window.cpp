@@ -2,6 +2,7 @@
 
 #include "Utils/RAssert.h"
 #include "Utils/RException.h"
+#include "Graphics/Graphics.h"
 
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
@@ -54,5 +55,10 @@ namespace At0::VulkanTesting
 
 		m_hWnd = glfwCreateWindow(960, 540, "Vulkan Testing", nullptr, nullptr);
 		glfwShowWindow(m_hWnd);
+
+
+		glfwSetWindowSizeCallback(m_hWnd, [](GLFWwindow* window, int width, int height) {
+			Graphics::Get().m_FramebufferResized = true;
+		});
 	}
 }  // namespace At0::VulkanTesting

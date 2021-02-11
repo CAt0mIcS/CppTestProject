@@ -21,8 +21,8 @@ namespace At0::VulkanTesting
 
 	CommandBuffer::~CommandBuffer()
 	{
-		vkFreeCommandBuffers(
-			Graphics::Get().GetLogicalDevice(), Graphics::Get().GetCommandPool(), 1, nullptr);
+		vkFreeCommandBuffers(Graphics::Get().GetLogicalDevice(), Graphics::Get().GetCommandPool(),
+			1, &m_CommandBuffer);
 	}
 
 	void CommandBuffer::Begin()
