@@ -11,7 +11,6 @@ namespace At0::VulkanTesting
 	class Framebuffer
 	{
 	public:
-		Framebuffer() = default;
 		Framebuffer(std::vector<VkImageView> attachments);
 		~Framebuffer();
 

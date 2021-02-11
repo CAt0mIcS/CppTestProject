@@ -2,6 +2,7 @@
 
 #include <vulkan/vulkan_core.h>
 #include <vector>
+#include <memory>
 
 #include "Images/ImageView.h"
 
@@ -28,7 +29,7 @@ namespace At0::VulkanTesting
 		VkFormat GetFormat() const { return m_Format; }
 		const VkExtent2D& GetExtent() const { return m_Extent; }
 		uint32_t GetNumberOfImages() const { return m_ImageViews.size(); }
-		const VkImageView& GetImageView(uint32_t i) const { return m_ImageViews[i]; }
+		const VkImageView& GetImageView(uint32_t i) const { return *m_ImageViews[i]; }
 
 	private:
 		VkSurfaceFormatKHR ChooseSurfaceFormat(
@@ -42,6 +43,6 @@ namespace At0::VulkanTesting
 		VkExtent2D m_Extent;
 
 		std::vector<VkImage> m_Images;
-		std::vector<ImageView> m_ImageViews;
+		std::vector<std::unique_ptr<ImageView>> m_ImageViews;
 	};
 }  // namespace At0::VulkanTesting

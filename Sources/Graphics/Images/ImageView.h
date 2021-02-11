@@ -8,7 +8,6 @@ namespace At0::VulkanTesting
 	class ImageView
 	{
 	public:
-		ImageView() : m_View(nullptr) {}
 		ImageView(VkImage image, VkFormat imageFormat);
 		~ImageView();
 

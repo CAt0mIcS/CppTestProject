@@ -2,6 +2,7 @@
 #include "../Utils/RLogger.h"
 #include "../Utils/RException.h"
 #include "../Utils/RAssert.h"
+#include "Window.h"
 
 #include <vulkan/vulkan.h>
 
@@ -20,7 +21,9 @@ namespace At0::VulkanTesting
 
 		CreateGraphicsPipeline();
 		CreateFramebuffers();
-		CreateCommandPoolAndBuffers();
+
+		m_CommandPool = std::make_unique<CommandPool>();
+		CreateCommandBuffers();
 		CreateSyncObjects();
 	}
 
@@ -49,13 +52,13 @@ namespace At0::VulkanTesting
 		m_Framebuffers.resize(m_Swapchain->GetNumberOfImages());
 		for (uint32_t i = 0; i < m_Swapchain->GetNumberOfImages(); ++i)
 		{
-			m_Framebuffers[i] = { { m_Swapchain->GetImageView(i) } };
+			m_Framebuffers[i] = std::make_unique<Framebuffer>(
+				std::vector<VkImageView>{ m_Swapchain->GetImageView(i) });
 		}
 	}
 
-	void Graphics::CreateCommandPoolAndBuffers()
+	void Graphics::CreateCommandBuffers()
 	{
-		m_CommandPool = std::make_unique<CommandPool>();
 		m_CommandBuffers.resize(m_Framebuffers.size());
 
 		uint32_t i = 0;
@@ -69,7 +72,7 @@ namespace At0::VulkanTesting
 			VkRenderPassBeginInfo renderPassInfo{};
 			renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 			renderPassInfo.renderPass = *m_Renderpass;
-			renderPassInfo.framebuffer = m_Framebuffers[i];
+			renderPassInfo.framebuffer = *m_Framebuffers[i];
 			renderPassInfo.renderArea.offset = { 0, 0 };
 			renderPassInfo.renderArea.extent = m_Swapchain->GetExtent();
 			VkClearValue clearColor{ 0.0f, 0.0f, 0.0f, 1.0f };
@@ -231,6 +234,16 @@ namespace At0::VulkanTesting
 
 	void Graphics::RecreateSwapchain()
 	{
+		// Minimized window will have framebuffer size of [0 | 0]
+		// Sleep until window is back in foreground
+		int width, height;
+		Window::Get().GetFramebufferSize(&width, &height);
+		while (width == 0 || height == 0)
+		{
+			Window::Get().GetFramebufferSize(&width, &height);
+			Window::Get().WaitForEvents();
+		}
+
 		vkDeviceWaitIdle(*m_LogicalDevice);
 
 		CleanupSwapchain();
@@ -238,7 +251,7 @@ namespace At0::VulkanTesting
 
 		CreateGraphicsPipeline();
 		CreateFramebuffers();
-		CreateCommandPoolAndBuffers();
+		CreateCommandBuffers();
 		CreateSyncObjects();
 
 		m_FramebufferResized = false;

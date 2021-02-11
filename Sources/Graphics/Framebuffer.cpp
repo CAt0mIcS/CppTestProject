@@ -1,5 +1,6 @@
 ﻿#include "Framebuffer.h"
 #include "Graphics/Graphics.h"
+#include "Swapchain.h"
 #include "Utils/RException.h"
 #include "Graphics/Renderpass/Renderpass.h"
 
@@ -24,7 +25,6 @@ namespace At0::VulkanTesting
 
 	Framebuffer::~Framebuffer()
 	{
-		// if (m_Framebuffer)
-		//	vkDestroyFramebuffer(Graphics::Get().GetLogicalDevice(), m_Framebuffer, nullptr);
+		vkDestroyFramebuffer(Graphics::Get().GetLogicalDevice(), m_Framebuffer, nullptr);
 	}
 }  // namespace At0::VulkanTesting

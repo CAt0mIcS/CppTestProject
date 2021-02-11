@@ -44,7 +44,7 @@ namespace At0::VulkanTesting
 		Graphics();
 		void CreateGraphicsPipeline();
 		void CreateFramebuffers();
-		void CreateCommandPoolAndBuffers();
+		void CreateCommandBuffers();
 		void CreateSyncObjects();
 		void RecreateSwapchain();
 		void CleanupSwapchain();
@@ -66,7 +66,7 @@ namespace At0::VulkanTesting
 		std::unique_ptr<CommandPool> m_CommandPool;
 		std::vector<std::unique_ptr<CommandBuffer>> m_CommandBuffers;
 
-		std::vector<Framebuffer> m_Framebuffers;
+		std::vector<std::unique_ptr<Framebuffer>> m_Framebuffers;
 
 		// Signal that an image has been acquired and is ready for rendering (1 semaphore / frame)
 		std::array<VkSemaphore, s_MaxFramesInFlight> m_ImageAvailableSemaphore;

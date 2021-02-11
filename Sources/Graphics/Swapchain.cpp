@@ -75,7 +75,7 @@ namespace At0::VulkanTesting
 		m_ImageViews.resize(m_Images.size());
 		for (uint32_t i = 0; i < m_ImageViews.size(); ++i)
 		{
-			m_ImageViews[i] = { m_Images[i], m_Format };
+			m_ImageViews[i] = std::make_unique<ImageView>(m_Images[i], m_Format);
 		}
 	}
 
