@@ -17,7 +17,7 @@ int main()
 		Window::Create();
 
 		// Create graphics
-		Graphics::Get();
+		Graphics::Create();
 
 		while (Window::Get().Update())
 		{

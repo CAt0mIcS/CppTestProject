@@ -160,12 +160,12 @@ namespace At0::VulkanTesting
 		m_Instance.reset();
 	}
 
-	Graphics& Graphics::Get()
+	Graphics& Graphics::Get() { return *s_Instance; }
+
+	void Graphics::Create()
 	{
 		if (!s_Instance)
 			new Graphics();
-
-		return *s_Instance;
 	}
 
 	void Graphics::Update()

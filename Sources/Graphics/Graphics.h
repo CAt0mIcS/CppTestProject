@@ -29,6 +29,7 @@ namespace At0::VulkanTesting
 	public:
 		~Graphics();
 		static Graphics& Get();
+		static void Create();
 
 		void Update();
 
