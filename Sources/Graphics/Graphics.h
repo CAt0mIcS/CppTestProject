@@ -96,6 +96,6 @@ namespace At0::VulkanTesting
 
 		bool m_FramebufferResized = false;
 
-		std::unique_ptr<Quad> m_Triangle;
+		std::unique_ptr<Drawable> m_Drawable;
 	};
 }  // namespace At0::VulkanTesting

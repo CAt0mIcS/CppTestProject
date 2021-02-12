@@ -9,6 +9,8 @@
 
 namespace At0::VulkanTesting
 {
+	using RenderObject = Quad;
+
 	Graphics::Graphics()
 	{
 		s_Instance = this;
@@ -30,7 +32,7 @@ namespace At0::VulkanTesting
 
 		// --------------------------------------------------------------
 		// Create all drawables
-		m_Triangle = std::make_unique<Quad>();
+		m_Drawable = std::make_unique<RenderObject>();
 
 		CreateCommandBuffers();
 		CreateSyncObjects();
@@ -103,13 +105,13 @@ namespace At0::VulkanTesting
 		vkCmdSetViewport(*cmdBuff, 0, std::size(viewports), viewports);
 		vkCmdSetScissor(*cmdBuff, 0, std::size(scissors), scissors);
 
-		VkBuffer vertexBuffers[] = { m_Triangle->GetVertexBuffer() };
+		VkBuffer vertexBuffers[] = { m_Drawable->GetVertexBuffer() };
 		VkDeviceSize offsets[] = { 0 };
 		vkCmdBindVertexBuffers(*cmdBuff, 0, std::size(vertexBuffers), vertexBuffers, offsets);
-		vkCmdBindIndexBuffer(*cmdBuff, m_Triangle->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT16);
+		vkCmdBindIndexBuffer(*cmdBuff, m_Drawable->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT16);
 
 		vkCmdBindPipeline(*cmdBuff, VK_PIPELINE_BIND_POINT_GRAPHICS, *m_GraphicsPipeline);
-		vkCmdDrawIndexed(*cmdBuff, m_Triangle->GetIndexBuffer().GetNumIndices(), 1, 0, 0, 0);
+		vkCmdDrawIndexed(*cmdBuff, m_Drawable->GetIndexBuffer().GetNumIndices(), 1, 0, 0, 0);
 
 		vkCmdEndRenderPass(*cmdBuff);
 
@@ -159,7 +161,7 @@ namespace At0::VulkanTesting
 
 		// ---------------------------------------
 		// Reset all drawables here
-		m_Triangle.reset();
+		m_Drawable.reset();
 
 		m_CommandPool.reset();
 		m_Framebuffers.clear();
