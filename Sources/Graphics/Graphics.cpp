@@ -30,7 +30,7 @@ namespace At0::VulkanTesting
 
 		// --------------------------------------------------------------
 		// Create all drawables
-		m_Triangle = std::make_unique<Triangle>();
+		m_Triangle = std::make_unique<Quad>();
 
 		CreateCommandBuffers();
 		CreateSyncObjects();

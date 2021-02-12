@@ -67,6 +67,8 @@ set(SRC
     "Sources/Graphics/Drawables/Drawable.cpp"
     "Sources/Graphics/Drawables/Triangle.h"
     "Sources/Graphics/Drawables/Triangle.cpp"
+    "Sources/Graphics/Drawables/Quad.h"
+    "Sources/Graphics/Drawables/Quad.cpp"
 
     "Sources/Graphics/Renderpass/Renderpass.h"
     "Sources/Graphics/Renderpass/Renderpass.cpp"

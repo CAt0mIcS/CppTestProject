@@ -17,7 +17,9 @@
 #include "Bindables/Pipeline.h"
 #include "Renderpass/Renderpass.h"
 #include "Framebuffer.h"
+
 #include "Drawables/Triangle.h"
+#include "Drawables/Quad.h"
 
 
 namespace At0::VulkanTesting
@@ -94,6 +96,6 @@ namespace At0::VulkanTesting
 
 		bool m_FramebufferResized = false;
 
-		std::unique_ptr<Triangle> m_Triangle;
+		std::unique_ptr<Quad> m_Triangle;
 	};
 }  // namespace At0::VulkanTesting
