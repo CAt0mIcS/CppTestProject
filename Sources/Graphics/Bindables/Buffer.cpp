@@ -70,7 +70,7 @@ namespace At0::VulkanTesting
 		submitInfo.commandBufferCount = 1;
 		submitInfo.pCommandBuffers = &cmdBuff;
 
-		// VK_TODO: Use transfer queue and enable multithreading by using fences
+		// VK_TODO: Check which queue is faster and enable multithreading by using fences
 		// instead of vkQueueWaitIdle
 		vkQueueSubmit(
 			Graphics::Get().GetLogicalDevice().GetGraphicsQueue(), 1, &submitInfo, VK_NULL_HANDLE);

@@ -4,6 +4,8 @@
 
 #include "VertexBuffer.h"
 
+#include <fstream>
+
 
 namespace At0::VulkanTesting
 {
