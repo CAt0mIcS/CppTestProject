@@ -2,6 +2,8 @@
 #include "Graphics/Graphics.h"
 #include "Window.h"
 
+#include "VertexBuffer.h"
+
 
 namespace At0::VulkanTesting
 {
@@ -31,12 +33,15 @@ namespace At0::VulkanTesting
 
 		// ---------------------------------------------------------------------------------------
 		// Vertex Input
+		auto bindingDesc = Vertex::GetBindingDescription();
+		auto attribDesc = Vertex::GetAttributeDescriptions(0, 1);
+
 		VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
 		vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-		vertexInputInfo.vertexBindingDescriptionCount = 0;
-		vertexInputInfo.pVertexBindingDescriptions = nullptr;
-		vertexInputInfo.vertexAttributeDescriptionCount = 0;
-		vertexInputInfo.pVertexAttributeDescriptions = nullptr;
+		vertexInputInfo.vertexBindingDescriptionCount = 1;
+		vertexInputInfo.pVertexBindingDescriptions = &bindingDesc;
+		vertexInputInfo.vertexAttributeDescriptionCount = (uint32_t)attribDesc.size();
+		vertexInputInfo.pVertexAttributeDescriptions = attribDesc.data();
 
 		// ---------------------------------------------------------------------------------------
 		// Input Assembler

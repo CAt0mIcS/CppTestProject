@@ -12,7 +12,7 @@ namespace At0::VulkanTesting
 		CommandBuffer();
 		~CommandBuffer();
 
-		void Begin();
+		void Begin(VkCommandBufferUsageFlags usage = 0);
 		void End();
 
 		operator const VkCommandBuffer&() const { return m_CommandBuffer; }

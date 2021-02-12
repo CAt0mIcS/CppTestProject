@@ -14,9 +14,10 @@
 #include "Surface.h"
 #include "LogicalDevice.h"
 #include "Swapchain.h"
-#include "Pipeline/Pipeline.h"
+#include "Bindables/Pipeline.h"
 #include "Renderpass/Renderpass.h"
 #include "Framebuffer.h"
+#include "Drawables/Triangle.h"
 
 
 namespace At0::VulkanTesting
@@ -91,5 +92,7 @@ namespace At0::VulkanTesting
 		std::vector<VkFence> m_ImagesInFlight;
 
 		bool m_FramebufferResized = false;
+
+		std::unique_ptr<Triangle> m_Triangle;
 	};
 }  // namespace At0::VulkanTesting

@@ -53,8 +53,17 @@ set(SRC
     "Sources/Graphics/Commands/CommandPool.cpp"
     "Sources/Graphics/Images/ImageView.h"
     "Sources/Graphics/Images/ImageView.cpp"
-    "Sources/Graphics/Pipeline/Pipeline.h"
-    "Sources/Graphics/Pipeline/Pipeline.cpp"
+
+    "Sources/Graphics/Bindables/Pipeline.h"
+    "Sources/Graphics/Bindables/Pipeline.cpp"
+    "Sources/Graphics/Bindables/VertexBuffer.h"
+    "Sources/Graphics/Bindables/VertexBuffer.cpp"
+    "Sources/Graphics/Bindables/Buffer.h"
+    "Sources/Graphics/Bindables/Buffer.cpp"
+
+    "Sources/Graphics/Drawables/Triangle.h"
+    "Sources/Graphics/Drawables/Triangle.cpp"
+
     "Sources/Graphics/Renderpass/Renderpass.h"
     "Sources/Graphics/Renderpass/Renderpass.cpp"
     "Sources/Graphics/Renderpass/Subpass.h"

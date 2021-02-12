@@ -17,6 +17,7 @@ namespace At0::VulkanTesting
 			RAY_THROW_RUNTIME("Failed to find suitable GPU");
 
 		vkGetPhysicalDeviceFeatures(m_Device, &m_Features);
+		vkGetPhysicalDeviceMemoryProperties(m_Device, &m_MemoryProperties);
 	}
 
 	PhysicalDevice::~PhysicalDevice() {}

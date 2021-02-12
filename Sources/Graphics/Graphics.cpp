@@ -27,6 +27,11 @@ namespace At0::VulkanTesting
 		CreateFramebuffers();
 
 		m_CommandPool = std::make_unique<CommandPool>();
+
+		// --------------------------------------------------------------
+		// Create all drawables
+		m_Triangle = std::make_unique<Triangle>();
+
 		CreateCommandBuffers();
 		CreateSyncObjects();
 	}
@@ -97,6 +102,10 @@ namespace At0::VulkanTesting
 		const VkRect2D scissors[] = { m_Scissor };
 		vkCmdSetViewport(*cmdBuff, 0, std::size(viewports), viewports);
 		vkCmdSetScissor(*cmdBuff, 0, std::size(scissors), scissors);
+
+		VkBuffer vertexBuffers[] = { m_Triangle->GetVertexBuffer() };
+		VkDeviceSize offsets[] = { 0 };
+		vkCmdBindVertexBuffers(*cmdBuff, 0, std::size(vertexBuffers), vertexBuffers, offsets);
 
 		vkCmdBindPipeline(*cmdBuff, VK_PIPELINE_BIND_POINT_GRAPHICS, *m_GraphicsPipeline);
 		vkCmdDraw(*cmdBuff, 3, 1, 0, 0);

@@ -25,14 +25,14 @@ namespace At0::VulkanTesting
 			1, &m_CommandBuffer);
 	}
 
-	void CommandBuffer::Begin()
+	void CommandBuffer::Begin(VkCommandBufferUsageFlags usage)
 	{
 		if (m_Running)
 			return;
 
 		VkCommandBufferBeginInfo beginInfo{};
 		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-		beginInfo.flags = 0;
+		beginInfo.flags = usage;
 		RAY_VK_THROW_FAILED(vkBeginCommandBuffer(m_CommandBuffer, &beginInfo),
 			"Failed to begin command buffer recording.");
 		m_Running = true;
