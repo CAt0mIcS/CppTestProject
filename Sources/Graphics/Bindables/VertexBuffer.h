@@ -50,16 +50,10 @@ namespace At0::VulkanTesting
 		}
 	};
 
-	class VertexBuffer : protected Buffer
+	class VertexBuffer : public Buffer
 	{
 	public:
 		VertexBuffer(const std::vector<Vertex> vertices);
-		~VertexBuffer();
-
-		operator const VkBuffer&() const { return m_VertexBuffer; }
-
-	private:
-		VkBuffer m_VertexBuffer;
-		VkDeviceMemory m_BufferMemory;
+		~VertexBuffer() = default;
 	};
 }  // namespace At0::VulkanTesting
