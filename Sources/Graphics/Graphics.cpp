@@ -13,12 +13,16 @@ namespace At0::VulkanTesting
 	{
 		s_Instance = this;
 
+		UpdateViewport();
+		UpdateScissor();
+
 		m_Instance = std::make_unique<VulkanInstance>();
 		m_Surface = std::make_unique<Surface>();
 		m_PhysicalDevice = std::make_unique<PhysicalDevice>();
 		m_LogicalDevice = std::make_unique<LogicalDevice>();
 		m_Swapchain = std::make_unique<Swapchain>();
 
+		CreateRenderpass();
 		CreateGraphicsPipeline();
 		CreateFramebuffers();
 
@@ -27,7 +31,7 @@ namespace At0::VulkanTesting
 		CreateSyncObjects();
 	}
 
-	void Graphics::CreateGraphicsPipeline()
+	void Graphics::CreateRenderpass()
 	{
 		Attachment attachment;
 
@@ -42,7 +46,10 @@ namespace At0::VulkanTesting
 		m_Renderpass = std::make_unique<Renderpass>(
 			std::vector<VkAttachmentDescription>{ attachment.GetDescription() },
 			std::vector<VkSubpassDescription>{ subpass.GetDescription() });
+	}
 
+	void Graphics::CreateGraphicsPipeline()
+	{
 		m_GraphicsPipeline = std::make_unique<GraphicsPipeline>(*m_Renderpass,
 			"Resources/Shaders/VertexShader.vert.spv", "Resources/Shaders/FragmentShader.frag.spv");
 	}
@@ -61,34 +68,43 @@ namespace At0::VulkanTesting
 	{
 		m_CommandBuffers.resize(m_Framebuffers.size());
 
-		uint32_t i = 0;
-		for (std::unique_ptr<CommandBuffer>& cmdBuff : m_CommandBuffers)
+		for (uint32_t i = 0; i < m_CommandBuffers.size(); ++i)
 		{
-			cmdBuff = std::make_unique<CommandBuffer>();
+			m_CommandBuffers[i] = std::make_unique<CommandBuffer>();
 
-			// Prerecorded commands
-			cmdBuff->Begin();
-
-			VkRenderPassBeginInfo renderPassInfo{};
-			renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-			renderPassInfo.renderPass = *m_Renderpass;
-			renderPassInfo.framebuffer = *m_Framebuffers[i];
-			renderPassInfo.renderArea.offset = { 0, 0 };
-			renderPassInfo.renderArea.extent = m_Swapchain->GetExtent();
-			VkClearValue clearColor{ 0.0f, 0.0f, 0.0f, 1.0f };
-			renderPassInfo.clearValueCount = 1;
-			renderPassInfo.pClearValues = &clearColor;
-			vkCmdBeginRenderPass(*cmdBuff, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-
-			vkCmdBindPipeline(*cmdBuff, VK_PIPELINE_BIND_POINT_GRAPHICS, *m_GraphicsPipeline);
-			vkCmdDraw(*cmdBuff, 3, 1, 0, 0);
-
-			vkCmdEndRenderPass(*cmdBuff);
-
-			cmdBuff->End();
-			++i;
+			// Prerecord commands
+			RecordCommandBuffer(m_CommandBuffers[i], m_Framebuffers[i]);
 		}
 	}
+
+	void Graphics::RecordCommandBuffer(
+		std::unique_ptr<CommandBuffer>& cmdBuff, std::unique_ptr<Framebuffer>& framebuffer)
+	{
+		cmdBuff->Begin();
+
+		VkRenderPassBeginInfo renderPassInfo{};
+		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+		renderPassInfo.renderPass = *m_Renderpass;
+		renderPassInfo.framebuffer = *framebuffer;
+		renderPassInfo.renderArea.offset = { 0, 0 };
+		renderPassInfo.renderArea.extent = m_Swapchain->GetExtent();
+		VkClearValue clearColor{ 0.0f, 0.0f, 0.0f, 1.0f };
+		renderPassInfo.clearValueCount = 1;
+		renderPassInfo.pClearValues = &clearColor;
+		vkCmdBeginRenderPass(*cmdBuff, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+
+		const VkViewport viewports[] = { m_Viewport };
+		const VkRect2D scissors[] = { m_Scissor };
+		vkCmdSetViewport(*cmdBuff, 0, std::size(viewports), viewports);
+		vkCmdSetScissor(*cmdBuff, 0, std::size(scissors), scissors);
+
+		vkCmdBindPipeline(*cmdBuff, VK_PIPELINE_BIND_POINT_GRAPHICS, *m_GraphicsPipeline);
+		vkCmdDraw(*cmdBuff, 3, 1, 0, 0);
+
+		vkCmdEndRenderPass(*cmdBuff);
+
+		cmdBuff->End();
+	}  // namespace At0::VulkanTesting
 
 	void Graphics::CreateSyncObjects()
 	{
@@ -246,22 +262,43 @@ namespace At0::VulkanTesting
 
 		vkDeviceWaitIdle(*m_LogicalDevice);
 
-		CleanupSwapchain();
-		m_Swapchain = std::make_unique<Swapchain>(m_Swapchain.get());
+		m_CommandBuffers.clear();
+		m_CommandPool.reset();
+		m_Framebuffers.clear();
 
-		CreateGraphicsPipeline();
+		m_Renderpass.reset();
+		m_Swapchain.reset();
+
+		m_Swapchain = std::make_unique<Swapchain>(m_Swapchain.get());
+		CreateRenderpass();
+		UpdateViewport();
+		UpdateScissor();
 		CreateFramebuffers();
+		m_CommandPool = std::make_unique<CommandPool>();
 		CreateCommandBuffers();
-		CreateSyncObjects();
 
 		m_FramebufferResized = false;
 	}
 
-	void Graphics::CleanupSwapchain()
+	void Graphics::UpdateViewport()
 	{
-		m_Framebuffers.clear();
-		m_CommandBuffers.clear();
-		m_GraphicsPipeline.reset();
-		m_Renderpass.reset();
+		int width, height;
+		Window::Get().GetFramebufferSize(&width, &height);
+
+		m_Viewport.x = 0.0f;
+		m_Viewport.y = 0.0f;
+		m_Viewport.width = (float)width;
+		m_Viewport.height = (float)height;
+		m_Viewport.minDepth = 0.0f;
+		m_Viewport.maxDepth = 1.0f;
+	}
+
+	void Graphics::UpdateScissor()
+	{
+		int width, height;
+		Window::Get().GetFramebufferSize(&width, &height);
+
+		m_Scissor.offset = { 0, 0 };
+		m_Scissor.extent = { (uint32_t)width, (uint32_t)height };
 	}
 }  // namespace At0::VulkanTesting

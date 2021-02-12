@@ -45,33 +45,33 @@ namespace At0::VulkanTesting
 		inputAssembler.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
 		inputAssembler.primitiveRestartEnable = VK_FALSE;
 
-		// ---------------------------------------------------------------------------------------
-		// Viewport
-		int width, height;
-		Window::Get().GetFramebufferSize(&width, &height);
+		//// ---------------------------------------------------------------------------------------
+		//// Viewport
+		// int width, height;
+		// Window::Get().GetFramebufferSize(&width, &height);
 
-		VkViewport viewport{};
-		viewport.x = 0.0f;
-		viewport.y = 0.0f;
-		viewport.width = (float)width;
-		viewport.height = (float)height;
-		viewport.minDepth = 0.0f;
-		viewport.maxDepth = 1.0f;
+		// VkViewport viewport{};
+		// viewport.x = 0.0f;
+		// viewport.y = 0.0f;
+		// viewport.width = (float)width;
+		// viewport.height = (float)height;
+		// viewport.minDepth = 0.0f;
+		// viewport.maxDepth = 1.0f;
 
-		// ---------------------------------------------------------------------------------------
-		// Scissor
-		VkRect2D scissor{};
-		scissor.offset = { 0, 0 };
-		scissor.extent = { (uint32_t)width, (uint32_t)height };
+		//// ---------------------------------------------------------------------------------------
+		//// Scissor
+		// VkRect2D scissor{};
+		// scissor.offset = { 0, 0 };
+		// scissor.extent = { (uint32_t)width, (uint32_t)height };
 
 		// ---------------------------------------------------------------------------------------
 		// Viewport State
 		VkPipelineViewportStateCreateInfo viewportState{};
 		viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
 		viewportState.viewportCount = 1;
-		viewportState.pViewports = &viewport;
+		viewportState.pViewports = nullptr;
 		viewportState.scissorCount = 1;
-		viewportState.pScissors = &scissor;
+		viewportState.pScissors = nullptr;
 
 		// ---------------------------------------------------------------------------------------
 		// Rasterizer
@@ -157,7 +157,7 @@ namespace At0::VulkanTesting
 		pipelineInfo.pMultisampleState = &multisampling;
 		pipelineInfo.pDepthStencilState = nullptr;
 		pipelineInfo.pColorBlendState = &colorBlending;
-		pipelineInfo.pDynamicState = nullptr;
+		pipelineInfo.pDynamicState = &dynamicStateInfo;
 		pipelineInfo.layout = m_Layout;
 		pipelineInfo.renderPass = renderpass;
 		pipelineInfo.subpass = 0;  // Index of subpass used with pipeline

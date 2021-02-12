@@ -42,12 +42,17 @@ namespace At0::VulkanTesting
 
 	private:
 		Graphics();
+		void CreateRenderpass();
 		void CreateGraphicsPipeline();
 		void CreateFramebuffers();
 		void CreateCommandBuffers();
+		void RecordCommandBuffer(
+			std::unique_ptr<CommandBuffer>& cmdBuff, std::unique_ptr<Framebuffer>& framebuffer);
 		void CreateSyncObjects();
 		void RecreateSwapchain();
-		void CleanupSwapchain();
+
+		void UpdateViewport();
+		void UpdateScissor();
 
 	private:
 		// Specifies the maximum amount of images which we can work on concurrently
@@ -55,6 +60,10 @@ namespace At0::VulkanTesting
 		static constexpr uint8_t s_MaxFramesInFlight = 2;
 		uint64_t m_CurrentFrame = 0;
 		inline static Graphics* s_Instance = nullptr;
+
+		// Dynamic state, need to be updated when the window is resized
+		VkViewport m_Viewport;
+		VkRect2D m_Scissor;
 
 		std::unique_ptr<VulkanInstance> m_Instance;
 		std::unique_ptr<PhysicalDevice> m_PhysicalDevice;
