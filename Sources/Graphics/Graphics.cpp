@@ -106,9 +106,10 @@ namespace At0::VulkanTesting
 		VkBuffer vertexBuffers[] = { m_Triangle->GetVertexBuffer() };
 		VkDeviceSize offsets[] = { 0 };
 		vkCmdBindVertexBuffers(*cmdBuff, 0, std::size(vertexBuffers), vertexBuffers, offsets);
+		vkCmdBindIndexBuffer(*cmdBuff, m_Triangle->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT16);
 
 		vkCmdBindPipeline(*cmdBuff, VK_PIPELINE_BIND_POINT_GRAPHICS, *m_GraphicsPipeline);
-		vkCmdDraw(*cmdBuff, 3, 1, 0, 0);
+		vkCmdDrawIndexed(*cmdBuff, m_Triangle->GetIndexBuffer().GetNumIndices(), 1, 0, 0, 0);
 
 		vkCmdEndRenderPass(*cmdBuff);
 

@@ -17,6 +17,9 @@ namespace At0::VulkanTesting
 			};
 			// clang-format on
 			s_VertexBuffer = std::make_unique<VertexBuffer>(vertices);
+
+			std::vector<uint16_t> indices{ 0, 1, 2 };
+			s_IndexBuffer = std::make_unique<IndexBuffer>(indices);
 		}
 	}
 

@@ -6,7 +6,7 @@
 
 namespace At0::VulkanTesting
 {
-	Buffer::Buffer(VkDeviceSize bufferSize, const void* const bufferData)
+	Buffer::Buffer(VkDeviceSize bufferSize, const void* const bufferData, VkBufferUsageFlags usage)
 	{
 		VkBuffer stagingBuffer;
 		VkDeviceMemory stagingBufferMemory;
@@ -20,8 +20,7 @@ namespace At0::VulkanTesting
 		memcpy(data, bufferData, (size_t)bufferSize);
 		vkUnmapMemory(Graphics::Get().GetLogicalDevice(), stagingBufferMemory);
 
-		CreateBuffer(bufferSize,
-			VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+		CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | usage,
 			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_Buffer, m_BufferMemory);
 
 		CopyBuffer(stagingBuffer, m_Buffer, bufferSize);

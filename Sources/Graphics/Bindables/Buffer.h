@@ -10,7 +10,7 @@ namespace At0::VulkanTesting
 		operator const VkBuffer&() const { return m_Buffer; }
 
 	protected:
-		Buffer(VkDeviceSize bufferSize, const void* const bufferData);
+		Buffer(VkDeviceSize bufferSize, const void* const bufferData, VkBufferUsageFlags usage);
 		virtual ~Buffer();
 
 		void CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage,

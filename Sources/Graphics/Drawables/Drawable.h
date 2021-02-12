@@ -3,6 +3,7 @@
 #include <memory>
 
 #include "Graphics/Bindables/VertexBuffer.h"
+#include "Graphics/Bindables/IndexBuffer.h"
 
 
 namespace At0::VulkanTesting
@@ -11,6 +12,7 @@ namespace At0::VulkanTesting
 	{
 	public:
 		virtual VertexBuffer& GetVertexBuffer() = 0;
+		virtual IndexBuffer& GetIndexBuffer() = 0;
 
 		virtual ~Drawable() = default;
 
@@ -24,13 +26,19 @@ namespace At0::VulkanTesting
 	{
 	public:
 		virtual VertexBuffer& GetVertexBuffer() override { return *s_VertexBuffer; }
+		virtual IndexBuffer& GetIndexBuffer() override { return *s_IndexBuffer; }
 
-		virtual ~DrawableBase() { s_VertexBuffer.reset(); }
+		virtual ~DrawableBase()
+		{
+			s_VertexBuffer.reset();
+			s_IndexBuffer.reset();
+		}
 
 	protected:
 		DrawableBase() = default;
 
 	protected:
 		inline static std::unique_ptr<VertexBuffer> s_VertexBuffer = nullptr;
+		inline static std::unique_ptr<IndexBuffer> s_IndexBuffer = nullptr;
 	};
 }  // namespace At0::VulkanTesting

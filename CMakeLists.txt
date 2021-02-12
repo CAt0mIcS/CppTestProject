@@ -56,10 +56,12 @@ set(SRC
 
     "Sources/Graphics/Bindables/Pipeline.h"
     "Sources/Graphics/Bindables/Pipeline.cpp"
-    "Sources/Graphics/Bindables/VertexBuffer.h"
-    "Sources/Graphics/Bindables/VertexBuffer.cpp"
     "Sources/Graphics/Bindables/Buffer.h"
     "Sources/Graphics/Bindables/Buffer.cpp"
+    "Sources/Graphics/Bindables/VertexBuffer.h"
+    "Sources/Graphics/Bindables/VertexBuffer.cpp"
+    "Sources/Graphics/Bindables/IndexBuffer.h"
+    "Sources/Graphics/Bindables/IndexBuffer.cpp"
 
     "Sources/Graphics/Drawables/Drawable.h"
     "Sources/Graphics/Drawables/Drawable.cpp"
