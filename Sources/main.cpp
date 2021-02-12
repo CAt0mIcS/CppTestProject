@@ -19,10 +19,19 @@ int main()
 		// Create graphics
 		Graphics::Get();
 
+		std::thread updateGraphics([]() {
+			while (Window::Get().IsOpen())
+			{
+				Graphics::Get().Update();
+			}
+		});
+
 		while (Window::Get().Update())
 		{
-			Graphics::Get().Update();
 		}
+
+		if (updateGraphics.joinable())
+			updateGraphics.join();
 	}
 	catch (Exception& e)
 	{

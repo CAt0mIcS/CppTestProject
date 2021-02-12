@@ -23,6 +23,8 @@ namespace At0::VulkanTesting
 		return !glfwWindowShouldClose(m_hWnd);
 	}
 
+	bool Window::IsOpen() const { return !glfwWindowShouldClose(m_hWnd); }
+
 	void Window::WaitForEvents() const { glfwWaitEvents(); }
 
 	std::pair<const char**, uint32_t> Window::GetInstanceExtensions() const

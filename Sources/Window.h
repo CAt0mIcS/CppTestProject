@@ -16,6 +16,7 @@ namespace At0::VulkanTesting
 		static Window& Get() { return *s_Instance; }
 
 		bool Update();
+		bool IsOpen() const;
 		void WaitForEvents() const;
 
 		std::pair<const char**, uint32_t> GetInstanceExtensions() const;

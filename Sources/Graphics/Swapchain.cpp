@@ -152,10 +152,11 @@ namespace At0::VulkanTesting
 			VkExtent2D extent = { (uint32_t)width, (uint32_t)height };
 
 			// Clamp values to allowed minimum and maximum implementation extents supported
-			extent.width = std::max(capabilities.minImageExtent.width,
-				std::min(capabilities.maxImageExtent.width, extent.width));
-			extent.height = std::max(capabilities.minImageExtent.height,
-				std::min(capabilities.maxImageExtent.height, extent.height));
+			extent.width = std::clamp(
+				extent.width, capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
+			extent.height = std::clamp(extent.height, capabilities.minImageExtent.height,
+				capabilities.maxImageExtent.height);
+
 			return extent;
 		}
 	}
