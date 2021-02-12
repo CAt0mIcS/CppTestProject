@@ -31,6 +31,7 @@ namespace At0::VulkanTesting
 		~Graphics();
 		static Graphics& Get();
 		static void Create();
+		static void Destroy();
 
 		void Update();
 

@@ -1,19 +1,14 @@
 #pragma once
 
-#include "Graphics/Bindables/VertexBuffer.h"
+#include "Drawable.h"
 
 
 namespace At0::VulkanTesting
 {
-	class Triangle
+	class Triangle : public DrawableBase<Triangle>
 	{
 	public:
 		Triangle();
-		~Triangle();
-
-		const VertexBuffer& GetVertexBuffer() const { return m_VertexBuffer; }
-
-	private:
-		VertexBuffer m_VertexBuffer;
+		~Triangle() = default;
 	};
 }  // namespace At0::VulkanTesting

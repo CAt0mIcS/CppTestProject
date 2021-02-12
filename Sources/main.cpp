@@ -33,6 +33,8 @@ int main()
 
 			Graphics::Get().Update();
 		}
+
+		Graphics::Destroy();
 	}
 	catch (Exception& e)
 	{

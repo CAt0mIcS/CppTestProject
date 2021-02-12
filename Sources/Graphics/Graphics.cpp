@@ -144,14 +144,8 @@ namespace At0::VulkanTesting
 
 	Graphics::~Graphics()
 	{
+		Log::Debug("Destroying Graphics object...");
 		vkDeviceWaitIdle(*m_LogicalDevice);
-
-		// not production level code here...
-		if (s_Instance)
-		{
-			delete s_Instance;
-			s_Instance = nullptr;
-		}
 
 		for (uint32_t i = 0; i < s_MaxFramesInFlight; ++i)
 		{
@@ -160,6 +154,13 @@ namespace At0::VulkanTesting
 			vkDestroyFence(*m_LogicalDevice, m_InFlightFences[i], nullptr);
 		}
 
+		m_CommandBuffers.clear();
+
+		// ---------------------------------------
+		// Reset all drawables here
+		m_Triangle.reset();
+
+		m_CommandPool.reset();
 		m_Framebuffers.clear();
 		m_GraphicsPipeline.reset();
 		m_Renderpass.reset();
@@ -167,6 +168,8 @@ namespace At0::VulkanTesting
 		m_LogicalDevice.reset();
 		m_Surface.reset();
 		m_Instance.reset();
+
+		Log::Debug("Destroyed Graphics object");
 	}
 
 	Graphics& Graphics::Get() { return *s_Instance; }
@@ -175,6 +178,15 @@ namespace At0::VulkanTesting
 	{
 		if (!s_Instance)
 			new Graphics();
+	}
+
+	void Graphics::Destroy()
+	{
+		if (s_Instance)
+		{
+			delete s_Instance;
+			s_Instance = nullptr;
+		}
 	}
 
 	void Graphics::Update()
