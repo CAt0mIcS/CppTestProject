@@ -20,7 +20,7 @@ namespace At0::VulkanTesting
 		};
 
 	public:
-		Swapchain();
+		Swapchain(Swapchain* previousSwapchain = nullptr);
 		~Swapchain();
 
 		operator const VkSwapchainKHR&() const { return m_Swapchain; }

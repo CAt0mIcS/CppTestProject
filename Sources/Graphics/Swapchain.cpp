@@ -8,7 +8,7 @@
 
 namespace At0::VulkanTesting
 {
-	Swapchain::Swapchain()
+	Swapchain::Swapchain(Swapchain* previousSwapchain)
 	{
 		SupportDetails supportDetails = QuerySwapchainSupport();
 		VkSurfaceFormatKHR surfaceFormat = ChooseSurfaceFormat(supportDetails.Formats);
@@ -56,7 +56,10 @@ namespace At0::VulkanTesting
 		createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
 		createInfo.presentMode = presentMode;
 		createInfo.clipped = VK_TRUE;
-		createInfo.oldSwapchain = VK_NULL_HANDLE;
+		if (previousSwapchain)
+			createInfo.oldSwapchain = *previousSwapchain;
+		else
+			createInfo.oldSwapchain = VK_NULL_HANDLE;
 
 		RAY_VK_THROW_FAILED(vkCreateSwapchainKHR(Graphics::Get().GetLogicalDevice(), &createInfo,
 								nullptr, &m_Swapchain),

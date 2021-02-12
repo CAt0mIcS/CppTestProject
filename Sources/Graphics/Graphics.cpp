@@ -247,7 +247,7 @@ namespace At0::VulkanTesting
 		vkDeviceWaitIdle(*m_LogicalDevice);
 
 		CleanupSwapchain();
-		m_Swapchain = std::make_unique<Swapchain>();
+		m_Swapchain = std::make_unique<Swapchain>(m_Swapchain.get());
 
 		CreateGraphicsPipeline();
 		CreateFramebuffers();
@@ -263,6 +263,5 @@ namespace At0::VulkanTesting
 		m_CommandBuffers.clear();
 		m_GraphicsPipeline.reset();
 		m_Renderpass.reset();
-		m_Swapchain.reset();
 	}
 }  // namespace At0::VulkanTesting

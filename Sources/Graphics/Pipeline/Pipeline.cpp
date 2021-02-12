@@ -124,6 +124,14 @@ namespace At0::VulkanTesting
 		colorBlending.blendConstants[3] = 0.0f;
 
 		// ---------------------------------------------------------------------------------------
+		// Dynamic state
+		VkDynamicState dynamicStates[] = { VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR };
+		VkPipelineDynamicStateCreateInfo dynamicStateInfo{};
+		dynamicStateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
+		dynamicStateInfo.dynamicStateCount = std::size(dynamicStates);
+		dynamicStateInfo.pDynamicStates = dynamicStates;
+
+		// ---------------------------------------------------------------------------------------
 		// Pipeline Layout
 		VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
 		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
