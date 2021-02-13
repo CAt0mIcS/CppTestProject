@@ -71,6 +71,8 @@ set(SRC
     "Sources/Graphics/Primitives/Triangle.cpp"
     "Sources/Graphics/Primitives/Square.h"
     "Sources/Graphics/Primitives/Square.cpp"
+    "Sources/Graphics/Primitives/Cube.h"
+    "Sources/Graphics/Primitives/Cube.cpp"
 
     "Sources/Graphics/Renderpass/Renderpass.h"
     "Sources/Graphics/Renderpass/Renderpass.cpp"

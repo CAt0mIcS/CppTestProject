@@ -15,7 +15,7 @@
 
 namespace At0::VulkanTesting
 {
-	using RenderObject = Square;
+	using RenderObject = Cube;
 
 	Graphics::Graphics()
 	{

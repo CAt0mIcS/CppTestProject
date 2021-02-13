@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <vector>
 #include <array>
@@ -12,7 +12,7 @@ namespace At0::VulkanTesting
 	{
 		struct
 		{
-			float x, y;
+			float x, y, z = 0.0f;
 		} pos;
 
 		struct
@@ -38,7 +38,7 @@ namespace At0::VulkanTesting
 
 			attributeDescs[0].binding = binding;
 			attributeDescs[0].location = posLocation;
-			attributeDescs[0].format = VK_FORMAT_R32G32_SFLOAT;
+			attributeDescs[0].format = VK_FORMAT_R32G32B32_SFLOAT;
 			attributeDescs[0].offset = offsetof(Vertex, pos);
 
 			attributeDescs[1].binding = binding;

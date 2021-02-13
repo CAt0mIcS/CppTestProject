@@ -22,6 +22,7 @@
 
 #include "Primitives/Triangle.h"
 #include "Primitives/Square.h"
+#include "Primitives/Cube.h"
 
 
 namespace At0::VulkanTesting
