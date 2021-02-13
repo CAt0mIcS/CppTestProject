@@ -36,7 +36,7 @@ namespace At0::VulkanTesting
 	}
 
 	void Buffer::CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage,
-		VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory) const
+		VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory)
 	{
 		VkBufferCreateInfo bufferInfo{};
 		bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
@@ -63,7 +63,7 @@ namespace At0::VulkanTesting
 		vkBindBufferMemory(Graphics::Get().GetLogicalDevice(), buffer, bufferMemory, 0);
 	}
 
-	uint32_t Buffer::FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties) const
+	uint32_t Buffer::FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties)
 	{
 		VkPhysicalDeviceMemoryProperties memProps =
 			Graphics::Get().GetPhysicalDevice().GetMemoryProperties();
@@ -78,7 +78,7 @@ namespace At0::VulkanTesting
 		RAY_THROW_RUNTIME("Failed to find suitable memory type");
 	}
 
-	void Buffer::CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size) const
+	void Buffer::CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size)
 	{
 		// VT_TODO: Create separate command pool for short-lived command buffers
 

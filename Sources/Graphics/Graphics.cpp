@@ -6,6 +6,12 @@
 
 #include <vulkan/vulkan.h>
 
+#define GLM_FORCE_RADIANS
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
+#include <chrono>
+
 
 namespace At0::VulkanTesting
 {
@@ -24,6 +30,7 @@ namespace At0::VulkanTesting
 		m_LogicalDevice = std::make_unique<LogicalDevice>();
 		m_Swapchain = std::make_unique<Swapchain>();
 
+		CreateDescriptorSetLayout();
 		CreateRenderpass();
 		CreateGraphicsPipeline();
 		CreateFramebuffers();
@@ -33,6 +40,9 @@ namespace At0::VulkanTesting
 		// --------------------------------------------------------------
 		// Create all drawables
 		m_Drawable = std::make_unique<RenderObject>();
+		CreateUniformBuffers();
+		CreateDescriptorPool();
+		CreateDescriptorSets();
 
 		CreateCommandBuffers();
 		CreateSyncObjects();
@@ -80,12 +90,12 @@ namespace At0::VulkanTesting
 			m_CommandBuffers[i] = std::make_unique<CommandBuffer>();
 
 			// Prerecord commands
-			RecordCommandBuffer(m_CommandBuffers[i], m_Framebuffers[i]);
+			RecordCommandBuffer(m_CommandBuffers[i], m_Framebuffers[i], m_DescriptorSets[i]);
 		}
 	}
 
-	void Graphics::RecordCommandBuffer(
-		std::unique_ptr<CommandBuffer>& cmdBuff, std::unique_ptr<Framebuffer>& framebuffer)
+	void Graphics::RecordCommandBuffer(std::unique_ptr<CommandBuffer>& cmdBuff,
+		std::unique_ptr<Framebuffer>& framebuffer, VkDescriptorSet descriptorSet)
 	{
 		cmdBuff->Begin();
 
@@ -111,6 +121,8 @@ namespace At0::VulkanTesting
 		vkCmdBindIndexBuffer(*cmdBuff, m_Drawable->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT16);
 
 		vkCmdBindPipeline(*cmdBuff, VK_PIPELINE_BIND_POINT_GRAPHICS, *m_GraphicsPipeline);
+		vkCmdBindDescriptorSets(*cmdBuff, VK_PIPELINE_BIND_POINT_GRAPHICS,
+			m_GraphicsPipeline->GetLayout(), 0, 1, &descriptorSet, 0, nullptr);
 		vkCmdDrawIndexed(*cmdBuff, m_Drawable->GetIndexBuffer().GetNumIndices(), 1, 0, 0, 0);
 
 		vkCmdEndRenderPass(*cmdBuff);
@@ -167,6 +179,15 @@ namespace At0::VulkanTesting
 		m_Framebuffers.clear();
 		m_GraphicsPipeline.reset();
 		m_Renderpass.reset();
+
+		for (size_t i = 0; i < m_Swapchain->GetNumberOfImages(); i++)
+		{
+			vkDestroyBuffer(*m_LogicalDevice, m_UniformBuffers[i], nullptr);
+			vkFreeMemory(*m_LogicalDevice, m_UniformBuffersMemory[i], nullptr);
+		}
+		vkDestroyDescriptorSetLayout(*m_LogicalDevice, m_DescriptorSetLayout, nullptr);
+		vkDestroyDescriptorPool(*m_LogicalDevice, m_DescriptorPool, nullptr);
+
 		m_Swapchain.reset();
 		m_LogicalDevice.reset();
 		m_Surface.reset();
@@ -214,6 +235,7 @@ namespace At0::VulkanTesting
 		else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
 			RAY_THROW_RUNTIME("Failed to acquire next swapchain image.");
 
+		UpdateUniformBuffer(imageIndex);
 
 		// Check if a previous frame is using this image (i.e. there is its fence to wait on)
 		if (m_ImagesInFlight[imageIndex] != VK_NULL_HANDLE)
@@ -291,13 +313,25 @@ namespace At0::VulkanTesting
 		m_Framebuffers.clear();
 
 		m_Renderpass.reset();
+
+		for (size_t i = 0; i < m_Swapchain->GetNumberOfImages(); i++)
+		{
+			vkDestroyBuffer(*m_LogicalDevice, m_UniformBuffers[i], nullptr);
+			vkFreeMemory(*m_LogicalDevice, m_UniformBuffersMemory[i], nullptr);
+		}
+		vkDestroyDescriptorPool(*m_LogicalDevice, m_DescriptorPool, nullptr);
+
 		m_Swapchain.reset();
+
 
 		m_Swapchain = std::make_unique<Swapchain>(m_Swapchain.get());
 		CreateRenderpass();
 		UpdateViewport();
 		UpdateScissor();
 		CreateFramebuffers();
+		CreateUniformBuffers();
+		CreateDescriptorPool();
+		CreateDescriptorSets();
 		m_CommandPool = std::make_unique<CommandPool>();
 		CreateCommandBuffers();
 
@@ -324,5 +358,128 @@ namespace At0::VulkanTesting
 
 		m_Scissor.offset = { 0, 0 };
 		m_Scissor.extent = { (uint32_t)width, (uint32_t)height };
+	}
+
+	void Graphics::CreateDescriptorSetLayout()
+	{
+		VkDescriptorSetLayoutBinding layoutBinding{};
+		layoutBinding.binding = 0;
+		layoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		layoutBinding.descriptorCount = 1;
+		layoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+
+		VkDescriptorSetLayoutCreateInfo layoutInfo{};
+		layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+		layoutInfo.bindingCount = 1;
+		layoutInfo.pBindings = &layoutBinding;
+
+		RAY_VK_THROW_FAILED(vkCreateDescriptorSetLayout(
+								*m_LogicalDevice, &layoutInfo, nullptr, &m_DescriptorSetLayout),
+			"Failed to create descriptor set");
+	}
+
+	struct UniformBufferObject
+	{
+		alignas(16) glm::mat4 model;
+		alignas(16) glm::mat4 view;
+		alignas(16) glm::mat4 proj;
+	};
+
+	void Graphics::CreateUniformBuffers()
+	{
+		VkDeviceSize bufferSize = sizeof(UniformBufferObject);
+
+		m_UniformBuffers.resize(m_Swapchain->GetNumberOfImages());
+		m_UniformBuffersMemory.resize(m_Swapchain->GetNumberOfImages());
+
+		for (uint32_t i = 0; i < m_Swapchain->GetNumberOfImages(); ++i)
+		{
+			Buffer::CreateBuffer(bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+				m_UniformBuffers[i], m_UniformBuffersMemory[i]);
+		}
+	}
+
+	void Graphics::UpdateUniformBuffer(uint32_t currentImage)
+	{
+		static auto startTIme = std::chrono::high_resolution_clock::now();
+
+		auto currentTime = std::chrono::high_resolution_clock::now();
+		float time =
+			std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTIme)
+				.count();
+
+		UniformBufferObject ubo{};
+		ubo.model = glm::rotate(
+			glm::mat4(1.0f), time * glm::radians(90.0f) * 0.3f, glm::vec3(0.0f, 0.0f, 1.0f));
+
+		ubo.view = glm::lookAt(
+			glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+
+		ubo.proj = glm::perspective(glm::radians(45.0f),
+			m_Swapchain->GetExtent().width / (float)m_Swapchain->GetExtent().height, 0.1f, 10.0f);
+
+		ubo.proj[1][1] *= -1;
+
+		void* data;
+		vkMapMemory(
+			*m_LogicalDevice, m_UniformBuffersMemory[currentImage], 0, sizeof(ubo), 0, &data);
+		memcpy(data, &ubo, sizeof(ubo));
+		vkUnmapMemory(*m_LogicalDevice, m_UniformBuffersMemory[currentImage]);
+	}
+
+	void Graphics::CreateDescriptorPool()
+	{
+		VkDescriptorPoolSize poolSize{};
+		poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		poolSize.descriptorCount = m_Swapchain->GetNumberOfImages();
+
+		VkDescriptorPoolCreateInfo createInfo{};
+		createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+		createInfo.poolSizeCount = 1;
+		createInfo.pPoolSizes = &poolSize;
+		createInfo.maxSets = m_Swapchain->GetNumberOfImages();
+
+		RAY_VK_THROW_FAILED(
+			vkCreateDescriptorPool(*m_LogicalDevice, &createInfo, nullptr, &m_DescriptorPool),
+			"Failed to create descriptor pool");
+	}
+
+	void Graphics::CreateDescriptorSets()
+	{
+		std::vector<VkDescriptorSetLayout> layouts(
+			m_Swapchain->GetNumberOfImages(), m_DescriptorSetLayout);
+
+		VkDescriptorSetAllocateInfo allocInfo{};
+		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+		allocInfo.descriptorPool = m_DescriptorPool;
+		allocInfo.descriptorSetCount = m_Swapchain->GetNumberOfImages();
+		allocInfo.pSetLayouts = layouts.data();
+
+		m_DescriptorSets.resize(m_Swapchain->GetNumberOfImages());
+
+		RAY_VK_THROW_FAILED(
+			vkAllocateDescriptorSets(*m_LogicalDevice, &allocInfo, m_DescriptorSets.data()),
+			"Failed to allocate descriptor set");
+
+		for (uint32_t i = 0; i < m_Swapchain->GetNumberOfImages(); ++i)
+		{
+			VkDescriptorBufferInfo bufferInfo{};
+			bufferInfo.buffer = m_UniformBuffers[i];
+			bufferInfo.offset = 0;
+			bufferInfo.range = sizeof(UniformBufferObject);
+
+			VkWriteDescriptorSet descriptorWrite{};
+			descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+			descriptorWrite.dstSet = m_DescriptorSets[i];
+			descriptorWrite.dstBinding = 0;
+			descriptorWrite.dstArrayElement = 0;
+
+			descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+			descriptorWrite.descriptorCount = 1;
+			descriptorWrite.pBufferInfo = &bufferInfo;
+
+			vkUpdateDescriptorSets(*m_LogicalDevice, 1, &descriptorWrite, 0, nullptr);
+		}
 	}
 }  // namespace At0::VulkanTesting

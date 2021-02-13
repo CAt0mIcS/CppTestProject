@@ -17,6 +17,7 @@ namespace At0::VulkanTesting
 		~GraphicsPipeline();
 
 		operator const VkPipeline&() const { return m_Pipeline; }
+		const VkPipelineLayout& GetLayout() const { return m_Layout; }
 
 	private:
 		static VkShaderModule CreateShader(std::vector<char> src);

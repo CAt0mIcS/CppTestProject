@@ -9,14 +9,15 @@ namespace At0::VulkanTesting
 	public:
 		operator const VkBuffer&() const { return m_Buffer; }
 
+		static void CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage,
+			VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
+		static void CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
+
 	protected:
 		Buffer(VkDeviceSize bufferSize, const void* const bufferData, VkBufferUsageFlags usage);
 		virtual ~Buffer();
 
-		void CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage,
-			VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory) const;
-		uint32_t FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties) const;
-		void CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size) const;
+		static uint32_t FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 
 	private:
 		VkBuffer m_Buffer;

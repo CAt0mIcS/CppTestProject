@@ -94,7 +94,7 @@ find_package("Vulkan" REQUIRED FATAL_ERROR)
 
 add_executable("VulkanTesting" "${SRC}" "${SHADERS}")
 target_include_directories("VulkanTesting" PRIVATE "${Vulkan_INCLUDE_DIRS}" "${CMAKE_SOURCE_DIR}/Extern/glfw/include" "Sources")
-target_link_libraries("VulkanTesting" PRIVATE "${Vulkan_LIBRARIES}" "glfw")
+target_link_libraries("VulkanTesting" PRIVATE "${Vulkan_LIBRARIES}" "glfw" "glm")
 
 # ------------------------------------------------------------------------------------------------
 # Set the startup project for VS

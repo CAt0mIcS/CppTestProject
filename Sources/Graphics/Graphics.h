@@ -45,19 +45,28 @@ namespace At0::VulkanTesting
 		const CommandPool& GetCommandPool() const { return *m_CommandPool; }
 		const Renderpass& GetRenderpass() const { return *m_Renderpass; }
 
+		// Temporary
+		VkDescriptorSetLayout GetDescriptorSetLayout() const { return m_DescriptorSetLayout; }
+
 	private:
 		Graphics();
 		void CreateRenderpass();
 		void CreateGraphicsPipeline();
 		void CreateFramebuffers();
 		void CreateCommandBuffers();
-		void RecordCommandBuffer(
-			std::unique_ptr<CommandBuffer>& cmdBuff, std::unique_ptr<Framebuffer>& framebuffer);
+		void RecordCommandBuffer(std::unique_ptr<CommandBuffer>& cmdBuff,
+			std::unique_ptr<Framebuffer>& framebuffer, VkDescriptorSet descriptorSet);
 		void CreateSyncObjects();
 		void RecreateSwapchain();
 
 		void UpdateViewport();
 		void UpdateScissor();
+
+		void CreateDescriptorSetLayout();
+		void CreateUniformBuffers();
+		void UpdateUniformBuffer(uint32_t currentImage);
+		void CreateDescriptorPool();
+		void CreateDescriptorSets();
 
 	private:
 		// Specifies the maximum amount of images which we can work on concurrently
@@ -97,5 +106,13 @@ namespace At0::VulkanTesting
 		bool m_FramebufferResized = false;
 
 		std::unique_ptr<Drawable> m_Drawable;
+
+
+		// Temporary data
+		VkDescriptorSetLayout m_DescriptorSetLayout;
+		std::vector<VkBuffer> m_UniformBuffers;
+		std::vector<VkDeviceMemory> m_UniformBuffersMemory;
+		VkDescriptorPool m_DescriptorPool;
+		std::vector<VkDescriptorSet> m_DescriptorSets;
 	};
 }  // namespace At0::VulkanTesting
