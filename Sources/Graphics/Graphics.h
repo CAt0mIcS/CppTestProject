@@ -18,6 +18,8 @@
 #include "Renderpass/Renderpass.h"
 #include "Framebuffer.h"
 
+#include "Camera.h"
+
 #include "Primitives/Triangle.h"
 #include "Primitives/Square.h"
 
@@ -35,7 +37,7 @@ namespace At0::VulkanTesting
 		static void Create();
 		static void Destroy();
 
-		void Update();
+		void Update(float dt);
 
 		const VulkanInstance& GetInstance() const { return *m_Instance; }
 		const PhysicalDevice& GetPhysicalDevice() const { return *m_PhysicalDevice; }
@@ -47,6 +49,9 @@ namespace At0::VulkanTesting
 
 		// Temporary
 		VkDescriptorSetLayout GetDescriptorSetLayout() const { return m_DescriptorSetLayout; }
+
+	public:
+		Camera SceneCamera;
 
 	private:
 		Graphics();
@@ -62,6 +67,7 @@ namespace At0::VulkanTesting
 		void UpdateViewport();
 		void UpdateScissor();
 
+		// Temporary
 		void CreateDescriptorSetLayout();
 		void CreateUniformBuffers();
 		void UpdateUniformBuffer(uint32_t currentImage);

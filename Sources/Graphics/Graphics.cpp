@@ -46,7 +46,16 @@ namespace At0::VulkanTesting
 
 		CreateCommandBuffers();
 		CreateSyncObjects();
-	}
+
+		int width, height;
+		Window::Get().GetFramebufferSize(&width, &height);
+
+		SceneCamera.SetPosition(glm::vec3(0.0f, 0.0f, -2.5f));
+		SceneCamera.SetRotation(glm::vec3(0.0f));
+		SceneCamera.SetPerspective(60.0f, (float)width / (float)height, 0.1f, 256.0f);
+		SceneCamera.SetRotationSpeed(0.1f);
+		SceneCamera.SetMovementSpeed(2.0f);
+	}  // namespace At0::VulkanTesting
 
 	void Graphics::CreateRenderpass()
 	{
@@ -213,8 +222,10 @@ namespace At0::VulkanTesting
 		}
 	}
 
-	void Graphics::Update()
+	void Graphics::Update(float dt)
 	{
+		SceneCamera.Update(dt);
+
 		// Wait for fence in vkQueueSubmit to become signaled,
 		// which means that the command buffer finished executing
 		vkWaitForFences(
@@ -335,6 +346,9 @@ namespace At0::VulkanTesting
 		m_CommandPool = std::make_unique<CommandPool>();
 		CreateCommandBuffers();
 
+		Window::Get().GetFramebufferSize(&width, &height);
+		SceneCamera.UpdateAspectRatio((float)width / (float)height);
+
 		m_FramebufferResized = false;
 	}
 
@@ -410,17 +424,9 @@ namespace At0::VulkanTesting
 				.count();
 
 		UniformBufferObject ubo{};
-		ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f) * 0.3f,
-						glm::vec3(0.0f, 0.0f, 1.0f)) *
-					glm::scale(glm::mat4(1.0f), glm::vec3(2.0f, 2.0f, 2.0f));
-
-		ubo.view = glm::lookAt(
-			glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-
-		ubo.proj = glm::perspective(glm::radians(45.0f),
-			m_Swapchain->GetExtent().width / (float)m_Swapchain->GetExtent().height, 0.1f, 10.0f);
-
-		ubo.proj[1][1] *= -1;
+		ubo.proj = SceneCamera.Matrices.Perspective;
+		ubo.view = SceneCamera.Matrices.View;
+		ubo.model = glm::mat4(1.0f);
 
 		void* data;
 		vkMapMemory(

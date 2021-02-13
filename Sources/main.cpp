@@ -31,7 +31,7 @@ int main()
 
 			// std::cout << "Frametime: " << diff << '\n';
 
-			Graphics::Get().Update();
+			Graphics::Get().Update((float)diff / 1000.0f);
 		}
 
 		Graphics::Destroy();

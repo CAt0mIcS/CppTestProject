@@ -3,6 +3,11 @@
 #include <memory>
 #include <vulkan/vulkan_core.h>
 
+#define GLM_FORCE_RADIANS
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
 struct GLFWwindow;
 
 namespace At0::VulkanTesting
@@ -19,6 +24,10 @@ namespace At0::VulkanTesting
 		bool IsOpen() const;
 		void WaitForEvents() const;
 
+		bool CursorEnabled() const;
+		void EnableCursor() const;
+		void DisableCursor() const;
+
 		std::pair<const char**, uint32_t> GetInstanceExtensions() const;
 		void CreateSurface(
 			VkInstance instance, const VkAllocationCallbacks* allocator, VkSurfaceKHR* surface);
@@ -31,5 +40,7 @@ namespace At0::VulkanTesting
 	private:
 		inline static std::unique_ptr<Window> s_Instance = nullptr;
 		GLFWwindow* m_hWnd;
+
+		glm::vec2 m_MousePos{};
 	};
 }  // namespace At0::VulkanTesting

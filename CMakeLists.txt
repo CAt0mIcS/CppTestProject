@@ -47,6 +47,8 @@ set(SRC
     "Sources/Graphics/Framebuffer.cpp"
     "Sources/Graphics/Swapchain.h"
     "Sources/Graphics/Swapchain.cpp"
+    "Sources/Graphics/Camera.h"
+    "Sources/Graphics/Camera.cpp"
     "Sources/Graphics/Commands/CommandBuffer.h"
     "Sources/Graphics/Commands/CommandBuffer.cpp"
     "Sources/Graphics/Commands/CommandPool.h"

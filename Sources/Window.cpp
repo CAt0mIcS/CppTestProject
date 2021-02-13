@@ -27,6 +27,18 @@ namespace At0::VulkanTesting
 
 	void Window::WaitForEvents() const { glfwWaitEvents(); }
 
+	bool Window::CursorEnabled() const
+	{
+		return glfwGetInputMode(m_hWnd, GLFW_CURSOR) == GLFW_CURSOR_NORMAL;
+	}
+
+	void Window::EnableCursor() const { glfwSetInputMode(m_hWnd, GLFW_CURSOR, GLFW_CURSOR_NORMAL); }
+
+	void Window::DisableCursor() const
+	{
+		glfwSetInputMode(m_hWnd, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	}
+
 	std::pair<const char**, uint32_t> Window::GetInstanceExtensions() const
 	{
 		uint32_t count = 0;
@@ -64,5 +76,57 @@ namespace At0::VulkanTesting
 		glfwSetWindowSizeCallback(m_hWnd, [](GLFWwindow* window, int width, int height) {
 			Graphics::Get().m_FramebufferResized = true;
 		});
-	}
+
+		glfwSetKeyCallback(m_hWnd, [](GLFWwindow*, int key, int, int action, int) {
+			if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+			{
+				if (Window::Get().CursorEnabled())
+					Window::Get().DisableCursor();
+				else
+					Window::Get().EnableCursor();
+			}
+
+			if (Graphics::Get().SceneCamera.Type == Camera::FirstPerson)
+			{
+				switch (action)
+				{
+				case GLFW_PRESS:
+					switch (key)
+					{
+					case GLFW_KEY_W: Graphics::Get().SceneCamera.Keys.Up = true; break;
+					case GLFW_KEY_S: Graphics::Get().SceneCamera.Keys.Down = true; break;
+					case GLFW_KEY_A: Graphics::Get().SceneCamera.Keys.Left = true; break;
+					case GLFW_KEY_D: Graphics::Get().SceneCamera.Keys.Right = true; break;
+					}
+					break;
+				case GLFW_RELEASE:
+					switch (key)
+					{
+					case GLFW_KEY_W: Graphics::Get().SceneCamera.Keys.Up = false; break;
+					case GLFW_KEY_S: Graphics::Get().SceneCamera.Keys.Down = false; break;
+					case GLFW_KEY_A: Graphics::Get().SceneCamera.Keys.Left = false; break;
+					case GLFW_KEY_D: Graphics::Get().SceneCamera.Keys.Right = false; break;
+					}
+					break;
+				}
+			}
+		});
+
+		glfwSetScrollCallback(m_hWnd, [](GLFWwindow*, double scrollX, double scrollY) {
+			// Graphics::Get().SceneCamera.Translate(
+			//	glm::vec3(0.0f, 0.0f, (float)wheelDelta * 0.005f));
+		});
+
+		glfwSetCursorPosCallback(m_hWnd, [](GLFWwindow*, double xPos, double yPos) {
+			int dx = (int)Window::Get().m_MousePos.x - xPos;
+			int dy = (int)Window::Get().m_MousePos.y - yPos;
+
+			Camera& camera = Graphics::Get().SceneCamera;
+			if (!Window::Get().CursorEnabled())
+				camera.Rotate(
+					glm::vec3(dy * camera.RotationSpeed, -dx * camera.RotationSpeed, 0.0f));
+
+			Window::Get().m_MousePos = { (float)xPos, (float)yPos };
+		});
+	}  // namespace At0::VulkanTesting
 }  // namespace At0::VulkanTesting
