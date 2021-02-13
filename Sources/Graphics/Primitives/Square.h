@@ -1,12 +1,12 @@
-#pragma once
+﻿#pragma once
 
 #include "Drawable.h"
 
 namespace At0::VulkanTesting
 {
-	class Quad : public DrawableBase<Quad>
+	class Square : public DrawableBase<Square>
 	{
 	public:
-		Quad();
+		Square();
 	};
 }  // namespace At0::VulkanTesting

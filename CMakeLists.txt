@@ -63,12 +63,12 @@ set(SRC
     "Sources/Graphics/Bindables/IndexBuffer.h"
     "Sources/Graphics/Bindables/IndexBuffer.cpp"
 
-    "Sources/Graphics/Drawables/Drawable.h"
-    "Sources/Graphics/Drawables/Drawable.cpp"
-    "Sources/Graphics/Drawables/Triangle.h"
-    "Sources/Graphics/Drawables/Triangle.cpp"
-    "Sources/Graphics/Drawables/Quad.h"
-    "Sources/Graphics/Drawables/Quad.cpp"
+    "Sources/Graphics/Primitives/Drawable.h"
+    "Sources/Graphics/Primitives/Drawable.cpp"
+    "Sources/Graphics/Primitives/Triangle.h"
+    "Sources/Graphics/Primitives/Triangle.cpp"
+    "Sources/Graphics/Primitives/Square.h"
+    "Sources/Graphics/Primitives/Square.cpp"
 
     "Sources/Graphics/Renderpass/Renderpass.h"
     "Sources/Graphics/Renderpass/Renderpass.cpp"

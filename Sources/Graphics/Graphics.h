@@ -18,8 +18,8 @@
 #include "Renderpass/Renderpass.h"
 #include "Framebuffer.h"
 
-#include "Drawables/Triangle.h"
-#include "Drawables/Quad.h"
+#include "Primitives/Triangle.h"
+#include "Primitives/Square.h"
 
 
 namespace At0::VulkanTesting
