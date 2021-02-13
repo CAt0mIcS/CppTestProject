@@ -52,25 +52,6 @@ namespace At0::VulkanTesting
 		inputAssembler.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
 		inputAssembler.primitiveRestartEnable = VK_FALSE;
 
-		//// ---------------------------------------------------------------------------------------
-		//// Viewport
-		// int width, height;
-		// Window::Get().GetFramebufferSize(&width, &height);
-
-		// VkViewport viewport{};
-		// viewport.x = 0.0f;
-		// viewport.y = 0.0f;
-		// viewport.width = (float)width;
-		// viewport.height = (float)height;
-		// viewport.minDepth = 0.0f;
-		// viewport.maxDepth = 1.0f;
-
-		//// ---------------------------------------------------------------------------------------
-		//// Scissor
-		// VkRect2D scissor{};
-		// scissor.offset = { 0, 0 };
-		// scissor.extent = { (uint32_t)width, (uint32_t)height };
-
 		// ---------------------------------------------------------------------------------------
 		// Viewport State
 		VkPipelineViewportStateCreateInfo viewportState{};
@@ -88,7 +69,7 @@ namespace At0::VulkanTesting
 		rasterizer.rasterizerDiscardEnable = VK_FALSE;
 		rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
 		rasterizer.lineWidth = 1.0f;
-		rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
+		rasterizer.cullMode = VK_CULL_MODE_FRONT_BIT;
 		rasterizer.frontFace = VK_FRONT_FACE_CLOCKWISE;
 		rasterizer.depthBiasEnable = VK_FALSE;
 		rasterizer.depthBiasConstantFactor = 0.0f;
