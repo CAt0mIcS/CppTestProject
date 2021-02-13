@@ -56,6 +56,7 @@ namespace At0::VulkanTesting
 
 	private:
 		Graphics();
+		void LoadExtensionFunctions();
 		void CreateRenderpass();
 		void CreateGraphicsPipeline();
 		void CreateFramebuffers();
@@ -81,6 +82,9 @@ namespace At0::VulkanTesting
 		static constexpr uint8_t s_MaxFramesInFlight = 2;
 		uint64_t m_CurrentFrame = 0;
 		inline static Graphics* s_Instance = nullptr;
+
+		// Extensions functions
+		PFN_vkCmdSetCullModeEXT vkCmdSetCullModeEXT;
 
 		// Dynamic state, need to be updated when the window is resized
 		VkViewport m_Viewport;

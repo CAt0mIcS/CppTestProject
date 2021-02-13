@@ -113,7 +113,8 @@ namespace At0::VulkanTesting
 
 		// ---------------------------------------------------------------------------------------
 		// Dynamic state
-		VkDynamicState dynamicStates[] = { VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR };
+		VkDynamicState dynamicStates[] = { VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR,
+			VK_DYNAMIC_STATE_CULL_MODE_EXT };
 		VkPipelineDynamicStateCreateInfo dynamicStateInfo{};
 		dynamicStateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
 		dynamicStateInfo.dynamicStateCount = std::size(dynamicStates);

@@ -39,10 +39,12 @@ namespace At0::VulkanTesting
 	VkPhysicalDevice PhysicalDevice::SelectPhysicalDevice(
 		const std::vector<VkPhysicalDevice>& devices) const
 	{
-		std::multimap<uint32_t, VkPhysicalDevice> scoreMap;
+		std::multimap<int32_t, VkPhysicalDevice> scoreMap;
 
 		for (const VkPhysicalDevice& device : devices)
 		{
+			int32_t score = 0;
+
 			// Check if requrested extensions are supported.
 			uint32_t extensionPropCount;
 			vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionPropCount, nullptr);
@@ -64,12 +66,11 @@ namespace At0::VulkanTesting
 					}
 				}
 
-				// Returns a score of 0 if this device is missing a required extension.
+				// Lowest score for devices that don't support a specific extension
 				if (!extFound)
-					return 0;
+					score = INT32_MIN;
 			}
 
-			uint32_t score = 0;
 			VkPhysicalDeviceProperties props;
 			vkGetPhysicalDeviceProperties(device, &props);
 

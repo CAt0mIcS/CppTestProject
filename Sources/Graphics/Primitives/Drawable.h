@@ -14,6 +14,8 @@ namespace At0::VulkanTesting
 		virtual VertexBuffer& GetVertexBuffer() = 0;
 		virtual IndexBuffer& GetIndexBuffer() = 0;
 
+		virtual VkCullModeFlags GetCullMode() const = 0;
+
 		virtual ~Drawable() = default;
 
 	protected:

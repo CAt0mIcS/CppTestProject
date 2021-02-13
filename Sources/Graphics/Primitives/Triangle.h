@@ -9,6 +9,6 @@ namespace At0::VulkanTesting
 	{
 	public:
 		Triangle();
-		~Triangle() = default;
+		virtual VkCullModeFlags GetCullMode() const override { return VK_CULL_MODE_BACK_BIT; }
 	};
 }  // namespace At0::VulkanTesting

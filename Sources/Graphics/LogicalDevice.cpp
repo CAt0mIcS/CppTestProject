@@ -11,7 +11,7 @@
 namespace At0::VulkanTesting
 {
 	const std::vector<const char*> LogicalDevice::s_DeviceExtensions = {
-		VK_KHR_SWAPCHAIN_EXTENSION_NAME
+		VK_KHR_SWAPCHAIN_EXTENSION_NAME, "VK_EXT_extended_dynamic_state"
 	};
 
 	LogicalDevice::LogicalDevice()
@@ -24,6 +24,11 @@ namespace At0::VulkanTesting
 	{
 		vkDeviceWaitIdle(m_Device);
 		vkDestroyDevice(m_Device, nullptr);
+	}
+
+	PFN_vkVoidFunction LogicalDevice::LoadExtensionFunction(const char* fName) const
+	{
+		return vkGetDeviceProcAddr(m_Device, fName);
 	}
 
 	void LogicalDevice::CreateQueueIndices()
@@ -189,11 +194,18 @@ namespace At0::VulkanTesting
 		else
 			Log::Warn("[LogicalDevice] Selected GPU does not support multiple viewports.");
 
+		// Enable dynamic state of cull mode for 2D and 3D geometry
+		VkPhysicalDeviceExtendedDynamicStateFeaturesEXT extendedDynamicStateFeatures{};
+		extendedDynamicStateFeatures.sType =
+			VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTENDED_DYNAMIC_STATE_FEATURES_EXT;
+		extendedDynamicStateFeatures.extendedDynamicState = VK_TRUE;
+
 		// Finally create the logical device
 		VkDeviceCreateInfo deviceCreateInfo{};
 		deviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 		deviceCreateInfo.queueCreateInfoCount = (uint32_t)queueCreateInfos.size();
 		deviceCreateInfo.pQueueCreateInfos = queueCreateInfos.data();
+		deviceCreateInfo.pNext = &extendedDynamicStateFeatures;
 
 		if (Graphics::Get().GetInstance().ValidationLayersEnabled())
 		{

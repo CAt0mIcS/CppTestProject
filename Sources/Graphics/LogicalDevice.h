@@ -15,6 +15,8 @@ namespace At0::VulkanTesting
 		LogicalDevice();
 		~LogicalDevice();
 
+		PFN_vkVoidFunction LoadExtensionFunction(const char* fName) const;
+
 		operator const VkDevice&() const { return m_Device; }
 
 		static const std::vector<const char*>& DeviceExtensions() { return s_DeviceExtensions; }
