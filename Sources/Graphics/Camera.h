@@ -38,12 +38,14 @@ namespace At0::VulkanTesting
 		{
 			bool Left = false;
 			bool Right = false;
+			bool Forward = false;
+			bool Backward = false;
 			bool Up = false;
 			bool Down = false;
 		} Keys;
 
 	public:
-		bool IsMoving() const { return Keys.Left || Keys.Right || Keys.Up || Keys.Down; }
+		bool IsMoving() const;
 		float GetNearClip() const { return m_NearZ; }
 		float GetFarClip() const { return m_FarZ; }
 		void SetPerspective(float fov, float aspect, float nearZ, float farZ);

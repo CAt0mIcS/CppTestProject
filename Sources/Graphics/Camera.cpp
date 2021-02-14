@@ -3,6 +3,11 @@
 
 namespace At0::VulkanTesting
 {
+	bool Camera::IsMoving() const
+	{
+		return Keys.Left || Keys.Right || Keys.Up || Keys.Down || Keys.Forward || Keys.Backward;
+	}
+
 	void Camera::SetPerspective(float fov, float aspect, float nearZ, float farZ)
 	{
 		m_FoV = fov;
@@ -61,9 +66,9 @@ namespace At0::VulkanTesting
 
 			float moveSpeed = dt * MovementSpeed;
 
-			if (Keys.Up)
+			if (Keys.Forward)
 				Position += camFront * moveSpeed;
-			if (Keys.Down)
+			if (Keys.Backward)
 				Position -= camFront * moveSpeed;
 			if (Keys.Left)
 				Position -=
@@ -71,6 +76,10 @@ namespace At0::VulkanTesting
 			if (Keys.Right)
 				Position +=
 					glm::normalize(glm::cross(camFront, glm::vec3(0.0f, 1.0f, 0.0f))) * moveSpeed;
+			if (Keys.Up)
+				Position.y += 1.0f * moveSpeed;
+			if (Keys.Down)
+				Position.y -= 1.0f * moveSpeed;
 
 			UpdateViewMatrix();
 		}

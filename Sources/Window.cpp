@@ -93,19 +93,25 @@ namespace At0::VulkanTesting
 				case GLFW_PRESS:
 					switch (key)
 					{
-					case GLFW_KEY_W: Graphics::Get().SceneCamera.Keys.Up = true; break;
-					case GLFW_KEY_S: Graphics::Get().SceneCamera.Keys.Down = true; break;
+					case GLFW_KEY_W: Graphics::Get().SceneCamera.Keys.Forward = true; break;
+					case GLFW_KEY_S: Graphics::Get().SceneCamera.Keys.Backward = true; break;
 					case GLFW_KEY_A: Graphics::Get().SceneCamera.Keys.Left = true; break;
 					case GLFW_KEY_D: Graphics::Get().SceneCamera.Keys.Right = true; break;
+					case GLFW_KEY_SPACE: Graphics::Get().SceneCamera.Keys.Up = true; break;
+					case GLFW_KEY_LEFT_CONTROL: Graphics::Get().SceneCamera.Keys.Down = true; break;
 					}
 					break;
 				case GLFW_RELEASE:
 					switch (key)
 					{
-					case GLFW_KEY_W: Graphics::Get().SceneCamera.Keys.Up = false; break;
-					case GLFW_KEY_S: Graphics::Get().SceneCamera.Keys.Down = false; break;
+					case GLFW_KEY_W: Graphics::Get().SceneCamera.Keys.Forward = false; break;
+					case GLFW_KEY_S: Graphics::Get().SceneCamera.Keys.Backward = false; break;
 					case GLFW_KEY_A: Graphics::Get().SceneCamera.Keys.Left = false; break;
 					case GLFW_KEY_D: Graphics::Get().SceneCamera.Keys.Right = false; break;
+					case GLFW_KEY_SPACE: Graphics::Get().SceneCamera.Keys.Up = false; break;
+					case GLFW_KEY_LEFT_CONTROL:
+						Graphics::Get().SceneCamera.Keys.Down = false;
+						break;
 					}
 					break;
 				}
