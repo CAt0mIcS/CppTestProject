@@ -9,6 +9,9 @@
 
 namespace At0::VulkanTesting
 {
+	class CommandBuffer;
+	class Framebuffer;
+
 	class Renderpass
 	{
 	public:
@@ -17,6 +20,10 @@ namespace At0::VulkanTesting
 		~Renderpass();
 
 		operator const VkRenderPass&() const { return m_Renderpass; }
+
+		void Begin(
+			CommandBuffer& cmdBuff, Framebuffer& framebuffer, const VkClearValue& clearColor) const;
+		void End(CommandBuffer& cmdBuff);
 
 	private:
 		VkRenderPass m_Renderpass;

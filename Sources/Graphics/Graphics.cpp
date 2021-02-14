@@ -112,16 +112,8 @@ namespace At0::VulkanTesting
 	{
 		cmdBuff->Begin();
 
-		VkRenderPassBeginInfo renderPassInfo{};
-		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-		renderPassInfo.renderPass = *m_Renderpass;
-		renderPassInfo.framebuffer = *framebuffer;
-		renderPassInfo.renderArea.offset = { 0, 0 };
-		renderPassInfo.renderArea.extent = m_Swapchain->GetExtent();
-		VkClearValue clearColor{ 0.0f, 0.0f, 0.0f, 1.0f };
-		renderPassInfo.clearValueCount = 1;
-		renderPassInfo.pClearValues = &clearColor;
-		vkCmdBeginRenderPass(*cmdBuff, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+		VkClearValue clearColor{ 0.0f, 0.0f, 0.0f };
+		m_Renderpass->Begin(*cmdBuff, *framebuffer, clearColor);
 
 		const VkViewport viewports[] = { m_Viewport };
 		const VkRect2D scissors[] = { m_Scissor };
@@ -138,7 +130,7 @@ namespace At0::VulkanTesting
 			m_GraphicsPipeline->GetLayout(), 0, 1, &descriptorSet, 0, nullptr);
 		vkCmdDrawIndexed(*cmdBuff, m_Drawable->GetIndexBuffer().GetNumIndices(), 1, 0, 0, 0);
 
-		vkCmdEndRenderPass(*cmdBuff);
+		m_Renderpass->End(*cmdBuff);
 
 		cmdBuff->End();
 	}  // namespace At0::VulkanTesting
