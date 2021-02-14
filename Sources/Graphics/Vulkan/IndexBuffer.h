@@ -10,7 +10,7 @@ namespace At0::VulkanTesting
 	{
 	public:
 		IndexBuffer(const std::vector<uint16_t>& indices);
-		~IndexBuffer() = default;
+		~IndexBuffer();
 
 		void Bind(CommandBuffer& cmdBuff) override;
 

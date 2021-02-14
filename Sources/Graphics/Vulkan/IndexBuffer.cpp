@@ -1,15 +1,41 @@
 ﻿#include "IndexBuffer.h"
 #include "Utils/RAssert.h"
 
-#include "Graphics/Vulkan/Commands/CommandBuffer.h"
+#include "Graphics/Graphics.h"
 
 namespace At0::VulkanTesting
 {
 	IndexBuffer::IndexBuffer(const std::vector<uint16_t>& indices)
-		: Buffer(sizeof(indices[0]) * indices.size(), indices.data(),
-			  VK_BUFFER_USAGE_INDEX_BUFFER_BIT),
-		  m_NumIndices((uint32_t)indices.size())
+		: m_NumIndices((uint32_t)indices.size())
 	{
+		VkDeviceSize bufferSize = sizeof(indices[0]) * indices.size();
+
+		VkBuffer stagingBuffer;
+		VkDeviceMemory stagingBufferMemory;
+		CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+			stagingBuffer, stagingBufferMemory);
+
+		void* data;
+		vkMapMemory(
+			Graphics::Get().GetLogicalDevice(), stagingBufferMemory, 0, bufferSize, 0, &data);
+		memcpy(data, indices.data(), (size_t)bufferSize);
+		vkUnmapMemory(Graphics::Get().GetLogicalDevice(), stagingBufferMemory);
+
+		CreateBuffer(bufferSize,
+			VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
+			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_Buffer, m_BufferMemory);
+
+		CopyBuffer(stagingBuffer, m_Buffer, bufferSize);
+
+		vkDestroyBuffer(Graphics::Get().GetLogicalDevice(), stagingBuffer, nullptr);
+		vkFreeMemory(Graphics::Get().GetLogicalDevice(), stagingBufferMemory, nullptr);
+	}
+
+	IndexBuffer::~IndexBuffer()
+	{
+		vkDestroyBuffer(Graphics::Get().GetLogicalDevice(), m_Buffer, nullptr);
+		vkFreeMemory(Graphics::Get().GetLogicalDevice(), m_BufferMemory, nullptr);
 	}
 
 	void IndexBuffer::Bind(CommandBuffer& cmdBuff)
