@@ -3,20 +3,20 @@
 #include <memory>
 #include <array>
 
-#include "../Utils/RAssert.h"
-#include "../Utils/RException.h"
+#include "Utils/RAssert.h"
+#include "Utils/RException.h"
 
-#include "Commands/CommandBuffer.h"
-#include "Commands/CommandPool.h"
-#include "Framebuffer.h"
-#include "VulkanInstance.h"
-#include "PhysicalDevice.h"
-#include "Surface.h"
-#include "LogicalDevice.h"
-#include "Swapchain.h"
-#include "Bindables/Pipeline.h"
-#include "Renderpass/Renderpass.h"
-#include "Framebuffer.h"
+#include "Vulkan/Commands/CommandBuffer.h"
+#include "Vulkan/Commands/CommandPool.h"
+#include "Vulkan/Framebuffer.h"
+#include "Vulkan/VulkanInstance.h"
+#include "Vulkan/PhysicalDevice.h"
+#include "Vulkan/Surface.h"
+#include "Vulkan/LogicalDevice.h"
+#include "Vulkan/Swapchain.h"
+#include "Vulkan/Pipeline.h"
+#include "Vulkan/Renderpass/Renderpass.h"
+#include "Vulkan/Framebuffer.h"
 
 #include "Camera.h"
 

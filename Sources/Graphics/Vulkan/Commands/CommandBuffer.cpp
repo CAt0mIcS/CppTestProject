@@ -1,7 +1,7 @@
 ﻿#include "CommandBuffer.h"
-#include "../Graphics.h"
+#include "Graphics/Graphics.h"
 #include "../LogicalDevice.h"
-#include "../../Utils/RException.h"
+#include "Utils/RException.h"
 #include "CommandPool.h"
 
 

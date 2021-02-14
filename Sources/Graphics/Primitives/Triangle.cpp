@@ -1,6 +1,6 @@
 ﻿#include "Triangle.h"
 
-#include "Graphics/Bindables/VertexBuffer.h"
+#include "Graphics/Vulkan/VertexBuffer.h"
 
 namespace At0::VulkanTesting
 {

@@ -1,6 +1,6 @@
 ﻿#include "CommandPool.h"
 #include "Graphics/Graphics.h"
-#include "../../Utils/RException.h"
+#include "Utils/RException.h"
 
 
 namespace At0::VulkanTesting

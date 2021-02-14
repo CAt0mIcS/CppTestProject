@@ -2,8 +2,8 @@
 
 #include <memory>
 
-#include "Graphics/Bindables/VertexBuffer.h"
-#include "Graphics/Bindables/IndexBuffer.h"
+#include "Graphics/Vulkan/VertexBuffer.h"
+#include "Graphics/Vulkan/IndexBuffer.h"
 
 
 namespace At0::VulkanTesting

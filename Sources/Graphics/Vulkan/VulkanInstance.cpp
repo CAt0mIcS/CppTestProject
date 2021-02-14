@@ -1,9 +1,9 @@
 ﻿#include "VulkanInstance.h"
 
-#include "../Utils/RAssert.h"
-#include "../Utils/RLogger.h"
-#include "../Window.h"
-#include "../Utils/RException.h"
+#include "Utils/RAssert.h"
+#include "Utils/RLogger.h"
+#include "Window.h"
+#include "Utils/RException.h"
 
 #include <vulkan/vulkan.h>
 
