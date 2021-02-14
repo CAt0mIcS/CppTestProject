@@ -108,7 +108,7 @@ namespace At0::VulkanTesting
 	}
 
 	void Graphics::RecordCommandBuffer(std::unique_ptr<CommandBuffer>& cmdBuff,
-		std::unique_ptr<Framebuffer>& framebuffer, VkDescriptorSet descriptorSet)
+		std::unique_ptr<Framebuffer>& framebuffer, std::unique_ptr<DescriptorSet>& descriptorSet)
 	{
 		cmdBuff->Begin();
 
@@ -123,9 +123,10 @@ namespace At0::VulkanTesting
 		m_Drawable->GetVertexBuffer().Bind(*cmdBuff);
 		m_Drawable->GetIndexBuffer().Bind(*cmdBuff);
 
+		VkDescriptorSet descSet = *descriptorSet;
 		m_GraphicsPipeline->Bind(*cmdBuff);
 		vkCmdBindDescriptorSets(*cmdBuff, VK_PIPELINE_BIND_POINT_GRAPHICS,
-			m_GraphicsPipeline->GetLayout(), 0, 1, &descriptorSet, 0, nullptr);
+			m_GraphicsPipeline->GetLayout(), 0, 1, &descSet, 0, nullptr);
 		vkCmdDrawIndexed(*cmdBuff, m_Drawable->GetIndexBuffer().GetNumIndices(), 1, 0, 0, 0);
 
 		m_Renderpass->End(*cmdBuff);
@@ -188,8 +189,8 @@ namespace At0::VulkanTesting
 			vkDestroyBuffer(*m_LogicalDevice, m_UniformBuffers[i], nullptr);
 			vkFreeMemory(*m_LogicalDevice, m_UniformBuffersMemory[i], nullptr);
 		}
-		vkDestroyDescriptorSetLayout(*m_LogicalDevice, m_DescriptorSetLayout, nullptr);
-		vkDestroyDescriptorPool(*m_LogicalDevice, m_DescriptorPool, nullptr);
+		m_DescriptorSetLayout.reset();
+		m_DescriptorPool.reset();
 
 		m_Swapchain.reset();
 		m_LogicalDevice.reset();
@@ -324,10 +325,10 @@ namespace At0::VulkanTesting
 			vkDestroyBuffer(*m_LogicalDevice, m_UniformBuffers[i], nullptr);
 			vkFreeMemory(*m_LogicalDevice, m_UniformBuffersMemory[i], nullptr);
 		}
-		vkDestroyDescriptorPool(*m_LogicalDevice, m_DescriptorPool, nullptr);
+		m_DescriptorSets.clear();
+		m_DescriptorPool.reset();
 
 		m_Swapchain.reset();
-
 
 		m_Swapchain = std::make_unique<Swapchain>(m_Swapchain.get());
 		CreateRenderpass();
@@ -370,20 +371,8 @@ namespace At0::VulkanTesting
 
 	void Graphics::CreateDescriptorSetLayout()
 	{
-		VkDescriptorSetLayoutBinding layoutBinding{};
-		layoutBinding.binding = 0;
-		layoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		layoutBinding.descriptorCount = 1;
-		layoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
-
-		VkDescriptorSetLayoutCreateInfo layoutInfo{};
-		layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-		layoutInfo.bindingCount = 1;
-		layoutInfo.pBindings = &layoutBinding;
-
-		RAY_VK_THROW_FAILED(vkCreateDescriptorSetLayout(
-								*m_LogicalDevice, &layoutInfo, nullptr, &m_DescriptorSetLayout),
-			"Failed to create descriptor set");
+		m_DescriptorSetLayout = std::make_unique<DescriptorSetLayout>(0,  // binding
+			VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT);
 	}
 
 	struct UniformBufferObject
@@ -431,37 +420,25 @@ namespace At0::VulkanTesting
 
 	void Graphics::CreateDescriptorPool()
 	{
+		std::vector<VkDescriptorPoolSize> poolSizes;
+
 		VkDescriptorPoolSize poolSize{};
 		poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 		poolSize.descriptorCount = m_Swapchain->GetNumberOfImages();
+		poolSizes.emplace_back(std::move(poolSize));
 
-		VkDescriptorPoolCreateInfo createInfo{};
-		createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-		createInfo.poolSizeCount = 1;
-		createInfo.pPoolSizes = &poolSize;
-		createInfo.maxSets = m_Swapchain->GetNumberOfImages();
-
-		RAY_VK_THROW_FAILED(
-			vkCreateDescriptorPool(*m_LogicalDevice, &createInfo, nullptr, &m_DescriptorPool),
-			"Failed to create descriptor pool");
+		m_DescriptorPool =
+			std::make_unique<DescriptorPool>(poolSizes, m_Swapchain->GetNumberOfImages()  // maxSets
+			);
 	}
 
 	void Graphics::CreateDescriptorSets()
 	{
-		std::vector<VkDescriptorSetLayout> layouts(
-			m_Swapchain->GetNumberOfImages(), m_DescriptorSetLayout);
-
-		VkDescriptorSetAllocateInfo allocInfo{};
-		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-		allocInfo.descriptorPool = m_DescriptorPool;
-		allocInfo.descriptorSetCount = m_Swapchain->GetNumberOfImages();
-		allocInfo.pSetLayouts = layouts.data();
-
 		m_DescriptorSets.resize(m_Swapchain->GetNumberOfImages());
-
-		RAY_VK_THROW_FAILED(
-			vkAllocateDescriptorSets(*m_LogicalDevice, &allocInfo, m_DescriptorSets.data()),
-			"Failed to allocate descriptor set");
+		for (uint32_t i = 0; i < m_Swapchain->GetNumberOfImages(); ++i)
+		{
+			m_DescriptorSets[i] = std::make_unique<DescriptorSet>(*m_DescriptorSetLayout);
+		}
 
 		for (uint32_t i = 0; i < m_Swapchain->GetNumberOfImages(); ++i)
 		{
@@ -472,7 +449,7 @@ namespace At0::VulkanTesting
 
 			VkWriteDescriptorSet descriptorWrite{};
 			descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-			descriptorWrite.dstSet = m_DescriptorSets[i];
+			descriptorWrite.dstSet = *m_DescriptorSets[i];
 			descriptorWrite.dstBinding = 0;
 			descriptorWrite.dstArrayElement = 0;
 

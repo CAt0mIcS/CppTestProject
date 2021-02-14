@@ -17,6 +17,7 @@
 #include "Vulkan/Pipeline.h"
 #include "Vulkan/Renderpass/Renderpass.h"
 #include "Vulkan/Framebuffer.h"
+#include "Vulkan/Descriptor.h"
 
 #include "Camera.h"
 
@@ -47,9 +48,8 @@ namespace At0::VulkanTesting
 		const Swapchain& GetSwapchain() const { return *m_Swapchain; }
 		const CommandPool& GetCommandPool() const { return *m_CommandPool; }
 		const Renderpass& GetRenderpass() const { return *m_Renderpass; }
-
-		// Temporary
-		VkDescriptorSetLayout GetDescriptorSetLayout() const { return m_DescriptorSetLayout; }
+		const DescriptorPool& GetDescriptorPool() const { return *m_DescriptorPool; }
+		const DescriptorSetLayout& GetDescriptorSetLayout() const { return *m_DescriptorSetLayout; }
 
 	public:
 		Camera SceneCamera;
@@ -62,7 +62,8 @@ namespace At0::VulkanTesting
 		void CreateFramebuffers();
 		void CreateCommandBuffers();
 		void RecordCommandBuffer(std::unique_ptr<CommandBuffer>& cmdBuff,
-			std::unique_ptr<Framebuffer>& framebuffer, VkDescriptorSet descriptorSet);
+			std::unique_ptr<Framebuffer>& framebuffer,
+			std::unique_ptr<DescriptorSet>& descriptorSet);
 		void CreateSyncObjects();
 		void RecreateSwapchain();
 
@@ -117,12 +118,13 @@ namespace At0::VulkanTesting
 
 		std::unique_ptr<Drawable> m_Drawable;
 
+		// Uniform buffer stuff
+		std::unique_ptr<DescriptorSetLayout> m_DescriptorSetLayout;
 
 		// Temporary data
-		VkDescriptorSetLayout m_DescriptorSetLayout;
 		std::vector<VkBuffer> m_UniformBuffers;
 		std::vector<VkDeviceMemory> m_UniformBuffersMemory;
-		VkDescriptorPool m_DescriptorPool;
-		std::vector<VkDescriptorSet> m_DescriptorSets;
+		std::unique_ptr<DescriptorPool> m_DescriptorPool;
+		std::vector<std::unique_ptr<DescriptorSet>> m_DescriptorSets;
 	};
 }  // namespace At0::VulkanTesting

@@ -1,7 +1,7 @@
 ﻿#include "IndexBuffer.h"
 #include "Utils/RAssert.h"
 
-#include "Graphics/Commands/CommandBuffer.h"
+#include "Graphics/Vulkan/Commands/CommandBuffer.h"
 
 namespace At0::VulkanTesting
 {
