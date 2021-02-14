@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <memory>
 
@@ -13,8 +13,6 @@ namespace At0::VulkanTesting
 	public:
 		virtual VertexBuffer& GetVertexBuffer() = 0;
 		virtual IndexBuffer& GetIndexBuffer() = 0;
-
-		virtual VkCullModeFlags GetCullMode() const = 0;
 
 		virtual ~Drawable() = default;
 

@@ -59,13 +59,7 @@ namespace At0::VulkanTesting
 		SceneCamera.SetMovementSpeed(2.0f);
 	}  // namespace At0::VulkanTesting
 
-	void Graphics::LoadExtensionFunctions()
-	{
-		vkCmdSetCullModeEXT =
-			(PFN_vkCmdSetCullModeEXT)m_LogicalDevice->LoadExtensionFunction("vkCmdSetCullModeEXT");
-
-		RAY_MEXPECTS(vkCmdSetCullModeEXT, "Failed to find vkCmdSetCullModeEXT.");
-	}
+	void Graphics::LoadExtensionFunctions() {}
 
 	void Graphics::CreateRenderpass()
 	{
@@ -138,8 +132,6 @@ namespace At0::VulkanTesting
 		VkDeviceSize offsets[] = { 0 };
 		vkCmdBindVertexBuffers(*cmdBuff, 0, std::size(vertexBuffers), vertexBuffers, offsets);
 		vkCmdBindIndexBuffer(*cmdBuff, m_Drawable->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT16);
-
-		vkCmdSetCullModeEXT(*cmdBuff, m_Drawable->GetCullMode());
 
 		vkCmdBindPipeline(*cmdBuff, VK_PIPELINE_BIND_POINT_GRAPHICS, *m_GraphicsPipeline);
 		vkCmdBindDescriptorSets(*cmdBuff, VK_PIPELINE_BIND_POINT_GRAPHICS,

@@ -84,7 +84,6 @@ namespace At0::VulkanTesting
 		inline static Graphics* s_Instance = nullptr;
 
 		// Extensions functions
-		PFN_vkCmdSetCullModeEXT vkCmdSetCullModeEXT;
 
 		// Dynamic state, need to be updated when the window is resized
 		VkViewport m_Viewport;
