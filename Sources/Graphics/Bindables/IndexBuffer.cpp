@@ -1,5 +1,7 @@
-#include "IndexBuffer.h"
+﻿#include "IndexBuffer.h"
 #include "Utils/RAssert.h"
+
+#include "Graphics/Commands/CommandBuffer.h"
 
 namespace At0::VulkanTesting
 {
@@ -8,6 +10,11 @@ namespace At0::VulkanTesting
 			  VK_BUFFER_USAGE_INDEX_BUFFER_BIT),
 		  m_NumIndices((uint32_t)indices.size())
 	{
+	}
+
+	void IndexBuffer::Bind(CommandBuffer& cmdBuff)
+	{
+		vkCmdBindIndexBuffer(cmdBuff, m_Buffer, 0, VK_INDEX_TYPE_UINT16);
 	}
 
 	uint32_t IndexBuffer::GetNumIndices() const

@@ -168,6 +168,11 @@ namespace At0::VulkanTesting
 		vkDestroyPipelineLayout(Graphics::Get().GetLogicalDevice(), m_Layout, nullptr);
 	}
 
+	void GraphicsPipeline::Bind(CommandBuffer& cmdBuff)
+	{
+		vkCmdBindPipeline(cmdBuff, VK_PIPELINE_BIND_POINT_GRAPHICS, m_Pipeline);
+	}
+
 	VkShaderModule GraphicsPipeline::CreateShader(std::vector<char> src)
 	{
 		VkShaderModule shaderModule;

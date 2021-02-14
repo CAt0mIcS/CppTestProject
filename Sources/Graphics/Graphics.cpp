@@ -120,12 +120,10 @@ namespace At0::VulkanTesting
 		vkCmdSetViewport(*cmdBuff, 0, std::size(viewports), viewports);
 		vkCmdSetScissor(*cmdBuff, 0, std::size(scissors), scissors);
 
-		VkBuffer vertexBuffers[] = { m_Drawable->GetVertexBuffer() };
-		VkDeviceSize offsets[] = { 0 };
-		vkCmdBindVertexBuffers(*cmdBuff, 0, std::size(vertexBuffers), vertexBuffers, offsets);
-		vkCmdBindIndexBuffer(*cmdBuff, m_Drawable->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT16);
+		m_Drawable->GetVertexBuffer().Bind(*cmdBuff);
+		m_Drawable->GetIndexBuffer().Bind(*cmdBuff);
 
-		vkCmdBindPipeline(*cmdBuff, VK_PIPELINE_BIND_POINT_GRAPHICS, *m_GraphicsPipeline);
+		m_GraphicsPipeline->Bind(*cmdBuff);
 		vkCmdBindDescriptorSets(*cmdBuff, VK_PIPELINE_BIND_POINT_GRAPHICS,
 			m_GraphicsPipeline->GetLayout(), 0, 1, &descriptorSet, 0, nullptr);
 		vkCmdDrawIndexed(*cmdBuff, m_Drawable->GetIndexBuffer().GetNumIndices(), 1, 0, 0, 0);

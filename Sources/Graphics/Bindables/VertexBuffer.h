@@ -55,5 +55,7 @@ namespace At0::VulkanTesting
 	public:
 		VertexBuffer(const std::vector<Vertex> vertices);
 		~VertexBuffer() = default;
+
+		void Bind(CommandBuffer& cmdBuff) override;
 	};
 }  // namespace At0::VulkanTesting

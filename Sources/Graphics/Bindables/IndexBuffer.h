@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "Buffer.h"
 
@@ -11,6 +11,8 @@ namespace At0::VulkanTesting
 	public:
 		IndexBuffer(const std::vector<uint16_t>& indices);
 		~IndexBuffer() = default;
+
+		void Bind(CommandBuffer& cmdBuff) override;
 
 		uint32_t GetNumIndices() const;
 
