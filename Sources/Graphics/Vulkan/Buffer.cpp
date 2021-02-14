@@ -6,6 +6,12 @@
 
 namespace At0::VulkanTesting
 {
+	Buffer::~Buffer()
+	{
+		vkDestroyBuffer(Graphics::Get().GetLogicalDevice(), m_Buffer, nullptr);
+		vkFreeMemory(Graphics::Get().GetLogicalDevice(), m_BufferMemory, nullptr);
+	}
+
 	void Buffer::CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage,
 		VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory)
 	{

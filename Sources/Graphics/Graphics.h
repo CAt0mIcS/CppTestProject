@@ -18,6 +18,7 @@
 #include "Vulkan/Renderpass/Renderpass.h"
 #include "Vulkan/Framebuffer.h"
 #include "Vulkan/Descriptor.h"
+#include "Vulkan/UniformBuffer.h"
 
 #include "Camera.h"
 
@@ -122,8 +123,7 @@ namespace At0::VulkanTesting
 		std::unique_ptr<DescriptorSetLayout> m_DescriptorSetLayout;
 
 		// Temporary data
-		std::vector<VkBuffer> m_UniformBuffers;
-		std::vector<VkDeviceMemory> m_UniformBuffersMemory;
+		std::vector<std::unique_ptr<UniformBuffer>> m_UniformBuffers;
 		std::unique_ptr<DescriptorPool> m_DescriptorPool;
 		std::vector<std::unique_ptr<DescriptorSet>> m_DescriptorSets;
 	};

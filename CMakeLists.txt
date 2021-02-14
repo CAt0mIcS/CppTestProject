@@ -66,6 +66,8 @@ set(SRC
     "Sources/Graphics/Vulkan/VertexBuffer.cpp"
     "Sources/Graphics/Vulkan/IndexBuffer.h"
     "Sources/Graphics/Vulkan/IndexBuffer.cpp"
+    "Sources/Graphics/Vulkan/UniformBuffer.h"
+    "Sources/Graphics/Vulkan/UniformBuffer.cpp"
     "Sources/Graphics/Vulkan/Renderpass/Renderpass.h"
     "Sources/Graphics/Vulkan/Renderpass/Renderpass.cpp"
     "Sources/Graphics/Vulkan/Renderpass/Subpass.h"

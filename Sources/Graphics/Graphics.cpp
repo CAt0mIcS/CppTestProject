@@ -184,11 +184,7 @@ namespace At0::VulkanTesting
 		m_GraphicsPipeline.reset();
 		m_Renderpass.reset();
 
-		for (size_t i = 0; i < m_Swapchain->GetNumberOfImages(); i++)
-		{
-			vkDestroyBuffer(*m_LogicalDevice, m_UniformBuffers[i], nullptr);
-			vkFreeMemory(*m_LogicalDevice, m_UniformBuffersMemory[i], nullptr);
-		}
+		m_UniformBuffers.clear();
 		m_DescriptorSetLayout.reset();
 		m_DescriptorPool.reset();
 
@@ -320,11 +316,7 @@ namespace At0::VulkanTesting
 
 		m_Renderpass.reset();
 
-		for (size_t i = 0; i < m_Swapchain->GetNumberOfImages(); i++)
-		{
-			vkDestroyBuffer(*m_LogicalDevice, m_UniformBuffers[i], nullptr);
-			vkFreeMemory(*m_LogicalDevice, m_UniformBuffersMemory[i], nullptr);
-		}
+		m_UniformBuffers.clear();
 		m_DescriptorSets.clear();
 		m_DescriptorPool.reset();
 
@@ -375,25 +367,15 @@ namespace At0::VulkanTesting
 			VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT);
 	}
 
-	struct UniformBufferObject
-	{
-		alignas(16) glm::mat4 model;
-		alignas(16) glm::mat4 view;
-		alignas(16) glm::mat4 proj;
-	};
-
 	void Graphics::CreateUniformBuffers()
 	{
 		VkDeviceSize bufferSize = sizeof(UniformBufferObject);
 
 		m_UniformBuffers.resize(m_Swapchain->GetNumberOfImages());
-		m_UniformBuffersMemory.resize(m_Swapchain->GetNumberOfImages());
 
-		for (uint32_t i = 0; i < m_Swapchain->GetNumberOfImages(); ++i)
+		for (std::unique_ptr<UniformBuffer>& uBuff : m_UniformBuffers)
 		{
-			Buffer::CreateBuffer(bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-				m_UniformBuffers[i], m_UniformBuffersMemory[i]);
+			uBuff = std::make_unique<UniformBuffer>();
 		}
 	}
 
@@ -411,11 +393,7 @@ namespace At0::VulkanTesting
 		ubo.view = SceneCamera.Matrices.View;
 		ubo.model = glm::mat4(1.0f);
 
-		void* data;
-		vkMapMemory(
-			*m_LogicalDevice, m_UniformBuffersMemory[currentImage], 0, sizeof(ubo), 0, &data);
-		memcpy(data, &ubo, sizeof(ubo));
-		vkUnmapMemory(*m_LogicalDevice, m_UniformBuffersMemory[currentImage]);
+		m_UniformBuffers[currentImage]->Update(ubo);
 	}
 
 	void Graphics::CreateDescriptorPool()
@@ -443,7 +421,7 @@ namespace At0::VulkanTesting
 		for (uint32_t i = 0; i < m_Swapchain->GetNumberOfImages(); ++i)
 		{
 			VkDescriptorBufferInfo bufferInfo{};
-			bufferInfo.buffer = m_UniformBuffers[i];
+			bufferInfo.buffer = *m_UniformBuffers[i];
 			bufferInfo.offset = 0;
 			bufferInfo.range = sizeof(UniformBufferObject);
 

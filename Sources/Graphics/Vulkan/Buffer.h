@@ -9,7 +9,7 @@ namespace At0::VulkanTesting
 	class Buffer
 	{
 	public:
-		virtual ~Buffer() = default;
+		virtual ~Buffer();
 		virtual void Bind(CommandBuffer& cmdBuff) = 0;
 
 		operator const VkBuffer&() const { return m_Buffer; }
