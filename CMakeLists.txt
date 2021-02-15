@@ -38,6 +38,8 @@ set(SRC
     "Sources/Graphics/Graphics.h"
     "Sources/Graphics/Graphics.cpp"
     
+    "Sources/Graphics/Core/Codex.h"
+
     "Sources/Graphics/Vulkan/VulkanInstance.h"
     "Sources/Graphics/Vulkan/VulkanInstance.cpp"
     "Sources/Graphics/Vulkan/PhysicalDevice.h"
@@ -58,6 +60,7 @@ set(SRC
     "Sources/Graphics/Vulkan/Commands/CommandPool.cpp"
     "Sources/Graphics/Vulkan/Images/ImageView.h"
     "Sources/Graphics/Vulkan/Images/ImageView.cpp"
+    "Sources/Graphics/Vulkan/Bindable.h"
     "Sources/Graphics/Vulkan/Pipeline.h"
     "Sources/Graphics/Vulkan/Pipeline.cpp"
     "Sources/Graphics/Vulkan/Buffer.h"

@@ -5,40 +5,29 @@
 #include "Graphics/Vulkan/VertexBuffer.h"
 #include "Graphics/Vulkan/IndexBuffer.h"
 
+#include "Graphics/Core/Codex.h"
+
 
 namespace At0::VulkanTesting
 {
+	class CommandBuffer;
+
 	class Drawable
 	{
 	public:
-		virtual VertexBuffer& GetVertexBuffer() = 0;
-		virtual IndexBuffer& GetIndexBuffer() = 0;
+		void Draw(CommandBuffer& cmdBuff);
+		uint32_t GetNumberOfIndices() const { return m_NumIndices; }
 
-		virtual ~Drawable() = default;
+		virtual ~Drawable();
 
 	protected:
 		Drawable() = default;
+
+		void EmplaceBindable(std::shared_ptr<Bindable> bindable);
+
+	private:
+		std::vector<Codex::SharedPointer<Bindable>> m_Bindables;
+		uint32_t m_NumIndices;
 	};
 
-
-	template<typename T>
-	class DrawableBase : public Drawable
-	{
-	public:
-		virtual VertexBuffer& GetVertexBuffer() override { return *s_VertexBuffer; }
-		virtual IndexBuffer& GetIndexBuffer() override { return *s_IndexBuffer; }
-
-		virtual ~DrawableBase()
-		{
-			s_VertexBuffer.reset();
-			s_IndexBuffer.reset();
-		}
-
-	protected:
-		DrawableBase() = default;
-
-	protected:
-		inline static std::unique_ptr<VertexBuffer> s_VertexBuffer = nullptr;
-		inline static std::unique_ptr<IndexBuffer> s_IndexBuffer = nullptr;
-	};
 }  // namespace At0::VulkanTesting

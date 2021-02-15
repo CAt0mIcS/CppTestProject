@@ -5,6 +5,7 @@
 #include "VertexBuffer.h"
 
 #include <fstream>
+#include <sstream>
 
 
 namespace At0::VulkanTesting
@@ -171,6 +172,23 @@ namespace At0::VulkanTesting
 	void GraphicsPipeline::Bind(CommandBuffer& cmdBuff)
 	{
 		vkCmdBindPipeline(cmdBuff, VK_PIPELINE_BIND_POINT_GRAPHICS, m_Pipeline);
+	}
+
+	std::string GraphicsPipeline::GetUID(const Renderpass& renderpass,
+		std::string_view vShaderFilepath, std::string_view fShaderFilepath)
+	{
+		using namespace std::string_literals;
+
+		// Only fill oss once
+		static std::unique_ptr<std::ostringstream> oss;
+		if (!oss)
+		{
+			oss = std::make_unique<std::ostringstream>();
+			*oss << typeid(GraphicsPipeline).name() << "#" << (VkRenderPass)renderpass << "#"
+				 << vShaderFilepath << "#" << fShaderFilepath;
+		}
+
+		return oss->str();
 	}
 
 	VkShaderModule GraphicsPipeline::CreateShader(std::vector<char> src)

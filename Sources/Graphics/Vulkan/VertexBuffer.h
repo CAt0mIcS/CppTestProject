@@ -2,8 +2,10 @@
 
 #include <vector>
 #include <array>
+#include <string>
 
 #include "Buffer.h"
+#include "Bindable.h"
 
 
 namespace At0::VulkanTesting
@@ -50,11 +52,13 @@ namespace At0::VulkanTesting
 		}
 	};
 
-	class VertexBuffer : public Buffer
+	class VertexBuffer : public Buffer, public Bindable
 	{
 	public:
-		VertexBuffer(const std::vector<Vertex> vertices);
+		VertexBuffer(std::string_view tag, const std::vector<Vertex>& vertices);
 
 		void Bind(CommandBuffer& cmdBuff) override;
+
+		static std::string GetUID(std::string_view tag, const std::vector<Vertex>& indices);
 	};
 }  // namespace At0::VulkanTesting

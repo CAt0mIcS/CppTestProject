@@ -5,7 +5,7 @@
 
 namespace At0::VulkanTesting
 {
-	class Cube : public DrawableBase<Cube>
+	class Cube : public Drawable
 	{
 	public:
 		Cube();

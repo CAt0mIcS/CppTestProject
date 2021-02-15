@@ -5,8 +5,8 @@
 
 namespace At0::VulkanTesting
 {
-	IndexBuffer::IndexBuffer(const std::vector<uint16_t>& indices)
-		: m_NumIndices((uint32_t)indices.size())
+	IndexBuffer::IndexBuffer(std::string_view tag, const std::vector<uint16_t>& indices)
+		: m_NumIndices((uint32_t)indices.size()), m_Tag(tag)
 	{
 		VkDeviceSize bufferSize = sizeof(indices[0]) * indices.size();
 
@@ -41,5 +41,12 @@ namespace At0::VulkanTesting
 	{
 		RAY_MEXPECTS(m_NumIndices != 0, "Didn't set number of indices in the index buffer");
 		return m_NumIndices;
+	}
+
+	std::string IndexBuffer::GetUID(std::string_view tag, const std::vector<uint16_t>& indices)
+	{
+		using namespace std::string_literals;
+		static std::string uid = typeid(IndexBuffer).name() + "#"s + tag.data();
+		return uid;
 	}
 }  // namespace At0::VulkanTesting

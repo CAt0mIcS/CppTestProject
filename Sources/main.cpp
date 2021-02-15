@@ -26,7 +26,6 @@ int main()
 		auto startSecTime = std::chrono::high_resolution_clock::now();
 		while (Window::Get().Update())
 		{
-			// std::this_thread::sleep_for(std::chrono::milliseconds(100));
 			// Calculate frametime in ms
 			auto tNow = std::chrono::high_resolution_clock::now();
 			float dt = ((float)(tNow - prevTime).count()) / 1000.0f / 1000.0f / 1000.0f;

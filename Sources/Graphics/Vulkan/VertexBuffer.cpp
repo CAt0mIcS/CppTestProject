@@ -4,7 +4,7 @@
 
 namespace At0::VulkanTesting
 {
-	VertexBuffer::VertexBuffer(const std::vector<Vertex> vertices)
+	VertexBuffer::VertexBuffer(const std::string_view tag, const std::vector<Vertex>& vertices)
 	{
 		VkDeviceSize bufferSize = sizeof(vertices[0]) * vertices.size();
 
@@ -34,5 +34,12 @@ namespace At0::VulkanTesting
 	{
 		VkDeviceSize offsets[] = { 0 };
 		vkCmdBindVertexBuffers(cmdBuff, 0, 1, &m_Buffer, offsets);
+	}
+
+	std::string VertexBuffer::GetUID(std::string_view tag, const std::vector<Vertex>& indices)
+	{
+		using namespace std::string_literals;
+		static const std::string uid = typeid(VertexBuffer).name() + "#"s + tag.data();
+		return uid;
 	}
 }  // namespace At0::VulkanTesting

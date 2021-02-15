@@ -111,7 +111,7 @@ namespace At0::VulkanTesting
 	{
 		cmdBuff->Begin();
 
-		VkClearValue clearColor{ 0.0f, 0.0f, 0.0f };
+		VkClearValue clearColor{ 0.0137254f, 0.014117f, 0.0149019f };
 		m_Renderpass->Begin(*cmdBuff, *framebuffer, clearColor);
 
 		const VkViewport viewports[] = { m_Viewport };
@@ -119,14 +119,13 @@ namespace At0::VulkanTesting
 		vkCmdSetViewport(*cmdBuff, 0, std::size(viewports), viewports);
 		vkCmdSetScissor(*cmdBuff, 0, std::size(scissors), scissors);
 
-		m_Drawable->GetVertexBuffer().Bind(*cmdBuff);
-		m_Drawable->GetIndexBuffer().Bind(*cmdBuff);
-
 		VkDescriptorSet descSet = *descriptorSet;
 		m_GraphicsPipeline->Bind(*cmdBuff);
+
 		vkCmdBindDescriptorSets(*cmdBuff, VK_PIPELINE_BIND_POINT_GRAPHICS,
 			m_GraphicsPipeline->GetLayout(), 0, 1, &descSet, 0, nullptr);
-		vkCmdDrawIndexed(*cmdBuff, m_Drawable->GetIndexBuffer().GetNumIndices(), 1, 0, 0, 0);
+
+		m_Drawable->Draw(*cmdBuff);
 
 		m_Renderpass->End(*cmdBuff);
 
@@ -215,7 +214,7 @@ namespace At0::VulkanTesting
 	void Graphics::Update(float dt)
 	{
 		m_Dt = dt;
-		SceneCamera.SetRotationSpeed(220.0f * dt);
+		SceneCamera.SetRotationSpeed(260.0f * dt);
 		SceneCamera.Update(dt);
 
 		// Wait for fence in vkQueueSubmit to become signaled,

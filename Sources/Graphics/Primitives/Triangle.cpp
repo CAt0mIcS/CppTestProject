@@ -1,26 +1,26 @@
 ﻿#include "Triangle.h"
-
+#include "Graphics/Core/Codex.h"
 #include "Graphics/Vulkan/VertexBuffer.h"
 
 namespace At0::VulkanTesting
 {
 	Triangle::Triangle()
 	{
-		if (!s_VertexBuffer)
-		{
-			// clang-format off
-			std::vector<Vertex> vertices 
-			{ 
-				{ { -0.5f, -0.5f }, { 0.0f, 0.0f, 1.0f } },
-				{ {  0.5f, -0.5f }, { 0.0f, 1.0f, 0.0f } },
-				{ {  0.0f,  0.5f }, { 1.0f, 0.0f, 0.0f } }
-			};
-			// clang-format on
-			s_VertexBuffer = std::make_unique<VertexBuffer>(vertices);
+		// clang-format off
+		std::vector<Vertex> vertices 
+		{ 
+			{ { -0.5f, -0.5f }, { 0.0f, 0.0f, 1.0f } },
+			{ {  0.5f, -0.5f }, { 0.0f, 1.0f, 0.0f } },
+			{ {  0.0f,  0.5f }, { 1.0f, 0.0f, 0.0f } }
+		};
+		// clang-format on
 
-			std::vector<uint16_t> indices{ 0, 1, 2 };
-			s_IndexBuffer = std::make_unique<IndexBuffer>(indices);
-		}
+		std::vector<uint16_t> indices{ 0, 1, 2 };
+
+		// The codex will check if the bindable already exists and return a "reference" to it
+		// otherwise the codex will create the bindable and return a "reference" to it
+		EmplaceBindable(Codex::Resolve<VertexBuffer>("Triangle", vertices));
+		EmplaceBindable(Codex::Resolve<IndexBuffer>("012", indices));
 	}
 
 }  // namespace At0::VulkanTesting

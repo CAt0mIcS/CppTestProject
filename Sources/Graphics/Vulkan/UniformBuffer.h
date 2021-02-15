@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "Buffer.h"
 
@@ -20,7 +20,6 @@ namespace At0::VulkanTesting
 	public:
 		UniformBuffer();
 
-		virtual void Bind(CommandBuffer& cmdBuff) override;
 		void Update(const UniformBufferObject& ubo);
 	};
 }  // namespace At0::VulkanTesting

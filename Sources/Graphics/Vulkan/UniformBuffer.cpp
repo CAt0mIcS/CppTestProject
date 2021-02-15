@@ -1,4 +1,4 @@
-#include "UniformBuffer.h"
+﻿#include "UniformBuffer.h"
 
 #include "Graphics/Graphics.h"
 
@@ -13,8 +13,6 @@ namespace At0::VulkanTesting
 			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, m_Buffer,
 			m_BufferMemory);
 	}
-
-	void UniformBuffer::Bind(CommandBuffer& cmdBuff) {}
 
 	void UniformBuffer::Update(const UniformBufferObject& ubo)
 	{

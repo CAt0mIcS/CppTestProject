@@ -4,20 +4,25 @@
 #include <string_view>
 #include <vector>
 
+#include "Bindable.h"
+
 
 namespace At0::VulkanTesting
 {
 	class Renderpass;
 	class CommandBuffer;
 
-	class GraphicsPipeline
+	class GraphicsPipeline : public Bindable
 	{
 	public:
 		GraphicsPipeline(const Renderpass& renderpass, std::string_view vShaderFilepath,
 			std::string_view fShaderFilepath);
 		~GraphicsPipeline();
 
-		void Bind(CommandBuffer& cmdBuff);
+		void Bind(CommandBuffer& cmdBuff) override;
+
+		static std::string GetUID(const Renderpass& renderpass, std::string_view vShaderFilepath,
+			std::string_view fShaderFilepath);
 
 		operator const VkPipeline&() const { return m_Pipeline; }
 		const VkPipelineLayout& GetLayout() const { return m_Layout; }
