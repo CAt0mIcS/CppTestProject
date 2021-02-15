@@ -1,6 +1,8 @@
 ﻿#include "Cube.h"
 #include "Graphics/Core/Codex.h"
 
+#include "Graphics/Graphics.h"
+
 
 namespace At0::VulkanTesting
 {
@@ -31,5 +33,9 @@ namespace At0::VulkanTesting
 		};
 		// clang-format on
 		EmplaceBindable(Codex::Resolve<IndexBuffer>("CubeIndices", indices));
+
+		EmplaceBindable(Codex::Resolve<GraphicsPipeline>(Graphics::Get().GetRenderpass(),
+			"Resources/Shaders/VertexShader.vert.spv",
+			"Resources/Shaders/FragmentShader.frag.spv"));
 	}
 }  // namespace At0::VulkanTesting

@@ -4,6 +4,7 @@
 
 #include "Graphics/Vulkan/VertexBuffer.h"
 #include "Graphics/Vulkan/IndexBuffer.h"
+#include "Graphics/Vulkan/Pipeline.h"
 
 #include "Graphics/Core/Codex.h"
 
@@ -16,7 +17,9 @@ namespace At0::VulkanTesting
 	{
 	public:
 		void Draw(CommandBuffer& cmdBuff);
-		uint32_t GetNumberOfIndices() const { return m_NumIndices; }
+
+		const IndexBuffer& GetIndexBuffer() const { return *m_IndexBuffer; }
+		const GraphicsPipeline& GetGraphicsPipeline() const { return *m_GraphicsPipeline; }
 
 		virtual ~Drawable() = default;
 
@@ -27,7 +30,8 @@ namespace At0::VulkanTesting
 
 	private:
 		std::vector<std::shared_ptr<Bindable>> m_Bindables;
-		uint32_t m_NumIndices;
+		IndexBuffer* m_IndexBuffer;
+		GraphicsPipeline* m_GraphicsPipeline;
 	};
 
 }  // namespace At0::VulkanTesting

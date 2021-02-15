@@ -34,14 +34,14 @@ namespace At0::VulkanTesting
 
 		CreateDescriptorSetLayout();
 		CreateRenderpass();
-		CreateGraphicsPipeline();
+		// CreateGraphicsPipeline();
 		CreateFramebuffers();
 
 		m_CommandPool = std::make_unique<CommandPool>();
 
 		// --------------------------------------------------------------
 		// Create all drawables
-		m_Drawable = std::make_unique<RenderObject>();
+		CreateDrawables();
 		CreateUniformBuffers();
 		CreateDescriptorPool();
 		CreateDescriptorSets();
@@ -77,12 +77,6 @@ namespace At0::VulkanTesting
 			std::vector<VkSubpassDescription>{ subpass.GetDescription() });
 	}
 
-	void Graphics::CreateGraphicsPipeline()
-	{
-		m_GraphicsPipeline = std::make_unique<GraphicsPipeline>(*m_Renderpass,
-			"Resources/Shaders/VertexShader.vert.spv", "Resources/Shaders/FragmentShader.frag.spv");
-	}
-
 	void Graphics::CreateFramebuffers()
 	{
 		m_Framebuffers.resize(m_Swapchain->GetNumberOfImages());
@@ -92,6 +86,8 @@ namespace At0::VulkanTesting
 				std::vector<VkImageView>{ m_Swapchain->GetImageView(i) });
 		}
 	}
+
+	void Graphics::CreateDrawables() { m_Drawable = std::make_unique<RenderObject>(); }
 
 	void Graphics::CreateCommandBuffers()
 	{
@@ -120,10 +116,9 @@ namespace At0::VulkanTesting
 		vkCmdSetScissor(*cmdBuff, 0, std::size(scissors), scissors);
 
 		VkDescriptorSet descSet = *descriptorSet;
-		m_GraphicsPipeline->Bind(*cmdBuff);
 
 		vkCmdBindDescriptorSets(*cmdBuff, VK_PIPELINE_BIND_POINT_GRAPHICS,
-			m_GraphicsPipeline->GetLayout(), 0, 1, &descSet, 0, nullptr);
+			m_Drawable->GetGraphicsPipeline().GetLayout(), 0, 1, &descSet, 0, nullptr);
 
 		m_Drawable->Draw(*cmdBuff);
 
@@ -183,7 +178,7 @@ namespace At0::VulkanTesting
 
 		m_CommandPool.reset();
 		m_Framebuffers.clear();
-		m_GraphicsPipeline.reset();
+		// m_GraphicsPipeline.reset();
 		m_Renderpass.reset();
 
 		m_UniformBuffers.clear();

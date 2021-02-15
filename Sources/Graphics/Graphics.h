@@ -61,8 +61,8 @@ namespace At0::VulkanTesting
 		Graphics();
 		void LoadExtensionFunctions();
 		void CreateRenderpass();
-		void CreateGraphicsPipeline();
 		void CreateFramebuffers();
+		void CreateDrawables();
 		void CreateCommandBuffers();
 		void RecordCommandBuffer(std::unique_ptr<CommandBuffer>& cmdBuff,
 			std::unique_ptr<Framebuffer>& framebuffer,
@@ -101,7 +101,6 @@ namespace At0::VulkanTesting
 		std::unique_ptr<Surface> m_Surface;
 		std::unique_ptr<LogicalDevice> m_LogicalDevice;
 		std::unique_ptr<Swapchain> m_Swapchain;
-		std::unique_ptr<GraphicsPipeline> m_GraphicsPipeline;
 		std::unique_ptr<Renderpass> m_Renderpass;
 		std::unique_ptr<CommandPool> m_CommandPool;
 		std::vector<std::unique_ptr<CommandBuffer>> m_CommandBuffers;

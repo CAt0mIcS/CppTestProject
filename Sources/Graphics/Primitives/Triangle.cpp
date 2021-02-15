@@ -1,6 +1,8 @@
 ﻿#include "Triangle.h"
 #include "Graphics/Core/Codex.h"
-#include "Graphics/Vulkan/VertexBuffer.h"
+
+#include "Graphics/Graphics.h"
+
 
 namespace At0::VulkanTesting
 {
@@ -21,6 +23,10 @@ namespace At0::VulkanTesting
 		// otherwise the codex will create the bindable and return a "reference" to it
 		EmplaceBindable(Codex::Resolve<VertexBuffer>("Triangle", vertices));
 		EmplaceBindable(Codex::Resolve<IndexBuffer>("012", indices));
+
+		EmplaceBindable(Codex::Resolve<GraphicsPipeline>(Graphics::Get().GetRenderpass(),
+			"Resources/Shaders/VertexShader.vert.spv",
+			"Resources/Shaders/FragmentShader.frag.spv"));
 	}
 
 }  // namespace At0::VulkanTesting

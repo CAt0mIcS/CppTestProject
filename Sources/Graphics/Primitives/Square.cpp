@@ -1,6 +1,7 @@
 ﻿#include "Square.h"
 
 #include "Graphics/Core/Codex.h"
+#include "Graphics/Graphics.h"
 
 
 namespace At0::VulkanTesting
@@ -20,5 +21,9 @@ namespace At0::VulkanTesting
 
 		std::vector<uint16_t> indices{ 0, 1, 2, 2, 3, 0 };
 		EmplaceBindable(Codex::Resolve<IndexBuffer>("012230", indices));
+
+		EmplaceBindable(Codex::Resolve<GraphicsPipeline>(Graphics::Get().GetRenderpass(),
+			"Resources/Shaders/VertexShader.vert.spv",
+			"Resources/Shaders/FragmentShader.frag.spv"));
 	}
 }  // namespace At0::VulkanTesting
