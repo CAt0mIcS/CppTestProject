@@ -129,8 +129,8 @@ namespace At0::VulkanTesting
 
 			Camera& camera = Graphics::Get().SceneCamera;
 			if (!Window::Get().CursorEnabled())
-				camera.Rotate(
-					glm::vec3(dy * camera.RotationSpeed, -dx * camera.RotationSpeed, 0.0f));
+				camera.Rotate(glm::vec3(dy * camera.RotationSpeed * Graphics::Get().GetDelta(),
+					-dx * camera.RotationSpeed * Graphics::Get().GetDelta(), 0.0f));
 
 			Window::Get().m_MousePos = { (float)xPos, (float)yPos };
 		});

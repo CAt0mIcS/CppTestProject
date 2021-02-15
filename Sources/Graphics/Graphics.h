@@ -42,6 +42,8 @@ namespace At0::VulkanTesting
 
 		void Update(float dt);
 
+		float GetDelta() const { return m_Dt; }
+
 		const VulkanInstance& GetInstance() const { return *m_Instance; }
 		const PhysicalDevice& GetPhysicalDevice() const { return *m_PhysicalDevice; }
 		const LogicalDevice& GetLogicalDevice() const { return *m_LogicalDevice; }
@@ -79,6 +81,9 @@ namespace At0::VulkanTesting
 		void CreateDescriptorSets();
 
 	private:
+		// Utils
+		float m_Dt;
+
 		// Specifies the maximum amount of images which we can work on concurrently
 		// (1 image is presenting, the other 2 of triple buffering can be worked on)
 		static constexpr uint8_t s_MaxFramesInFlight = 2;
