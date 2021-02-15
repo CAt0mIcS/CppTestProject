@@ -23,6 +23,7 @@ int main()
 		Graphics::Create();
 
 		auto prevTime = std::chrono::high_resolution_clock::now();
+		auto startSecTime = std::chrono::high_resolution_clock::now();
 		while (Window::Get().Update())
 		{
 			// std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -33,11 +34,18 @@ int main()
 
 			Graphics::Get().Update(dt);
 
-			uint32_t currFPS = 996.0f / (dt * 1000.0f);
-			std::ostringstream oss;
-			oss << "Frametime: " << dt << "s"
-				<< ", FPS: " << currFPS;
-			Window::Get().SetTitle(oss.str());
+			// Update frametime and fps info every 0.5s
+			if (std::chrono::duration_cast<std::chrono::milliseconds>(tNow - startSecTime)
+					.count() >= 500)
+			{
+				uint32_t currFPS = 996.0f / (dt * 1000.0f);
+				std::ostringstream oss;
+				oss << "Frametime: " << dt << "s"
+					<< ", FPS: " << currFPS;
+				Window::Get().SetTitle(oss.str());
+
+				startSecTime = tNow;
+			}
 		}
 
 		Graphics::Destroy();
