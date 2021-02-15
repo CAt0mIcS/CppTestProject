@@ -20,68 +20,7 @@ namespace At0::VulkanTesting
 			return Get().InternalResolve<T>(std::forward<Args>(args)...);
 		}
 
-	public:
-		// Object needs to be destroyed if the refcount reaches 1
-		// This class will check for that
-		template<typename T>
-		class SharedPointer : public std::shared_ptr<T>
-		{
-			using Callback = void (*)(SharedPointer<T>& ptr);
-			using Base = std::shared_ptr<T>;
-
-		public:
-			using Base::Base;
-
-			SharedPointer(const std::shared_ptr<T>& ptr) : Base(ptr) {}
-			SharedPointer() {}
-
-			SharedPointer(const SharedPointer<T>& ptr) : Base(ptr) {}
-
-			SharedPointer<T>& operator=(SharedPointer<T>&& right)
-			{
-				if (this->get() != right.get())
-				{
-					// if (this->get())
-					//	m_DecCallback(*this);
-
-					Base::operator=(std::move(right));
-					m_DecCallback = right.m_DecCallback;
-				}
-
-				return *this;
-			}
-
-			SharedPointer<T>& operator=(const SharedPointer<T>& right)
-			{
-				if (this->get() != right.get())
-				{
-					// if (this->get())
-					//	m_DecCallback(*this);
-
-					Base::operator=(std::move(right));
-					m_DecCallback = right.m_DecCallback;
-				}
-
-				return *this;
-			}
-
-			~SharedPointer()
-			{
-				Base::~Base();
-				m_DecCallback(*this);
-			}
-
-			void Reset()
-			{
-				Base::reset();
-
-				if (this->get())
-					m_DecCallback(*this);
-			}
-
-		private:
-			Callback m_DecCallback = PointerRefCountDecreasedCallback;
-		};
+		static void Shutdown() { Get().InternalShutdown(); }
 
 	private:
 		static Codex& Get()
@@ -99,8 +38,7 @@ namespace At0::VulkanTesting
 			// Key does not exist, create bindable
 			if (it == m_BindableMap.end())
 			{
-				m_BindableMap[uniqueID] =
-					Codex::SharedPointer<T>(std::make_shared<T>(std::forward<Args>(args)...));
+				m_BindableMap[uniqueID] = std::make_shared<T>(std::forward<Args>(args)...);
 				return std::static_pointer_cast<T>(m_BindableMap[uniqueID]);
 			}
 			// Key exists, return it
@@ -110,15 +48,9 @@ namespace At0::VulkanTesting
 			}
 		}
 
-		template<typename T>
-		static void PointerRefCountDecreasedCallback(Codex::SharedPointer<T>& ptr)
-		{
-			long useCount = ptr.use_count();
-			if (useCount == 1)
-				ptr.Reset();
-		}
+		void InternalShutdown() { m_BindableMap.clear(); }
 
 	private:
-		std::unordered_map<std::string, Codex::SharedPointer<Bindable>> m_BindableMap;
+		std::unordered_map<std::string, std::shared_ptr<Bindable>> m_BindableMap;
 	};
 }  // namespace At0::VulkanTesting

@@ -18,7 +18,7 @@ namespace At0::VulkanTesting
 		void Draw(CommandBuffer& cmdBuff);
 		uint32_t GetNumberOfIndices() const { return m_NumIndices; }
 
-		virtual ~Drawable();
+		virtual ~Drawable() = default;
 
 	protected:
 		Drawable() = default;
@@ -26,7 +26,7 @@ namespace At0::VulkanTesting
 		void EmplaceBindable(std::shared_ptr<Bindable> bindable);
 
 	private:
-		std::vector<Codex::SharedPointer<Bindable>> m_Bindables;
+		std::vector<std::shared_ptr<Bindable>> m_Bindables;
 		uint32_t m_NumIndices;
 	};
 

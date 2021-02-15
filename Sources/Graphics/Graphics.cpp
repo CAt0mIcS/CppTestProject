@@ -177,6 +177,10 @@ namespace At0::VulkanTesting
 		// Reset all drawables here
 		m_Drawable.reset();
 
+		// Explicit Codex destruction because Drawables might still need resources
+		// even if the ref count of the resource is 1
+		Codex::Shutdown();
+
 		m_CommandPool.reset();
 		m_Framebuffers.clear();
 		m_GraphicsPipeline.reset();
