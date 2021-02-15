@@ -39,6 +39,11 @@ namespace At0::VulkanTesting
 		glfwSetInputMode(m_hWnd, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	}
 
+	void Window::SetTitle(std::string_view title) const
+	{
+		glfwSetWindowTitle(m_hWnd, title.data());
+	}
+
 	std::pair<const char**, uint32_t> Window::GetInstanceExtensions() const
 	{
 		uint32_t count = 0;
@@ -127,10 +132,14 @@ namespace At0::VulkanTesting
 			int dx = (int)Window::Get().m_MousePos.x - xPos;
 			int dy = (int)Window::Get().m_MousePos.y - yPos;
 
-			Camera& camera = Graphics::Get().SceneCamera;
 			if (!Window::Get().CursorEnabled())
-				camera.Rotate(glm::vec3(dy * camera.RotationSpeed * Graphics::Get().GetDelta(),
-					-dx * camera.RotationSpeed * Graphics::Get().GetDelta(), 0.0f));
+			{
+				Camera& camera = Graphics::Get().SceneCamera;
+				// float delta = Graphics::Get().GetDelta();
+				camera.Rotate(
+					glm::vec3(dy * camera.RotationSpeed, -dx * camera.RotationSpeed, 0.0f));
+			}
+
 
 			Window::Get().m_MousePos = { (float)xPos, (float)yPos };
 		});

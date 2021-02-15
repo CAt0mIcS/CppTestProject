@@ -4,6 +4,7 @@
 #include "Graphics/Graphics.h"
 
 #include <chrono>
+#include <sstream>
 
 using namespace At0::VulkanTesting;
 
@@ -24,14 +25,19 @@ int main()
 		auto prevTime = std::chrono::high_resolution_clock::now();
 		while (Window::Get().Update())
 		{
+			// std::this_thread::sleep_for(std::chrono::milliseconds(100));
 			// Calculate frametime in ms
 			auto tNow = std::chrono::high_resolution_clock::now();
-			double diff = (double)((tNow - prevTime).count()) / 1000.0 / 1000.0;
+			float dt = ((float)(tNow - prevTime).count()) / 1000.0f / 1000.0f / 1000.0f;
 			prevTime = tNow;
 
-			// std::cout << "Frametime: " << diff << '\n';
+			Graphics::Get().Update(dt);
 
-			Graphics::Get().Update((float)diff / 1000.0f);
+			uint32_t currFPS = 996.0f / (dt * 1000.0f);
+			std::ostringstream oss;
+			oss << "Frametime: " << dt << "s"
+				<< ", FPS: " << currFPS;
+			Window::Get().SetTitle(oss.str());
 		}
 
 		Graphics::Destroy();

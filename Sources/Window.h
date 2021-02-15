@@ -1,6 +1,8 @@
 ﻿#pragma once
 
 #include <memory>
+#include <string>
+
 #include <vulkan/vulkan_core.h>
 
 #define GLM_FORCE_RADIANS
@@ -27,6 +29,7 @@ namespace At0::VulkanTesting
 		bool CursorEnabled() const;
 		void EnableCursor() const;
 		void DisableCursor() const;
+		void SetTitle(std::string_view title) const;
 
 		std::pair<const char**, uint32_t> GetInstanceExtensions() const;
 		void CreateSurface(
