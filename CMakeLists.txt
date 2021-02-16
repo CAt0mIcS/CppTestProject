@@ -13,6 +13,16 @@ set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 
+set(BUILD_TESTING OFF CACHE BOOL "" FORCE)
+set(ENABLE_GLSLANG_BINARIES OFF CACHE BOOL "" FORCE)
+set(ENABLE_SPVREMAPPER OFF CACHE BOOL "" FORCE)
+set(ENABLE_HLSL OFF CACHE BOOL "" FORCE)
+set(ENABLE_AMD_EXTENSIONS OFF CACHE BOOL "" FORCE)
+set(ENABLE_NV_EXTENSIONS CACHE BOOL "" FORCE)
+set(SKIP_GLSLANG_INSTALL ON CACHE BOOL "" FORCE)
+set(ENABLE_OPT ON CACHE BOOL "" FORCE)
+set(ENABLE_CTEST OFF CACHE BOOL "" FORCE)
+
 add_subdirectory("Extern")
 
 set(SRC
@@ -108,7 +118,7 @@ find_package("Vulkan" REQUIRED FATAL_ERROR)
 
 add_executable("VulkanTesting" "${SRC}" "${SHADERS}")
 target_include_directories("VulkanTesting" PRIVATE "${Vulkan_INCLUDE_DIRS}" "${CMAKE_SOURCE_DIR}/Extern/glfw/include" "Sources")
-target_link_libraries("VulkanTesting" PRIVATE "${Vulkan_LIBRARIES}" "glfw" "glm")
+target_link_libraries("VulkanTesting" PRIVATE "${Vulkan_LIBRARIES}" "glfw" "glm" "glslang" "SPIRV")
 target_precompile_headers("VulkanTesting" PRIVATE "Sources/pch.h")
 
 # ------------------------------------------------------------------------------------------------

@@ -2,9 +2,12 @@
 #include "Graphics/Graphics.h"
 #include "Utils/RString.h"
 
+#include <glslang/SPIRV/GlslangToSpv.h>
+
 
 namespace At0::VulkanTesting
 {
+	Shader::Shader() {}
 	std::vector<VkDescriptorSetLayoutBinding> Shader::GetDescriptorSetLayoutBindings() const
 	{
 		VkDescriptorSetLayoutBinding descBinding{};
