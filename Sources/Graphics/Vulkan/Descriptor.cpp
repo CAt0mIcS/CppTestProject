@@ -7,6 +7,9 @@
 namespace At0::VulkanTesting
 {
 	DescriptorSet::DescriptorSet(const GraphicsPipeline& pipeline)
+		: m_PipelineBindPoint(VK_PIPELINE_BIND_POINT_GRAPHICS),
+		  m_PipelineLayout(pipeline.GetLayout()),
+		  m_PipelineDescriptorPool(pipeline.GetDescriptorPool())
 	{
 		VkDescriptorSetLayout layout = pipeline.GetDescriptorSetLayout();
 
@@ -23,7 +26,19 @@ namespace At0::VulkanTesting
 
 	DescriptorSet::~DescriptorSet()
 	{
-		// vkFreeDescriptorSets(Graphics::Get().GetLogicalDevice(),
-		//	Graphics::Get().GetDescriptorPool(), 1, &m_DescriptorSet);
+		// vkFreeDescriptorSets(
+		//	Graphics::Get().GetLogicalDevice(), m_PipelineDescriptorPool, 1, &m_DescriptorSet);
+	}
+
+	void DescriptorSet::Update(const std::vector<VkWriteDescriptorSet>& descriptorWrites)
+	{
+		vkUpdateDescriptorSets(Graphics::Get().GetLogicalDevice(),
+			(uint32_t)descriptorWrites.size(), descriptorWrites.data(), 0, nullptr);
+	}
+
+	void DescriptorSet::Bind(CommandBuffer& cmdBuff)
+	{
+		vkCmdBindDescriptorSets(
+			cmdBuff, m_PipelineBindPoint, m_PipelineLayout, 0, 1, &m_DescriptorSet, 0, nullptr);
 	}
 }  // namespace At0::VulkanTesting

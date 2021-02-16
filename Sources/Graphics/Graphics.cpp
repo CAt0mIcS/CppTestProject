@@ -79,8 +79,8 @@ namespace At0::VulkanTesting
 		m_Framebuffers.resize(m_Swapchain->GetNumberOfImages());
 		for (uint32_t i = 0; i < m_Swapchain->GetNumberOfImages(); ++i)
 		{
-			m_Framebuffers[i] = MakeScope<Framebuffer>(
-				std::vector<VkImageView>{ m_Swapchain->GetImageView(i) });
+			m_Framebuffers[i] =
+				MakeScope<Framebuffer>(std::vector<VkImageView>{ m_Swapchain->GetImageView(i) });
 		}
 	}
 
@@ -389,8 +389,7 @@ namespace At0::VulkanTesting
 		m_DescriptorSets.resize(m_Swapchain->GetNumberOfImages());
 		for (uint32_t i = 0; i < m_Swapchain->GetNumberOfImages(); ++i)
 		{
-			m_DescriptorSets[i] =
-				MakeScope<DescriptorSet>(m_Drawable->GetGraphicsPipeline());
+			m_DescriptorSets[i] = MakeScope<DescriptorSet>(m_Drawable->GetGraphicsPipeline());
 		}
 
 		for (uint32_t i = 0; i < m_Swapchain->GetNumberOfImages(); ++i)
@@ -410,7 +409,7 @@ namespace At0::VulkanTesting
 			descriptorWrite.descriptorCount = 1;
 			descriptorWrite.pBufferInfo = &bufferInfo;
 
-			vkUpdateDescriptorSets(*m_LogicalDevice, 1, &descriptorWrite, 0, nullptr);
+			DescriptorSet::Update({ descriptorWrite });
 		}
 	}
 }  // namespace At0::VulkanTesting
