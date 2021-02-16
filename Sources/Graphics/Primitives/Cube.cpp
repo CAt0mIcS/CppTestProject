@@ -38,7 +38,6 @@ namespace At0::VulkanTesting
 			"Resources/Shaders/VertexShader.vert.spv",
 			"Resources/Shaders/FragmentShader.frag.spv"));
 
-		descriptorSet = MakeScope<DescriptorSet>(GetGraphicsPipeline());
-		uniformBuffer = MakeScope<UniformBuffer>();
+		Drawable::InternalInit();
 	}
 }  // namespace At0::VulkanTesting
