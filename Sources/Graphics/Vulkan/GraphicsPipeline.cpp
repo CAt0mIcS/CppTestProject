@@ -1,4 +1,4 @@
-﻿#include "Pipeline.h"
+﻿#include "GraphicsPipeline.h"
 #include "Graphics/Graphics.h"
 #include "Window.h"
 
@@ -13,7 +13,9 @@
 namespace At0::VulkanTesting
 {
 	GraphicsPipeline::GraphicsPipeline(const Renderpass& renderpass,
-		std::string_view vShaderFilepath, std::string_view fShaderFilepath)
+		std::string_view vShaderFilepath, std::string_view fShaderFilepath,
+		std::vector<Shader::Define> defines)
+		: m_Defines(std::move(defines))
 	{
 		static bool glslangInitialized = false;
 		if (!glslangInitialized)
@@ -37,11 +39,6 @@ namespace At0::VulkanTesting
 		vkDestroyDescriptorSetLayout(
 			Graphics::Get().GetLogicalDevice(), m_DescriptorSetLayout, nullptr);
 		vkDestroyDescriptorPool(Graphics::Get().GetLogicalDevice(), m_DescriptorPool, nullptr);
-	}
-
-	void GraphicsPipeline::Bind(CommandBuffer& cmdBuff)
-	{
-		vkCmdBindPipeline(cmdBuff, VK_PIPELINE_BIND_POINT_GRAPHICS, m_Pipeline);
 	}
 
 	std::string GraphicsPipeline::GetUID(const Renderpass& renderpass,

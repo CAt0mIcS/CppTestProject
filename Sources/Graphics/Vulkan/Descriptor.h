@@ -8,18 +8,18 @@
 namespace At0::VulkanTesting
 {
 	class DescriptorSetLayout;
-	class GraphicsPipeline;
+	class Pipeline;
 	class CommandBuffer;
 
 	class DescriptorSet
 	{
 	public:
-		DescriptorSet(const GraphicsPipeline& pipeline);
+		DescriptorSet(const Pipeline& pipeline);
 		~DescriptorSet();
 
 		static void Update(const std::vector<VkWriteDescriptorSet>& descriptorWrites);
 
-		void Bind(CommandBuffer& cmdBuff);
+		void Bind(const CommandBuffer& cmdBuff);
 
 		operator const VkDescriptorSet&() const { return m_DescriptorSet; }
 

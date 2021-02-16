@@ -32,7 +32,7 @@ namespace At0::VulkanTesting
 		vkFreeMemory(Graphics::Get().GetLogicalDevice(), stagingBufferMemory, nullptr);
 	}
 
-	void IndexBuffer::Bind(CommandBuffer& cmdBuff)
+	void IndexBuffer::Bind(const CommandBuffer& cmdBuff)
 	{
 		vkCmdBindIndexBuffer(cmdBuff, m_Buffer, 0, VK_INDEX_TYPE_UINT16);
 	}

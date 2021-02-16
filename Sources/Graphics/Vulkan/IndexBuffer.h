@@ -14,7 +14,7 @@ namespace At0::VulkanTesting
 	public:
 		IndexBuffer(std::string_view tag, const std::vector<uint16_t>& indices);
 
-		void Bind(CommandBuffer& cmdBuff) override;
+		void Bind(const CommandBuffer& cmdBuff) override;
 		uint32_t GetNumIndices() const;
 
 		static std::string GetUID(std::string_view tag, const std::vector<uint16_t>& indices);

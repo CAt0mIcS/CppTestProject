@@ -1,59 +1,29 @@
 ﻿#pragma once
 
-#include <vulkan/vulkan_core.h>
-#include <string_view>
-#include <vector>
-
 #include "Bindable.h"
-#include "Shader.h"
+#include "Commands/CommandBuffer.h"
+
+#include <vulkan/vulkan_core.h>
 
 
 namespace At0::VulkanTesting
 {
-	class Renderpass;
-	class CommandBuffer;
-
-	class GraphicsPipeline : public Bindable
+	class Pipeline : public Bindable
 	{
 	public:
-		GraphicsPipeline(const Renderpass& renderpass, std::string_view vShaderFilepath,
-			std::string_view fShaderFilepath);
-		~GraphicsPipeline();
+		virtual ~Pipeline() = default;
 
-		void Bind(CommandBuffer& cmdBuff) override;
-
-		static std::string GetUID(const Renderpass& renderpass, std::string_view vShaderFilepath,
-			std::string_view fShaderFilepath);
-
-		operator const VkPipeline&() const { return m_Pipeline; }
-		const VkPipelineLayout& GetLayout() const { return m_Layout; }
-
-		const VkDescriptorSetLayout& GetDescriptorSetLayout() const
+		void Bind(const CommandBuffer& cmdBuff) override
 		{
-			return m_DescriptorSetLayout;
+			vkCmdBindPipeline(cmdBuff, GetBindPoint(), *this);
 		}
-		const VkDescriptorPool& GetDescriptorPool() const { return m_DescriptorPool; }
 
-	private:
-		static VkShaderModule CreateShader(std::vector<char> src);
-		static std::vector<char> ReadShader(std::string_view filepath);
+		virtual const VkPipelineLayout& GetLayout() const = 0;
+		virtual VkPipelineBindPoint GetBindPoint() const = 0;
 
-		void CreateShaderProgram(const std::vector<std::string_view>& filepaths);
-		void CreateDescriptorSetLayout();
-		void CreateDescriptorPool();
-		void CreatePipelineLayout();
-		void CreatePipeline(const Renderpass& renderpass);
+		virtual operator const VkPipeline&() const = 0;
 
-	private:
-		VkPipeline m_Pipeline;
-		VkPipelineLayout m_Layout;
-
-		VkDescriptorSetLayout m_DescriptorSetLayout;
-		VkDescriptorPool m_DescriptorPool;
-
-		Shader m_Shader;
-
-		std::vector<VkPipelineShaderStageCreateInfo> m_ShaderStages;
-		std::vector<Shader::Define> m_Defines;
+		virtual const VkDescriptorSetLayout& GetDescriptorSetLayout() const = 0;
+		virtual const VkDescriptorPool& GetDescriptorPool() const = 0;
 	};
 }  // namespace At0::VulkanTesting

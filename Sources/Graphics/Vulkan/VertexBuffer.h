@@ -57,7 +57,7 @@ namespace At0::VulkanTesting
 	public:
 		VertexBuffer(std::string_view tag, const std::vector<Vertex>& vertices);
 
-		void Bind(CommandBuffer& cmdBuff) override;
+		void Bind(const CommandBuffer& cmdBuff) override;
 
 		static std::string GetUID(std::string_view tag, const std::vector<Vertex>& indices);
 	};

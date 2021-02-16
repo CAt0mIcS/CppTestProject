@@ -4,7 +4,7 @@
 
 #include "Graphics/Vulkan/VertexBuffer.h"
 #include "Graphics/Vulkan/IndexBuffer.h"
-#include "Graphics/Vulkan/Pipeline.h"
+#include "Graphics/Vulkan/GraphicsPipeline.h"
 
 #include "Graphics/Core/Codex.h"
 

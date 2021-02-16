@@ -6,7 +6,7 @@
 
 namespace At0::VulkanTesting
 {
-	DescriptorSet::DescriptorSet(const GraphicsPipeline& pipeline)
+	DescriptorSet::DescriptorSet(const Pipeline& pipeline)
 		: m_PipelineBindPoint(VK_PIPELINE_BIND_POINT_GRAPHICS),
 		  m_PipelineLayout(pipeline.GetLayout()),
 		  m_PipelineDescriptorPool(pipeline.GetDescriptorPool())
@@ -36,7 +36,7 @@ namespace At0::VulkanTesting
 			(uint32_t)descriptorWrites.size(), descriptorWrites.data(), 0, nullptr);
 	}
 
-	void DescriptorSet::Bind(CommandBuffer& cmdBuff)
+	void DescriptorSet::Bind(const CommandBuffer& cmdBuff)
 	{
 		vkCmdBindDescriptorSets(
 			cmdBuff, m_PipelineBindPoint, m_PipelineLayout, 0, 1, &m_DescriptorSet, 0, nullptr);

@@ -16,7 +16,7 @@
 #include "Vulkan/Surface.h"
 #include "Vulkan/LogicalDevice.h"
 #include "Vulkan/Swapchain.h"
-#include "Vulkan/Pipeline.h"
+#include "Vulkan/GraphicsPipeline.h"
 #include "Vulkan/Renderpass/Renderpass.h"
 #include "Vulkan/Framebuffer.h"
 #include "Vulkan/Descriptor.h"

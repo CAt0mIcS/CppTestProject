@@ -10,6 +10,6 @@ namespace At0::VulkanTesting
 	public:
 		virtual ~Bindable() = default;
 
-		virtual void Bind(CommandBuffer& cmdBuff) = 0;
+		virtual void Bind(const CommandBuffer& cmdBuff) = 0;
 	};
 }  // namespace At0::VulkanTesting

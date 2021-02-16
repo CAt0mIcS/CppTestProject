@@ -30,7 +30,7 @@ namespace At0::VulkanTesting
 		vkFreeMemory(Graphics::Get().GetLogicalDevice(), stagingBufferMemory, nullptr);
 	}
 
-	void VertexBuffer::Bind(CommandBuffer& cmdBuff)
+	void VertexBuffer::Bind(const CommandBuffer& cmdBuff)
 	{
 		VkDeviceSize offsets[] = { 0 };
 		vkCmdBindVertexBuffers(cmdBuff, 0, 1, &m_Buffer, offsets);
