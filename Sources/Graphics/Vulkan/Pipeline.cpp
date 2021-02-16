@@ -2,6 +2,8 @@
 #include "Graphics/Graphics.h"
 #include "Window.h"
 
+#include <glslang/SPIRV/GlslangToSpv.h>
+
 #include "VertexBuffer.h"
 
 #include <fstream>
@@ -13,6 +15,13 @@ namespace At0::VulkanTesting
 	GraphicsPipeline::GraphicsPipeline(const Renderpass& renderpass,
 		std::string_view vShaderFilepath, std::string_view fShaderFilepath)
 	{
+		static bool glslangInitialized = false;
+		if (!glslangInitialized)
+		{
+			glslang::InitializeProcess();
+			glslangInitialized = true;
+		}
+
 		CreateShaderProgram({ vShaderFilepath, fShaderFilepath });
 		CreateDescriptorSetLayout();
 		CreateDescriptorPool();
@@ -85,29 +94,37 @@ namespace At0::VulkanTesting
 
 	void GraphicsPipeline::CreateShaderProgram(const std::vector<std::string_view>& filepaths)
 	{
-		for (std::string_view filepath : filepaths)
-		{
-			std::vector<char> code = ReadShader(filepath);
-			VkShaderStageFlagBits stageFlag = Shader::GetShaderStage(filepath);
-			VkShaderModule shaderModule = CreateShader(code);
+		std::ostringstream defineBlock;
+		for (const auto& [defineName, defineValue] : m_Defines)
+			defineBlock << "#define " << defineName << " " << defineValue << '\n';
 
-			VkPipelineShaderStageCreateInfo pipelineShaderStageCreateInfo = {};
+		for (std::string_view shaderStage : filepaths)
+		{
+			auto fileLoaded = Shader::ReadFile(shaderStage);
+
+			if (!fileLoaded)
+				RAY_THROW_RUNTIME("Unable to create pipeline because of missing shader stage");
+
+			VkShaderStageFlagBits stageFlag = Shader::GetShaderStage(shaderStage);
+			VkShaderModule shaderModule =
+				m_Shader.CreateShaderModule(shaderStage, *fileLoaded, defineBlock.str(), stageFlag);
+
+			VkPipelineShaderStageCreateInfo pipelineShaderStageCreateInfo{};
 			pipelineShaderStageCreateInfo.sType =
 				VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 			pipelineShaderStageCreateInfo.stage = stageFlag;
 			pipelineShaderStageCreateInfo.module = shaderModule;
 			pipelineShaderStageCreateInfo.pName = "main";
 			m_ShaderStages.emplace_back(pipelineShaderStageCreateInfo);
-			m_ShaderModules.emplace_back(shaderModule);
 		}
 
-		// m_Shader.CreateReflection();
+		m_Shader.CreateReflection();
 	}
 
 	void GraphicsPipeline::CreateDescriptorSetLayout()
 	{
 		const std::vector<VkDescriptorSetLayoutBinding>& descriptorSetLayoutBindings =
-			m_Shader.GetDescriptorSetLayoutBindings();
+			m_Shader.GetDescriptorSetLayouts();
 
 		VkDescriptorSetLayoutCreateInfo createInfo{};
 		createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -124,7 +141,7 @@ namespace At0::VulkanTesting
 	void GraphicsPipeline::CreateDescriptorPool()
 	{
 		const std::vector<VkDescriptorPoolSize>& descriptorPoolSizes =
-			m_Shader.GetDescriptorPoolSizes();
+			m_Shader.GetDescriptorPools();
 
 		VkDescriptorPoolCreateInfo createInfo{};
 		createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
@@ -140,14 +157,16 @@ namespace At0::VulkanTesting
 
 	void GraphicsPipeline::CreatePipelineLayout()
 	{
+		auto pushConstantRanges = m_Shader.GetPushConstantRanges();
+
 		// ---------------------------------------------------------------------------------------
 		// Pipeline Layout
 		VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
 		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 		pipelineLayoutInfo.setLayoutCount = 1;
 		pipelineLayoutInfo.pSetLayouts = &m_DescriptorSetLayout;
-		pipelineLayoutInfo.pushConstantRangeCount = 0;
-		pipelineLayoutInfo.pPushConstantRanges = nullptr;
+		pipelineLayoutInfo.pushConstantRangeCount = (uint32_t)pushConstantRanges.size();
+		pipelineLayoutInfo.pPushConstantRanges = pushConstantRanges.data();
 
 		RAY_VK_THROW_FAILED(vkCreatePipelineLayout(Graphics::Get().GetLogicalDevice(),
 								&pipelineLayoutInfo, nullptr, &m_Layout),
@@ -268,13 +287,12 @@ namespace At0::VulkanTesting
 			"Failed to create graphics pipeline.");
 
 		// Destroy shader modules as they aren't needed anymore
-		for (auto shaderModule : m_ShaderModules)
+		for (const VkPipelineShaderStageCreateInfo& shaderStage : m_ShaderStages)
 		{
-			vkDestroyShaderModule(Graphics::Get().GetLogicalDevice(), shaderModule, nullptr);
+			vkDestroyShaderModule(Graphics::Get().GetLogicalDevice(), shaderStage.module, nullptr);
 		}
 
 		// These vectors aren't needed anymore and can be freed
-		m_ShaderModules.resize(0);
 		m_ShaderStages.resize(0);
 	}
 

@@ -48,6 +48,10 @@ namespace At0::VulkanTesting
 		 */
 		static wchar_t ConvertUtf16(char ch);
 
+		static std::string ReplaceFirst(
+			std::string str, std::string_view token, std::string_view to);
+		static std::vector<std::string> Split(std::string_view str, char sep);
+
 		/**
 		 * Gets if a string starts with a token
 		 * @param str The string

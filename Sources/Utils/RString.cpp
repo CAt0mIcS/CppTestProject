@@ -73,6 +73,27 @@ namespace At0::VulkanTesting
 
 	wchar_t String::ConvertUtf16(char ch) { return g_UtfConverter.from_bytes(ch)[0]; }
 
+	std::string String::ReplaceFirst(std::string str, std::string_view token, std::string_view to)
+	{
+		const auto startPos = str.find(token);
+		if (startPos == std::string::npos)
+			return str;
+
+		str.replace(startPos, token.length(), to);
+		return str;
+	}
+
+	std::vector<std::string> String::Split(std::string_view str, char sep)
+	{
+		std::vector<std::string> tokens;
+		std::string token;
+		std::istringstream tokenStream(str.data());
+
+		while (std::getline(tokenStream, token, sep))
+			tokens.emplace_back(token);
+		return tokens;
+	}
+
 	bool String::StartsWith(std::string_view str, std::string_view token)
 	{
 		if (token.length() > str.length())

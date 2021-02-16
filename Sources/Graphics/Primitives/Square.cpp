@@ -23,8 +23,7 @@ namespace At0::VulkanTesting
 		EmplaceBindable(Codex::Resolve<IndexBuffer>("012230", indices));
 
 		EmplaceBindable(Codex::Resolve<GraphicsPipeline>(Graphics::Get().GetRenderpass(),
-			"Resources/Shaders/VertexShader.vert.spv",
-			"Resources/Shaders/FragmentShader.frag.spv"));
+			"Resources/Shaders/VertexShader.vert", "Resources/Shaders/FragmentShader.frag"));
 
 		Drawable::InternalInit();
 	}

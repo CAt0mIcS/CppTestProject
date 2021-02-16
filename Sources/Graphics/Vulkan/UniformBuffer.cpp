@@ -21,4 +21,16 @@ namespace At0::VulkanTesting
 		memcpy(data, &ubo, sizeof(ubo));
 		vkUnmapMemory(Graphics::Get().GetLogicalDevice(), m_BufferMemory);
 	}
+
+	VkDescriptorSetLayoutBinding UniformBuffer::GetDescriptorSetLayout(
+		uint32_t binding, VkDescriptorType descriptorType, VkShaderStageFlags stage, uint32_t count)
+	{
+		VkDescriptorSetLayoutBinding descriptorSetLayoutBinding = {};
+		descriptorSetLayoutBinding.binding = binding;
+		descriptorSetLayoutBinding.descriptorType = descriptorType;
+		descriptorSetLayoutBinding.descriptorCount = 1;
+		descriptorSetLayoutBinding.stageFlags = stage;
+		descriptorSetLayoutBinding.pImmutableSamplers = nullptr;
+		return descriptorSetLayoutBinding;
+	}
 }  // namespace At0::VulkanTesting

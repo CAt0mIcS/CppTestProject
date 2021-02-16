@@ -53,7 +53,7 @@ namespace At0::VulkanTesting
 
 		Shader m_Shader;
 
-		std::vector<VkShaderModule> m_ShaderModules;
 		std::vector<VkPipelineShaderStageCreateInfo> m_ShaderStages;
+		std::vector<Shader::Define> m_Defines;
 	};
 }  // namespace At0::VulkanTesting

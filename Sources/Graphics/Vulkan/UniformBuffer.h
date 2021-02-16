@@ -21,5 +21,8 @@ namespace At0::VulkanTesting
 		UniformBuffer();
 
 		void Update(const UniformBufferObject& ubo);
+
+		static VkDescriptorSetLayoutBinding GetDescriptorSetLayout(uint32_t binding,
+			VkDescriptorType descriptorType, VkShaderStageFlags stage, uint32_t count);
 	};
 }  // namespace At0::VulkanTesting
