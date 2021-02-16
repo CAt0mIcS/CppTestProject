@@ -37,5 +37,8 @@ namespace At0::VulkanTesting
 		EmplaceBindable(Codex::Resolve<GraphicsPipeline>(Graphics::Get().GetRenderpass(),
 			"Resources/Shaders/VertexShader.vert.spv",
 			"Resources/Shaders/FragmentShader.frag.spv"));
+
+		descriptorSet = MakeScope<DescriptorSet>(GetGraphicsPipeline());
+		uniformBuffer = MakeScope<UniformBuffer>();
 	}
 }  // namespace At0::VulkanTesting

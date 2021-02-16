@@ -20,13 +20,13 @@ namespace At0::VulkanTesting
 	using Scope = std::unique_ptr<T>;
 
 	template<typename T, typename... Args>
-	auto MakeRef(Args&&... args)
+	Ref<T> MakeRef(Args&&... args)
 	{
 		return std::make_shared<T>(std::forward<Args>(args)...);
 	}
 
 	template<typename T, typename... Args>
-	auto MakeScope(Args&&... args)
+	Scope<T> MakeScope(Args&&... args)
 	{
 		return std::make_unique<T>(std::forward<Args>(args)...);
 	}

@@ -64,8 +64,7 @@ namespace At0::VulkanTesting
 		void CreateFramebuffers();
 		void CreateDrawables();
 		void CreateCommandBuffers();
-		void RecordCommandBuffer(Scope<CommandBuffer>& cmdBuff, Scope<Framebuffer>& framebuffer,
-			Scope<DescriptorSet>& descriptorSet);
+		void RecordCommandBuffer(Scope<CommandBuffer>& cmdBuff, Scope<Framebuffer>& framebuffer);
 		void CreateSyncObjects();
 		void RecreateSwapchain();
 
@@ -73,7 +72,6 @@ namespace At0::VulkanTesting
 		void UpdateScissor();
 
 		// Temporary
-		void CreateUniformBuffers();
 		void UpdateUniformBuffer(uint32_t currentImage);
 		void CreateDescriptorSets();
 
@@ -119,9 +117,5 @@ namespace At0::VulkanTesting
 		bool m_FramebufferResized = false;
 
 		Scope<Drawable> m_Drawable;
-
-		// Temporary data
-		std::vector<Scope<UniformBuffer>> m_UniformBuffers;
-		std::vector<Scope<DescriptorSet>> m_DescriptorSets;
 	};
 }  // namespace At0::VulkanTesting

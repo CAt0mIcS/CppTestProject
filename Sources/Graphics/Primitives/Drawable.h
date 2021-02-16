@@ -9,6 +9,10 @@
 #include "Graphics/Core/Codex.h"
 
 
+#include "Graphics/Vulkan/Descriptor.h"
+#include "Graphics/Vulkan/UniformBuffer.h"
+
+
 namespace At0::VulkanTesting
 {
 	class CommandBuffer;
@@ -22,6 +26,9 @@ namespace At0::VulkanTesting
 		const GraphicsPipeline& GetGraphicsPipeline() const { return *m_GraphicsPipeline; }
 
 		virtual ~Drawable() = default;
+
+		Scope<DescriptorSet> descriptorSet;
+		Scope<UniformBuffer> uniformBuffer;
 
 	protected:
 		Drawable() = default;

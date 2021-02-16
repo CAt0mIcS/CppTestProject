@@ -40,7 +40,6 @@ namespace At0::VulkanTesting
 		// --------------------------------------------------------------
 		// Create all drawables
 		CreateDrawables();
-		CreateUniformBuffers();
 		CreateDescriptorSets();
 
 		CreateCommandBuffers();
@@ -95,12 +94,12 @@ namespace At0::VulkanTesting
 			m_CommandBuffers[i] = MakeScope<CommandBuffer>();
 
 			// Prerecord commands
-			RecordCommandBuffer(m_CommandBuffers[i], m_Framebuffers[i], m_DescriptorSets[i]);
+			RecordCommandBuffer(m_CommandBuffers[i], m_Framebuffers[i]);
 		}
 	}
 
-	void Graphics::RecordCommandBuffer(Scope<CommandBuffer>& cmdBuff,
-		Scope<Framebuffer>& framebuffer, Scope<DescriptorSet>& descriptorSet)
+	void Graphics::RecordCommandBuffer(
+		Scope<CommandBuffer>& cmdBuff, Scope<Framebuffer>& framebuffer)
 	{
 		cmdBuff->Begin();
 
@@ -112,10 +111,9 @@ namespace At0::VulkanTesting
 		vkCmdSetViewport(*cmdBuff, 0, std::size(viewports), viewports);
 		vkCmdSetScissor(*cmdBuff, 0, std::size(scissors), scissors);
 
-		VkDescriptorSet descSet = *descriptorSet;
-
-		vkCmdBindDescriptorSets(*cmdBuff, VK_PIPELINE_BIND_POINT_GRAPHICS,
-			m_Drawable->GetGraphicsPipeline().GetLayout(), 0, 1, &descSet, 0, nullptr);
+		// vkCmdBindDescriptorSets(*cmdBuff, VK_PIPELINE_BIND_POINT_GRAPHICS,
+		//	m_Drawable->GetGraphicsPipeline().GetLayout(), 0, 1, &descSet, 0, nullptr);
+		m_Drawable->descriptorSet->Bind(*cmdBuff);
 
 		m_Drawable->Draw(*cmdBuff);
 
@@ -175,12 +173,7 @@ namespace At0::VulkanTesting
 
 		m_CommandPool.reset();
 		m_Framebuffers.clear();
-		// m_GraphicsPipeline.reset();
 		m_Renderpass.reset();
-
-		m_UniformBuffers.clear();
-		// m_DescriptorSetLayout.reset();
-		// m_DescriptorPool.reset();
 
 		m_Swapchain.reset();
 		m_LogicalDevice.reset();
@@ -312,9 +305,6 @@ namespace At0::VulkanTesting
 
 		m_Renderpass.reset();
 
-		m_UniformBuffers.clear();
-		m_DescriptorSets.clear();
-
 		m_Swapchain.reset();
 
 		m_Swapchain = MakeScope<Swapchain>(m_Swapchain.get());
@@ -322,7 +312,6 @@ namespace At0::VulkanTesting
 		UpdateViewport();
 		UpdateScissor();
 		CreateFramebuffers();
-		CreateUniformBuffers();
 		CreateDescriptorSets();
 		m_CommandPool = MakeScope<CommandPool>();
 		CreateCommandBuffers();
@@ -355,18 +344,6 @@ namespace At0::VulkanTesting
 		m_Scissor.extent = { (uint32_t)width, (uint32_t)height };
 	}
 
-	void Graphics::CreateUniformBuffers()
-	{
-		VkDeviceSize bufferSize = sizeof(UniformBufferObject);
-
-		m_UniformBuffers.resize(m_Swapchain->GetNumberOfImages());
-
-		for (Scope<UniformBuffer>& uBuff : m_UniformBuffers)
-		{
-			uBuff = MakeScope<UniformBuffer>();
-		}
-	}
-
 	void Graphics::UpdateUniformBuffer(uint32_t currentImage)
 	{
 		static auto startTIme = std::chrono::high_resolution_clock::now();
@@ -381,35 +358,27 @@ namespace At0::VulkanTesting
 		ubo.view = SceneCamera.Matrices.View;
 		ubo.model = glm::mat4(1.0f);
 
-		m_UniformBuffers[currentImage]->Update(ubo);
+		// m_UniformBuffers[0]->Update(ubo);
+		m_Drawable->uniformBuffer->Update(ubo);
 	}
 
 	void Graphics::CreateDescriptorSets()
 	{
-		m_DescriptorSets.resize(m_Swapchain->GetNumberOfImages());
-		for (uint32_t i = 0; i < m_Swapchain->GetNumberOfImages(); ++i)
-		{
-			m_DescriptorSets[i] = MakeScope<DescriptorSet>(m_Drawable->GetGraphicsPipeline());
-		}
+		VkDescriptorBufferInfo bufferInfo{};
+		bufferInfo.buffer = *m_Drawable->uniformBuffer;
+		bufferInfo.offset = 0;
+		bufferInfo.range = sizeof(UniformBufferObject);
 
-		for (uint32_t i = 0; i < m_Swapchain->GetNumberOfImages(); ++i)
-		{
-			VkDescriptorBufferInfo bufferInfo{};
-			bufferInfo.buffer = *m_UniformBuffers[i];
-			bufferInfo.offset = 0;
-			bufferInfo.range = sizeof(UniformBufferObject);
+		VkWriteDescriptorSet descriptorWrite{};
+		descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		descriptorWrite.dstSet = *m_Drawable->descriptorSet;
+		descriptorWrite.dstBinding = 0;
+		descriptorWrite.dstArrayElement = 0;
 
-			VkWriteDescriptorSet descriptorWrite{};
-			descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-			descriptorWrite.dstSet = *m_DescriptorSets[i];
-			descriptorWrite.dstBinding = 0;
-			descriptorWrite.dstArrayElement = 0;
+		descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		descriptorWrite.descriptorCount = 1;
+		descriptorWrite.pBufferInfo = &bufferInfo;
 
-			descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-			descriptorWrite.descriptorCount = 1;
-			descriptorWrite.pBufferInfo = &bufferInfo;
-
-			DescriptorSet::Update({ descriptorWrite });
-		}
+		DescriptorSet::Update({ descriptorWrite });
 	}
 }  // namespace At0::VulkanTesting
