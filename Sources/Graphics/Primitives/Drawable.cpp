@@ -7,7 +7,7 @@ namespace At0::VulkanTesting
 {
 	void Drawable::Draw(CommandBuffer& cmdBuff)
 	{
-		for (std::shared_ptr<Bindable>& bindable : m_Bindables)
+		for (Ref<Bindable>& bindable : m_Bindables)
 		{
 			bindable->Bind(cmdBuff);
 		}
@@ -15,7 +15,7 @@ namespace At0::VulkanTesting
 		vkCmdDrawIndexed(cmdBuff, GetIndexBuffer().GetNumIndices(), 1, 0, 0, 0);
 	}
 
-	void Drawable::EmplaceBindable(std::shared_ptr<Bindable> bindable)
+	void Drawable::EmplaceBindable(Ref<Bindable> bindable)
 	{
 		if (dynamic_cast<IndexBuffer*>(bindable.get()))
 			m_IndexBuffer = (IndexBuffer*)bindable.get();

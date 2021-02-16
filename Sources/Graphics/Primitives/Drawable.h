@@ -26,10 +26,10 @@ namespace At0::VulkanTesting
 	protected:
 		Drawable() = default;
 
-		void EmplaceBindable(std::shared_ptr<Bindable> bindable);
+		void EmplaceBindable(Ref<Bindable> bindable);
 
 	private:
-		std::vector<std::shared_ptr<Bindable>> m_Bindables;
+		std::vector<Ref<Bindable>> m_Bindables;
 		IndexBuffer* m_IndexBuffer;
 		GraphicsPipeline* m_GraphicsPipeline;
 	};

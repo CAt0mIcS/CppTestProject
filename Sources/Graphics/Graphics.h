@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include "pch.h"
+
 #include <memory>
 #include <array>
 
@@ -62,9 +64,8 @@ namespace At0::VulkanTesting
 		void CreateFramebuffers();
 		void CreateDrawables();
 		void CreateCommandBuffers();
-		void RecordCommandBuffer(std::unique_ptr<CommandBuffer>& cmdBuff,
-			std::unique_ptr<Framebuffer>& framebuffer,
-			std::unique_ptr<DescriptorSet>& descriptorSet);
+		void RecordCommandBuffer(Scope<CommandBuffer>& cmdBuff, Scope<Framebuffer>& framebuffer,
+			Scope<DescriptorSet>& descriptorSet);
 		void CreateSyncObjects();
 		void RecreateSwapchain();
 
@@ -92,16 +93,16 @@ namespace At0::VulkanTesting
 		VkViewport m_Viewport;
 		VkRect2D m_Scissor;
 
-		std::unique_ptr<VulkanInstance> m_Instance;
-		std::unique_ptr<PhysicalDevice> m_PhysicalDevice;
-		std::unique_ptr<Surface> m_Surface;
-		std::unique_ptr<LogicalDevice> m_LogicalDevice;
-		std::unique_ptr<Swapchain> m_Swapchain;
-		std::unique_ptr<Renderpass> m_Renderpass;
-		std::unique_ptr<CommandPool> m_CommandPool;
-		std::vector<std::unique_ptr<CommandBuffer>> m_CommandBuffers;
+		Scope<VulkanInstance> m_Instance;
+		Scope<PhysicalDevice> m_PhysicalDevice;
+		Scope<Surface> m_Surface;
+		Scope<LogicalDevice> m_LogicalDevice;
+		Scope<Swapchain> m_Swapchain;
+		Scope<Renderpass> m_Renderpass;
+		Scope<CommandPool> m_CommandPool;
+		std::vector<Scope<CommandBuffer>> m_CommandBuffers;
 
-		std::vector<std::unique_ptr<Framebuffer>> m_Framebuffers;
+		std::vector<Scope<Framebuffer>> m_Framebuffers;
 
 		// Signal that an image has been acquired and is ready for rendering (1 semaphore / frame)
 		std::array<VkSemaphore, s_MaxFramesInFlight> m_ImageAvailableSemaphore;
@@ -117,10 +118,10 @@ namespace At0::VulkanTesting
 
 		bool m_FramebufferResized = false;
 
-		std::unique_ptr<Drawable> m_Drawable;
+		Scope<Drawable> m_Drawable;
 
 		// Temporary data
-		std::vector<std::unique_ptr<UniformBuffer>> m_UniformBuffers;
-		std::vector<std::unique_ptr<DescriptorSet>> m_DescriptorSets;
+		std::vector<Scope<UniformBuffer>> m_UniformBuffers;
+		std::vector<Scope<DescriptorSet>> m_DescriptorSets;
 	};
 }  // namespace At0::VulkanTesting

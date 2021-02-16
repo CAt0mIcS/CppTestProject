@@ -41,10 +41,10 @@ namespace At0::VulkanTesting
 		using namespace std::string_literals;
 
 		// Only fill oss once
-		static std::unique_ptr<std::ostringstream> oss;
+		static Scope<std::ostringstream> oss;
 		if (!oss)
 		{
-			oss = std::make_unique<std::ostringstream>();
+			oss = MakeScope<std::ostringstream>();
 			*oss << typeid(GraphicsPipeline).name() << "#" << (VkRenderPass)renderpass << "#"
 				 << vShaderFilepath << "#" << fShaderFilepath;
 		}

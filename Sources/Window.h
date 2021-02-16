@@ -41,7 +41,7 @@ namespace At0::VulkanTesting
 		Window();
 
 	private:
-		inline static std::unique_ptr<Window> s_Instance = nullptr;
+		inline static Scope<Window> s_Instance = nullptr;
 		GLFWwindow* m_hWnd;
 
 		glm::vec2 m_MousePos{};

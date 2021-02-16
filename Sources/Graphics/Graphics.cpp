@@ -24,18 +24,18 @@ namespace At0::VulkanTesting
 		UpdateViewport();
 		UpdateScissor();
 
-		m_Instance = std::make_unique<VulkanInstance>();
-		m_Surface = std::make_unique<Surface>();
-		m_PhysicalDevice = std::make_unique<PhysicalDevice>();
-		m_LogicalDevice = std::make_unique<LogicalDevice>();
+		m_Instance = MakeScope<VulkanInstance>();
+		m_Surface = MakeScope<Surface>();
+		m_PhysicalDevice = MakeScope<PhysicalDevice>();
+		m_LogicalDevice = MakeScope<LogicalDevice>();
 		LoadExtensionFunctions();
 
-		m_Swapchain = std::make_unique<Swapchain>();
+		m_Swapchain = MakeScope<Swapchain>();
 
 		CreateRenderpass();
 		CreateFramebuffers();
 
-		m_CommandPool = std::make_unique<CommandPool>();
+		m_CommandPool = MakeScope<CommandPool>();
 
 		// --------------------------------------------------------------
 		// Create all drawables
@@ -69,7 +69,7 @@ namespace At0::VulkanTesting
 
 		Subpass subpass(attachmentReferences);
 
-		m_Renderpass = std::make_unique<Renderpass>(
+		m_Renderpass = MakeScope<Renderpass>(
 			std::vector<VkAttachmentDescription>{ attachment.GetDescription() },
 			std::vector<VkSubpassDescription>{ subpass.GetDescription() });
 	}
@@ -79,12 +79,12 @@ namespace At0::VulkanTesting
 		m_Framebuffers.resize(m_Swapchain->GetNumberOfImages());
 		for (uint32_t i = 0; i < m_Swapchain->GetNumberOfImages(); ++i)
 		{
-			m_Framebuffers[i] = std::make_unique<Framebuffer>(
+			m_Framebuffers[i] = MakeScope<Framebuffer>(
 				std::vector<VkImageView>{ m_Swapchain->GetImageView(i) });
 		}
 	}
 
-	void Graphics::CreateDrawables() { m_Drawable = std::make_unique<RenderObject>(); }
+	void Graphics::CreateDrawables() { m_Drawable = MakeScope<RenderObject>(); }
 
 	void Graphics::CreateCommandBuffers()
 	{
@@ -92,15 +92,15 @@ namespace At0::VulkanTesting
 
 		for (uint32_t i = 0; i < m_CommandBuffers.size(); ++i)
 		{
-			m_CommandBuffers[i] = std::make_unique<CommandBuffer>();
+			m_CommandBuffers[i] = MakeScope<CommandBuffer>();
 
 			// Prerecord commands
 			RecordCommandBuffer(m_CommandBuffers[i], m_Framebuffers[i], m_DescriptorSets[i]);
 		}
 	}
 
-	void Graphics::RecordCommandBuffer(std::unique_ptr<CommandBuffer>& cmdBuff,
-		std::unique_ptr<Framebuffer>& framebuffer, std::unique_ptr<DescriptorSet>& descriptorSet)
+	void Graphics::RecordCommandBuffer(Scope<CommandBuffer>& cmdBuff,
+		Scope<Framebuffer>& framebuffer, Scope<DescriptorSet>& descriptorSet)
 	{
 		cmdBuff->Begin();
 
@@ -317,14 +317,14 @@ namespace At0::VulkanTesting
 
 		m_Swapchain.reset();
 
-		m_Swapchain = std::make_unique<Swapchain>(m_Swapchain.get());
+		m_Swapchain = MakeScope<Swapchain>(m_Swapchain.get());
 		CreateRenderpass();
 		UpdateViewport();
 		UpdateScissor();
 		CreateFramebuffers();
 		CreateUniformBuffers();
 		CreateDescriptorSets();
-		m_CommandPool = std::make_unique<CommandPool>();
+		m_CommandPool = MakeScope<CommandPool>();
 		CreateCommandBuffers();
 
 		Window::Get().GetFramebufferSize(&width, &height);
@@ -361,9 +361,9 @@ namespace At0::VulkanTesting
 
 		m_UniformBuffers.resize(m_Swapchain->GetNumberOfImages());
 
-		for (std::unique_ptr<UniformBuffer>& uBuff : m_UniformBuffers)
+		for (Scope<UniformBuffer>& uBuff : m_UniformBuffers)
 		{
-			uBuff = std::make_unique<UniformBuffer>();
+			uBuff = MakeScope<UniformBuffer>();
 		}
 	}
 
@@ -390,7 +390,7 @@ namespace At0::VulkanTesting
 		for (uint32_t i = 0; i < m_Swapchain->GetNumberOfImages(); ++i)
 		{
 			m_DescriptorSets[i] =
-				std::make_unique<DescriptorSet>(m_Drawable->GetGraphicsPipeline());
+				MakeScope<DescriptorSet>(m_Drawable->GetGraphicsPipeline());
 		}
 
 		for (uint32_t i = 0; i < m_Swapchain->GetNumberOfImages(); ++i)

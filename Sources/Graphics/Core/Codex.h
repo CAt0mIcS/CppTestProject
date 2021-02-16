@@ -13,7 +13,7 @@ namespace At0::VulkanTesting
 	{
 	public:
 		template<typename T, typename... Args>
-		static std::shared_ptr<T> Resolve(Args&&... args)
+		static Ref<T> Resolve(Args&&... args)
 		{
 			static_assert(std::is_base_of<Bindable, T>::value,
 				"Template argument must be derived from Bindable");
@@ -30,7 +30,7 @@ namespace At0::VulkanTesting
 		}
 
 		template<typename T, typename... Args>
-		std::shared_ptr<T> InternalResolve(Args&&... args)
+		Ref<T> InternalResolve(Args&&... args)
 		{
 			std::string uniqueID = T::GetUID(std::forward<Args>(args)...);
 			auto it = m_BindableMap.find(uniqueID);
@@ -38,7 +38,7 @@ namespace At0::VulkanTesting
 			// Key does not exist, create bindable
 			if (it == m_BindableMap.end())
 			{
-				m_BindableMap[uniqueID] = std::make_shared<T>(std::forward<Args>(args)...);
+				m_BindableMap[uniqueID] = MakeRef<T>(std::forward<Args>(args)...);
 				return std::static_pointer_cast<T>(m_BindableMap[uniqueID]);
 			}
 			// Key exists, return it
@@ -51,6 +51,6 @@ namespace At0::VulkanTesting
 		void InternalShutdown() { m_BindableMap.clear(); }
 
 	private:
-		std::unordered_map<std::string, std::shared_ptr<Bindable>> m_BindableMap;
+		std::unordered_map<std::string, Ref<Bindable>> m_BindableMap;
 	};
 }  // namespace At0::VulkanTesting

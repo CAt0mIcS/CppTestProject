@@ -93,6 +93,7 @@ set(SRC
     "Sources/main.cpp"
     "Sources/Window.h"
     "Sources/Window.cpp"
+    "Sources/pch.h"
 )
 
 set(SHADERS
@@ -108,6 +109,7 @@ find_package("Vulkan" REQUIRED FATAL_ERROR)
 add_executable("VulkanTesting" "${SRC}" "${SHADERS}")
 target_include_directories("VulkanTesting" PRIVATE "${Vulkan_INCLUDE_DIRS}" "${CMAKE_SOURCE_DIR}/Extern/glfw/include" "Sources")
 target_link_libraries("VulkanTesting" PRIVATE "${Vulkan_LIBRARIES}" "glfw" "glm")
+target_precompile_headers("VulkanTesting" PRIVATE "Sources/pch.h")
 
 # ------------------------------------------------------------------------------------------------
 # Set the startup project for VS

@@ -43,6 +43,6 @@ namespace At0::VulkanTesting
 		VkExtent2D m_Extent;
 
 		std::vector<VkImage> m_Images;
-		std::vector<std::unique_ptr<ImageView>> m_ImageViews;
+		std::vector<Scope<ImageView>> m_ImageViews;
 	};
 }  // namespace At0::VulkanTesting

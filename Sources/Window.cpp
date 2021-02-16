@@ -13,7 +13,7 @@ namespace At0::VulkanTesting
 	void Window::Create()
 	{
 		if (!s_Instance)
-			s_Instance = std::make_unique<Window>();
+			s_Instance = MakeScope<Window>();
 	}
 
 	bool Window::Update()
