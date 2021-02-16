@@ -15,8 +15,6 @@
 
 namespace At0::VulkanTesting
 {
-	using RenderObject = Cube;
-
 	Graphics::Graphics()
 	{
 		s_Instance = this;
@@ -83,7 +81,13 @@ namespace At0::VulkanTesting
 		}
 	}
 
-	void Graphics::CreateDrawables() { m_Drawables.emplace_back(MakeScope<RenderObject>()); }
+	void Graphics::CreateDrawables()
+	{
+		m_Drawables.emplace_back(MakeScope<Cube>());
+		m_Drawables.emplace_back(MakeScope<Triangle>());
+
+		m_Drawables.back()->Translate({ 1.0f, 1.0f, 0.0f });
+	}
 
 	void Graphics::CreateCommandBuffers()
 	{
@@ -112,7 +116,9 @@ namespace At0::VulkanTesting
 		vkCmdSetScissor(*cmdBuff, 0, std::size(scissors), scissors);
 
 		for (Scope<Drawable>& drawable : m_Drawables)
+		{
 			drawable->CmdDraw(*cmdBuff);
+		}
 
 		m_Renderpass->End(*cmdBuff);
 
@@ -223,6 +229,8 @@ namespace At0::VulkanTesting
 		else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
 			RAY_THROW_RUNTIME("Failed to acquire next swapchain image.");
 
+		// VK_TODO: We might need more than one descriptor/uniform buffer per drawable to account
+		// for asynchronous image rendering
 		UpdateDrawables();
 
 		// Check if a previous frame is using this image (i.e. there is its fence to wait on)

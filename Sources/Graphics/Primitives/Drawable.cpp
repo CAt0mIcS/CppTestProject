@@ -25,7 +25,9 @@ namespace At0::VulkanTesting
 		// ubo.model = glm::scale(glm::mat4(), m_Scale) * glm::rotate(glm::mat4(), 0.0f, m_Rotation)
 		// * 			glm::translate(glm::mat4(), m_Translation);
 
-		ubo.model = glm::mat4(1.0f);
+		// VK_TODO: Rotation not working
+		ubo.model =
+			glm::scale(glm::mat4(1.0f), m_Scale) * glm::translate(glm::mat4(1.0f), m_Translation);
 
 		ubo.view = Graphics::Get().SceneCamera.Matrices.View;
 		ubo.proj = Graphics::Get().SceneCamera.Matrices.Perspective;
