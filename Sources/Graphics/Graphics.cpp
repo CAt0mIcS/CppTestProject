@@ -32,9 +32,7 @@ namespace At0::VulkanTesting
 
 		m_Swapchain = std::make_unique<Swapchain>();
 
-		CreateDescriptorSetLayout();
 		CreateRenderpass();
-		// CreateGraphicsPipeline();
 		CreateFramebuffers();
 
 		m_CommandPool = std::make_unique<CommandPool>();
@@ -43,7 +41,6 @@ namespace At0::VulkanTesting
 		// Create all drawables
 		CreateDrawables();
 		CreateUniformBuffers();
-		CreateDescriptorPool();
 		CreateDescriptorSets();
 
 		CreateCommandBuffers();
@@ -317,7 +314,6 @@ namespace At0::VulkanTesting
 
 		m_UniformBuffers.clear();
 		m_DescriptorSets.clear();
-		// m_DescriptorPool.reset();
 
 		m_Swapchain.reset();
 
@@ -327,7 +323,6 @@ namespace At0::VulkanTesting
 		UpdateScissor();
 		CreateFramebuffers();
 		CreateUniformBuffers();
-		CreateDescriptorPool();
 		CreateDescriptorSets();
 		m_CommandPool = std::make_unique<CommandPool>();
 		CreateCommandBuffers();
@@ -360,12 +355,6 @@ namespace At0::VulkanTesting
 		m_Scissor.extent = { (uint32_t)width, (uint32_t)height };
 	}
 
-	void Graphics::CreateDescriptorSetLayout()
-	{
-		// m_DescriptorSetLayout = std::make_unique<DescriptorSetLayout>(0,  // binding
-		//	VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT);
-	}
-
 	void Graphics::CreateUniformBuffers()
 	{
 		VkDeviceSize bufferSize = sizeof(UniformBufferObject);
@@ -393,20 +382,6 @@ namespace At0::VulkanTesting
 		ubo.model = glm::mat4(1.0f);
 
 		m_UniformBuffers[currentImage]->Update(ubo);
-	}
-
-	void Graphics::CreateDescriptorPool()
-	{
-		// std::vector<VkDescriptorPoolSize> poolSizes;
-
-		// VkDescriptorPoolSize poolSize{};
-		// poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		// poolSize.descriptorCount = m_Swapchain->GetNumberOfImages();
-		// poolSizes.emplace_back(std::move(poolSize));
-
-		// m_DescriptorPool =
-		//	std::make_unique<DescriptorPool>(poolSizes, m_Swapchain->GetNumberOfImages()  // maxSets
-		//	);
 	}
 
 	void Graphics::CreateDescriptorSets()
