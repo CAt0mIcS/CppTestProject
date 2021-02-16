@@ -51,8 +51,6 @@ namespace At0::VulkanTesting
 		const Swapchain& GetSwapchain() const { return *m_Swapchain; }
 		const CommandPool& GetCommandPool() const { return *m_CommandPool; }
 		const Renderpass& GetRenderpass() const { return *m_Renderpass; }
-		const DescriptorPool& GetDescriptorPool() const { return *m_DescriptorPool; }
-		const DescriptorSetLayout& GetDescriptorSetLayout() const { return *m_DescriptorSetLayout; }
 
 	public:
 		Camera SceneCamera;
@@ -124,11 +122,11 @@ namespace At0::VulkanTesting
 		std::unique_ptr<Drawable> m_Drawable;
 
 		// Uniform buffer stuff
-		std::unique_ptr<DescriptorSetLayout> m_DescriptorSetLayout;
+		// std::unique_ptr<DescriptorSetLayout> m_DescriptorSetLayout;
 
 		// Temporary data
 		std::vector<std::unique_ptr<UniformBuffer>> m_UniformBuffers;
-		std::unique_ptr<DescriptorPool> m_DescriptorPool;
+		// std::unique_ptr<DescriptorPool> m_DescriptorPool;
 		std::vector<std::unique_ptr<DescriptorSet>> m_DescriptorSets;
 	};
 }  // namespace At0::VulkanTesting

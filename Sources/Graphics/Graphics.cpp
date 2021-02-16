@@ -182,8 +182,8 @@ namespace At0::VulkanTesting
 		m_Renderpass.reset();
 
 		m_UniformBuffers.clear();
-		m_DescriptorSetLayout.reset();
-		m_DescriptorPool.reset();
+		// m_DescriptorSetLayout.reset();
+		// m_DescriptorPool.reset();
 
 		m_Swapchain.reset();
 		m_LogicalDevice.reset();
@@ -317,7 +317,7 @@ namespace At0::VulkanTesting
 
 		m_UniformBuffers.clear();
 		m_DescriptorSets.clear();
-		m_DescriptorPool.reset();
+		// m_DescriptorPool.reset();
 
 		m_Swapchain.reset();
 
@@ -362,8 +362,8 @@ namespace At0::VulkanTesting
 
 	void Graphics::CreateDescriptorSetLayout()
 	{
-		m_DescriptorSetLayout = std::make_unique<DescriptorSetLayout>(0,  // binding
-			VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT);
+		// m_DescriptorSetLayout = std::make_unique<DescriptorSetLayout>(0,  // binding
+		//	VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT);
 	}
 
 	void Graphics::CreateUniformBuffers()
@@ -397,16 +397,16 @@ namespace At0::VulkanTesting
 
 	void Graphics::CreateDescriptorPool()
 	{
-		std::vector<VkDescriptorPoolSize> poolSizes;
+		// std::vector<VkDescriptorPoolSize> poolSizes;
 
-		VkDescriptorPoolSize poolSize{};
-		poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		poolSize.descriptorCount = m_Swapchain->GetNumberOfImages();
-		poolSizes.emplace_back(std::move(poolSize));
+		// VkDescriptorPoolSize poolSize{};
+		// poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		// poolSize.descriptorCount = m_Swapchain->GetNumberOfImages();
+		// poolSizes.emplace_back(std::move(poolSize));
 
-		m_DescriptorPool =
-			std::make_unique<DescriptorPool>(poolSizes, m_Swapchain->GetNumberOfImages()  // maxSets
-			);
+		// m_DescriptorPool =
+		//	std::make_unique<DescriptorPool>(poolSizes, m_Swapchain->GetNumberOfImages()  // maxSets
+		//	);
 	}
 
 	void Graphics::CreateDescriptorSets()
@@ -414,7 +414,8 @@ namespace At0::VulkanTesting
 		m_DescriptorSets.resize(m_Swapchain->GetNumberOfImages());
 		for (uint32_t i = 0; i < m_Swapchain->GetNumberOfImages(); ++i)
 		{
-			m_DescriptorSets[i] = std::make_unique<DescriptorSet>(*m_DescriptorSetLayout);
+			m_DescriptorSets[i] =
+				std::make_unique<DescriptorSet>(m_Drawable->GetGraphicsPipeline());
 		}
 
 		for (uint32_t i = 0; i < m_Swapchain->GetNumberOfImages(); ++i)

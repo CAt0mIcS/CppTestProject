@@ -1,4 +1,4 @@
-#include "Descriptor.h"
+﻿#include "Descriptor.h"
 #include "Graphics/Graphics.h"
 
 #include <vulkan/vulkan.h>
@@ -6,15 +6,15 @@
 
 namespace At0::VulkanTesting
 {
-	DescriptorSet::DescriptorSet(const DescriptorSetLayout& layout)
+	DescriptorSet::DescriptorSet(const GraphicsPipeline& pipeline)
 	{
-		VkDescriptorSetLayout actualLayout = layout;
+		VkDescriptorSetLayout layout = pipeline.GetDescriptorSetLayout();
 
 		VkDescriptorSetAllocateInfo allocInfo{};
 		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-		allocInfo.descriptorPool = Graphics::Get().GetDescriptorPool();
+		allocInfo.descriptorPool = pipeline.GetDescriptorPool();
 		allocInfo.descriptorSetCount = 1;
-		allocInfo.pSetLayouts = &actualLayout;
+		allocInfo.pSetLayouts = &layout;
 
 		RAY_VK_THROW_FAILED(vkAllocateDescriptorSets(
 								Graphics::Get().GetLogicalDevice(), &allocInfo, &m_DescriptorSet),

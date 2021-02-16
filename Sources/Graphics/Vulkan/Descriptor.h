@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <vulkan/vulkan_core.h>
 
@@ -8,11 +8,12 @@
 namespace At0::VulkanTesting
 {
 	class DescriptorSetLayout;
+	class GraphicsPipeline;
 
 	class DescriptorSet
 	{
 	public:
-		DescriptorSet(const DescriptorSetLayout& layout);
+		DescriptorSet(const GraphicsPipeline& pipeline);
 		~DescriptorSet();
 
 		operator const VkDescriptorSet&() const { return m_DescriptorSet; }

@@ -13,27 +13,149 @@ namespace At0::VulkanTesting
 	GraphicsPipeline::GraphicsPipeline(const Renderpass& renderpass,
 		std::string_view vShaderFilepath, std::string_view fShaderFilepath)
 	{
-		VkShaderModule vShaderModule = CreateShader(ReadShader(vShaderFilepath));
-		VkShaderModule fShaderModule = CreateShader(ReadShader(fShaderFilepath));
+		CreateShaderProgram({ vShaderFilepath, fShaderFilepath });
+		CreateDescriptorSetLayout();
+		CreateDescriptorPool();
+		CreatePipelineLayout();
+		CreatePipeline(renderpass);
+	}
 
+	GraphicsPipeline::~GraphicsPipeline()
+	{
+		vkDestroyPipeline(Graphics::Get().GetLogicalDevice(), m_Pipeline, nullptr);
+		vkDestroyPipelineLayout(Graphics::Get().GetLogicalDevice(), m_Layout, nullptr);
+
+		vkDestroyDescriptorSetLayout(
+			Graphics::Get().GetLogicalDevice(), m_DescriptorSetLayout, nullptr);
+		vkDestroyDescriptorPool(Graphics::Get().GetLogicalDevice(), m_DescriptorPool, nullptr);
+	}
+
+	void GraphicsPipeline::Bind(CommandBuffer& cmdBuff)
+	{
+		vkCmdBindPipeline(cmdBuff, VK_PIPELINE_BIND_POINT_GRAPHICS, m_Pipeline);
+	}
+
+	std::string GraphicsPipeline::GetUID(const Renderpass& renderpass,
+		std::string_view vShaderFilepath, std::string_view fShaderFilepath)
+	{
+		using namespace std::string_literals;
+
+		// Only fill oss once
+		static std::unique_ptr<std::ostringstream> oss;
+		if (!oss)
+		{
+			oss = std::make_unique<std::ostringstream>();
+			*oss << typeid(GraphicsPipeline).name() << "#" << (VkRenderPass)renderpass << "#"
+				 << vShaderFilepath << "#" << fShaderFilepath;
+		}
+
+		return oss->str();
+	}
+
+	VkShaderModule GraphicsPipeline::CreateShader(std::vector<char> src)
+	{
+		VkShaderModule shaderModule;
+
+		VkShaderModuleCreateInfo createInfo{};
+		createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+		createInfo.codeSize = src.size();
+		createInfo.pCode = reinterpret_cast<uint32_t*>(src.data());
+
+		RAY_VK_THROW_FAILED(vkCreateShaderModule(Graphics::Get().GetLogicalDevice(), &createInfo,
+								nullptr, &shaderModule),
+			"Failed to create fragment shader module.");
+
+		return shaderModule;
+	}
+
+	std::vector<char> GraphicsPipeline::ReadShader(std::string_view filepath)
+	{
+		std::ifstream reader(filepath.data(), std::ios::ate | std::ios::binary);
+
+		size_t filesize = (size_t)reader.tellg();
+		RAY_MEXPECTS(filesize != 0 && filesize != SIZE_MAX, "Shader file not found");
+		std::vector<char> code(filesize);
+
+		reader.seekg(0);
+		reader.read(code.data(), filesize);
+		reader.close();
+
+		return code;
+	}
+
+	void GraphicsPipeline::CreateShaderProgram(const std::vector<std::string_view>& filepaths)
+	{
+		for (std::string_view filepath : filepaths)
+		{
+			std::vector<char> code = ReadShader(filepath);
+			VkShaderStageFlagBits stageFlag = Shader::GetShaderStage(filepath);
+			VkShaderModule shaderModule = CreateShader(code);
+
+			VkPipelineShaderStageCreateInfo pipelineShaderStageCreateInfo = {};
+			pipelineShaderStageCreateInfo.sType =
+				VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+			pipelineShaderStageCreateInfo.stage = stageFlag;
+			pipelineShaderStageCreateInfo.module = shaderModule;
+			pipelineShaderStageCreateInfo.pName = "main";
+			m_ShaderStages.emplace_back(pipelineShaderStageCreateInfo);
+			m_ShaderModules.emplace_back(shaderModule);
+		}
+
+		// m_Shader.CreateReflection();
+	}
+
+	void GraphicsPipeline::CreateDescriptorSetLayout()
+	{
+		const std::vector<VkDescriptorSetLayoutBinding>& descriptorSetLayoutBindings =
+			m_Shader.GetDescriptorSetLayoutBindings();
+
+		VkDescriptorSetLayoutCreateInfo createInfo{};
+		createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+		createInfo.flags =
+			/*m_PushDescriptors ? VK_DESCRIPTOR_SET_LAYOUT_CREATE_PUSH_DESCRIPTOR_BIT_KHR : */ 0;
+		createInfo.bindingCount = (uint32_t)descriptorSetLayoutBindings.size();
+		createInfo.pBindings = descriptorSetLayoutBindings.data();
+
+		RAY_VK_THROW_FAILED(vkCreateDescriptorSetLayout(Graphics::Get().GetLogicalDevice(),
+								&createInfo, nullptr, &m_DescriptorSetLayout),
+			"Failed to create descriptor set layout.");
+	}
+
+	void GraphicsPipeline::CreateDescriptorPool()
+	{
+		const std::vector<VkDescriptorPoolSize>& descriptorPoolSizes =
+			m_Shader.GetDescriptorPoolSizes();
+
+		VkDescriptorPoolCreateInfo createInfo{};
+		createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+		createInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
+		createInfo.maxSets = 8192;
+		createInfo.poolSizeCount = (uint32_t)descriptorPoolSizes.size();
+		createInfo.pPoolSizes = descriptorPoolSizes.data();
+
+		RAY_VK_THROW_FAILED(vkCreateDescriptorPool(Graphics::Get().GetLogicalDevice(), &createInfo,
+								nullptr, &m_DescriptorPool),
+			"Failed to create descriptor pool");
+	}
+
+	void GraphicsPipeline::CreatePipelineLayout()
+	{
 		// ---------------------------------------------------------------------------------------
-		// Vertex Shader Stage
-		VkPipelineShaderStageCreateInfo vShaderCreateInfo{};
-		vShaderCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-		vShaderCreateInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
-		vShaderCreateInfo.module = vShaderModule;
-		vShaderCreateInfo.pName = "main";
+		// Pipeline Layout
+		VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
+		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+		pipelineLayoutInfo.setLayoutCount = 1;
+		pipelineLayoutInfo.pSetLayouts = &m_DescriptorSetLayout;
+		pipelineLayoutInfo.pushConstantRangeCount = 0;
+		pipelineLayoutInfo.pPushConstantRanges = nullptr;
 
-		// ---------------------------------------------------------------------------------------
-		// Fragment Shader Stage
-		VkPipelineShaderStageCreateInfo pShaderCreateInfo{};
-		pShaderCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-		pShaderCreateInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
-		pShaderCreateInfo.module = fShaderModule;
-		pShaderCreateInfo.pName = "main";
+		RAY_VK_THROW_FAILED(vkCreatePipelineLayout(Graphics::Get().GetLogicalDevice(),
+								&pipelineLayoutInfo, nullptr, &m_Layout),
+			"Failed to create pipeline layout.");
+	}
 
-		VkPipelineShaderStageCreateInfo shaderStages[] = { vShaderCreateInfo, pShaderCreateInfo };
-
+	void GraphicsPipeline::CreatePipeline(const Renderpass& renderpass)
+	{
 		// ---------------------------------------------------------------------------------------
 		// Vertex Input
 		auto bindingDesc = Vertex::GetBindingDescription();
@@ -121,25 +243,11 @@ namespace At0::VulkanTesting
 		dynamicStateInfo.pDynamicStates = dynamicStates;
 
 		// ---------------------------------------------------------------------------------------
-		// Pipeline Layout
-		VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
-		VkDescriptorSetLayout descriptorSetLayout = Graphics::Get().GetDescriptorSetLayout();
-		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-		pipelineLayoutInfo.setLayoutCount = 1;
-		pipelineLayoutInfo.pSetLayouts = &descriptorSetLayout;
-		pipelineLayoutInfo.pushConstantRangeCount = 0;
-		pipelineLayoutInfo.pPushConstantRanges = nullptr;
-
-		RAY_VK_THROW_FAILED(vkCreatePipelineLayout(Graphics::Get().GetLogicalDevice(),
-								&pipelineLayoutInfo, nullptr, &m_Layout),
-			"Failed to create pipeline layout.");
-
-		// ---------------------------------------------------------------------------------------
 		// Pipeline
 		VkGraphicsPipelineCreateInfo pipelineInfo{};
 		pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-		pipelineInfo.stageCount = std::size(shaderStages);
-		pipelineInfo.pStages = shaderStages;
+		pipelineInfo.stageCount = (uint32_t)m_ShaderStages.size();
+		pipelineInfo.pStages = m_ShaderStages.data();
 		pipelineInfo.pVertexInputState = &vertexInputInfo;
 		pipelineInfo.pInputAssemblyState = &inputAssembler;
 		pipelineInfo.pViewportState = &viewportState;
@@ -159,66 +267,15 @@ namespace At0::VulkanTesting
 								VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_Pipeline),
 			"Failed to create graphics pipeline.");
 
-		vkDestroyShaderModule(Graphics::Get().GetLogicalDevice(), vShaderModule, nullptr);
-		vkDestroyShaderModule(Graphics::Get().GetLogicalDevice(), fShaderModule, nullptr);
-	}
-
-	GraphicsPipeline::~GraphicsPipeline()
-	{
-		vkDestroyPipeline(Graphics::Get().GetLogicalDevice(), m_Pipeline, nullptr);
-		vkDestroyPipelineLayout(Graphics::Get().GetLogicalDevice(), m_Layout, nullptr);
-	}
-
-	void GraphicsPipeline::Bind(CommandBuffer& cmdBuff)
-	{
-		vkCmdBindPipeline(cmdBuff, VK_PIPELINE_BIND_POINT_GRAPHICS, m_Pipeline);
-	}
-
-	std::string GraphicsPipeline::GetUID(const Renderpass& renderpass,
-		std::string_view vShaderFilepath, std::string_view fShaderFilepath)
-	{
-		using namespace std::string_literals;
-
-		// Only fill oss once
-		static std::unique_ptr<std::ostringstream> oss;
-		if (!oss)
+		// Destroy shader modules as they aren't needed anymore
+		for (auto shaderModule : m_ShaderModules)
 		{
-			oss = std::make_unique<std::ostringstream>();
-			*oss << typeid(GraphicsPipeline).name() << "#" << (VkRenderPass)renderpass << "#"
-				 << vShaderFilepath << "#" << fShaderFilepath;
+			vkDestroyShaderModule(Graphics::Get().GetLogicalDevice(), shaderModule, nullptr);
 		}
 
-		return oss->str();
+		// These vectors aren't needed anymore and can be freed
+		m_ShaderModules.resize(0);
+		m_ShaderStages.resize(0);
 	}
 
-	VkShaderModule GraphicsPipeline::CreateShader(std::vector<char> src)
-	{
-		VkShaderModule shaderModule;
-
-		VkShaderModuleCreateInfo createInfo{};
-		createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-		createInfo.codeSize = src.size();
-		createInfo.pCode = reinterpret_cast<uint32_t*>(src.data());
-
-		RAY_VK_THROW_FAILED(vkCreateShaderModule(Graphics::Get().GetLogicalDevice(), &createInfo,
-								nullptr, &shaderModule),
-			"Failed to create fragment shader module.");
-
-		return shaderModule;
-	}
-
-	std::vector<char> GraphicsPipeline::ReadShader(std::string_view filepath)
-	{
-		std::ifstream reader(filepath.data(), std::ios::ate | std::ios::binary);
-
-		size_t filesize = (size_t)reader.tellg();
-		RAY_MEXPECTS(filesize != 0 && filesize != SIZE_MAX, "Shader file not found");
-		std::vector<char> code(filesize);
-
-		reader.seekg(0);
-		reader.read(code.data(), filesize);
-		reader.close();
-
-		return code;
-	}
 }  // namespace At0::VulkanTesting

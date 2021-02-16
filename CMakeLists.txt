@@ -54,6 +54,8 @@ set(SRC
     "Sources/Graphics/Vulkan/Swapchain.cpp"
     "Sources/Graphics/Vulkan/Descriptor.h"
     "Sources/Graphics/Vulkan/Descriptor.cpp"
+    "Sources/Graphics/Vulkan/Shader.h"
+    "Sources/Graphics/Vulkan/Shader.cpp"
     "Sources/Graphics/Vulkan/Commands/CommandBuffer.h"
     "Sources/Graphics/Vulkan/Commands/CommandBuffer.cpp"
     "Sources/Graphics/Vulkan/Commands/CommandPool.h"
