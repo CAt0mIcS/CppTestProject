@@ -45,8 +45,8 @@ namespace At0::VulkanTesting
 		if (!oss)
 		{
 			oss = MakeScope<std::ostringstream>();
-			*oss << typeid(GraphicsPipeline).name() << "#" << (VkRenderPass)renderpass << "#"
-				 << vShaderFilepath << "#" << fShaderFilepath;
+			*oss << typeid(GraphicsPipeline).name() << "#" << vShaderFilepath << "#"
+				 << fShaderFilepath;
 		}
 
 		return oss->str();
