@@ -14,12 +14,16 @@ namespace At0::VulkanTesting
 {
 	class Node;
 	class Mesh;
+	class CommandBuffer;
 
 	class Model
 	{
 	public:
 		Model(std::string_view filename);
 		void SetRootTransform(const glm::mat4& transform);
+
+		void CmdDraw(const CommandBuffer& cmdBuff);
+		void Update();
 
 	private:
 		static Scope<Mesh> ParseMesh(const aiMesh& mesh, const aiMaterial* const* pMaterials);

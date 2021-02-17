@@ -97,18 +97,20 @@ namespace At0::VulkanTesting
 
 	void Graphics::CreateDrawables()
 	{
-		m_Drawables.emplace_back(MakeScope<Cube>());
-		m_Drawables.emplace_back(MakeScope<Triangle>());
+		m_Model = MakeScope<Model>("Resources/Models/Nanosuit/nanosuit.obj");
 
-		TransformComponent& triangleTransform =
-			m_Drawables.back()->GetEntity().Get<TransformComponent>();
-		triangleTransform.Translation = { 1.0f, 1.0f, 0.0f };
+		// m_Drawables.emplace_back(MakeScope<Cube>());
+		// m_Drawables.emplace_back(MakeScope<Triangle>());
 
-		m_Drawables.emplace_back(MakeScope<Square>());
+		// TransformComponent& triangleTransform =
+		//	m_Drawables.back()->GetEntity().Get<TransformComponent>();
+		// triangleTransform.Translation = { 1.0f, 1.0f, 0.0f };
 
-		TransformComponent& squareTransform =
-			m_Drawables.back()->GetEntity().Get<TransformComponent>();
-		squareTransform.Translation = { -1.0f, 1.0f, 0.0f };
+		// m_Drawables.emplace_back(MakeScope<Square>());
+
+		// TransformComponent& squareTransform =
+		//	m_Drawables.back()->GetEntity().Get<TransformComponent>();
+		// squareTransform.Translation = { -1.0f, 1.0f, 0.0f };
 	}
 
 	void Graphics::CreateCommandBuffers()
@@ -136,6 +138,7 @@ namespace At0::VulkanTesting
 		vkCmdSetViewport(cmdBuff, 0, std::size(viewports), viewports);
 		vkCmdSetScissor(cmdBuff, 0, std::size(scissors), scissors);
 
+		m_Model->CmdDraw(cmdBuff);
 		for (Scope<Drawable>& drawable : m_Drawables)
 		{
 			drawable->CmdDraw(cmdBuff);
@@ -190,6 +193,7 @@ namespace At0::VulkanTesting
 		// ---------------------------------------
 		// Reset all drawables here
 		m_Drawables.clear();
+		m_Model.reset();
 
 		// Explicit Codex destruction because Drawables might still need resources
 		// even if the ref count of the resource is 1
@@ -371,6 +375,7 @@ namespace At0::VulkanTesting
 
 	void Graphics::UpdateDrawables()
 	{
+		m_Model->Update();
 		for (Scope<Drawable>& drawable : m_Drawables)
 		{
 			drawable->Update();

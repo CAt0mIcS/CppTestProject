@@ -127,6 +127,8 @@ set(SRC
 set(SHADERS
     "${CMAKE_SOURCE_DIR}/Resources/Shaders/VertexShader.vert"
     "${CMAKE_SOURCE_DIR}/Resources/Shaders/FragmentShader.frag"
+    "${CMAKE_SOURCE_DIR}/Resources/Shaders/PhongModelShader.vert"
+    "${CMAKE_SOURCE_DIR}/Resources/Shaders/PhongModelShader.frag"
 )
 
 find_package("Vulkan" REQUIRED FATAL_ERROR)

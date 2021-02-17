@@ -21,7 +21,7 @@ namespace At0::VulkanTesting
 	{
 		Assimp::Importer imp;
 		const auto pScene = imp.ReadFile(filename.data(),
-			aiProcess_Triangulate | aiProcess_JoinIdenticalVertices |
+			aiProcess_Triangulate | /*aiProcess_JoinIdenticalVertices |*/
 				aiProcess_ConvertToLeftHanded | aiProcess_GenNormals | aiProcess_CalcTangentSpace);
 
 		if (!pScene)
@@ -38,11 +38,24 @@ namespace At0::VulkanTesting
 
 	void Model::SetRootTransform(const glm::mat4& transform) {}
 
+	void Model::CmdDraw(const CommandBuffer& cmdBuff)
+	{
+		for (Scope<Mesh>& mesh : m_Meshes)
+			mesh->CmdDraw(cmdBuff);
+	}
+
+	void Model::Update()
+	{
+		for (Scope<Mesh>& mesh : m_Meshes)
+			mesh->Update();
+	}
+
 	Scope<Mesh> Model::ParseMesh(const aiMesh& mesh, const aiMaterial* const* pMaterials)
 	{
 		std::vector<Ref<Bindable>> bindables;
 
-		std::string base = "Resources\\Models\\gobber\\";
+		using namespace std::string_literals;
+		std::string base = "Resources/Models/"s + mesh.mName.C_Str() + "/"s;
 
 		bool hasSpecularMap = false;
 		bool hasAlphaGloss = false;
@@ -99,7 +112,7 @@ namespace At0::VulkanTesting
 
 		VertexLayout layout{};
 		layout.Append(VertexLayout::Position3D);
-		layout.Append(VertexLayout::Normal);
+		// layout.Append(VertexLayout::Normal);
 
 		// VK_TODO: Different vertex layouts for different combinations of maps
 		if (!hasDiffuseMap && !hasNormalMap && !hasSpecularMap)
@@ -109,21 +122,26 @@ namespace At0::VulkanTesting
 			for (uint32_t i = 0; i < mesh.mNumVertices; ++i)
 			{
 				vertexInput.EmplaceBack(
-					glm::vec3(mesh.mVertices[i].x, mesh.mVertices[i].y, mesh.mVertices[i].z),
-					glm::vec3(mesh.mNormals[i].x, mesh.mNormals[i].y, mesh.mNormals[i].z));
+					glm::vec3(mesh.mVertices[i].x, mesh.mVertices[i].y, mesh.mVertices[i].z)); /*,
+					 glm::vec3(mesh.mNormals[i].x, mesh.mNormals[i].y, mesh.mNormals[i].z));*/
 			}
 
 			std::vector<IndexBuffer::Type> indices;
-			indices.reserve(mesh.mNumFaces * 3);
+			indices.resize(vertexInput.Size());
 
-			for (uint32_t i = 0; i < mesh.mNumFaces; ++i)
-			{
-				const aiFace& face = mesh.mFaces[i];
-				RAY_MEXPECTS(face.mNumIndices == 3, "Faces weren't triangulated");
-				indices[i] = (face.mIndices[0]);
-				indices[i] = (face.mIndices[1]);
-				indices[i] = (face.mIndices[2]);
-			}
+			for (uint32_t i = 0; i < indices.size(); ++i)
+				indices[i] = i;
+
+			// indices.resize(mesh.mNumFaces * 3);
+
+			// for (uint32_t i = 0; i < mesh.mNumFaces; ++i)
+			//{
+			//	const aiFace& face = mesh.mFaces[i];
+			//	RAY_MEXPECTS(face.mNumIndices == 3, "Faces weren't triangulated");
+			//	indices[i] = (face.mIndices[0]);
+			//	indices[i] = (face.mIndices[1]);
+			//	indices[i] = (face.mIndices[2]);
+			//}
 
 			bindables.emplace_back(Codex::Resolve<VertexBuffer>(std::move(vertexInput), meshTag));
 			bindables.emplace_back(Codex::Resolve<IndexBuffer>(std::move(indices), meshTag));

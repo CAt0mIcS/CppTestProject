@@ -24,6 +24,8 @@ namespace At0::VulkanTesting
 	class Framebuffer;
 	class Drawable;
 
+	class Model;
+
 	class Graphics
 	{
 		friend std::unique_ptr<Graphics> std::make_unique<Graphics>();
@@ -106,5 +108,6 @@ namespace At0::VulkanTesting
 		std::vector<VkFence> m_ImagesInFlight;
 
 		std::vector<Scope<Drawable>> m_Drawables;
+		Scope<Model> m_Model;
 	};
 }  // namespace At0::VulkanTesting
