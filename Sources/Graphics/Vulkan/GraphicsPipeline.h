@@ -5,8 +5,8 @@
 #include <vector>
 
 #include "Pipeline.h"
-
 #include "Shader.h"
+#include "Vertex.h"
 
 
 namespace At0::VulkanTesting
@@ -17,12 +17,12 @@ namespace At0::VulkanTesting
 	class GraphicsPipeline : public Pipeline
 	{
 	public:
-		GraphicsPipeline(const Renderpass& renderpass, std::string_view vShaderFilepath,
-			std::string_view fShaderFilepath, std::vector<Shader::Define> defines = {});
+		GraphicsPipeline(const VertexLayout& vertexLayout,
+			const std::vector<std::string_view>& shaders, std::vector<Shader::Define> defines = {});
 		~GraphicsPipeline();
 
-		static std::string GetUID(const Renderpass& renderpass, std::string_view vShaderFilepath,
-			std::string_view fShaderFilepath);
+		static std::string GetUID(const VertexLayout& vertexLayout,
+			const std::vector<std::string_view>& shaders, std::vector<Shader::Define> defines = {});
 
 		operator const VkPipeline&() const override { return m_Pipeline; }
 		const VkPipelineLayout& GetLayout() const override { return m_Layout; }
@@ -43,7 +43,7 @@ namespace At0::VulkanTesting
 		void CreateDescriptorSetLayout();
 		void CreateDescriptorPool();
 		void CreatePipelineLayout();
-		void CreatePipeline(const Renderpass& renderpass);
+		void CreatePipeline(const VertexLayout& vertexLayout);
 
 	private:
 		VkPipeline m_Pipeline;

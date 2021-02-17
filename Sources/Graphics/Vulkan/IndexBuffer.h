@@ -12,12 +12,15 @@ namespace At0::VulkanTesting
 	class IndexBuffer : public Buffer, public Bindable
 	{
 	public:
-		IndexBuffer(std::string_view tag, const std::vector<uint16_t>& indices);
+		using Type = uint16_t;
+
+	public:
+		IndexBuffer(const std::vector<Type>& indices, std::string_view tag);
 
 		void Bind(const CommandBuffer& cmdBuff) override;
 		uint32_t GetNumIndices() const;
 
-		static std::string GetUID(std::string_view tag, const std::vector<uint16_t>& indices);
+		static std::string GetUID(const std::vector<Type>& indices, std::string_view tag);
 
 	private:
 		uint32_t m_NumIndices = 0;

@@ -22,7 +22,7 @@ namespace At0::VulkanTesting
 		// clang-format on
 		EmplaceBindable(Codex::Resolve<VertexBuffer>("Square", vertices));
 
-		std::vector<uint16_t> indices{ 0, 1, 2, 2, 3, 0 };
+		std::vector<IndexBuffer::Type> indices{ 0, 1, 2, 2, 3, 0 };
 		EmplaceBindable(Codex::Resolve<IndexBuffer>("012230", indices));
 
 		Ref<GraphicsPipeline> graphicsPipeline =

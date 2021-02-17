@@ -25,7 +25,7 @@ namespace At0::VulkanTesting
 		};
 		EmplaceBindable(Codex::Resolve<VertexBuffer>("Cube", vertices));
 
-		std::vector<uint16_t> indices
+		std::vector<IndexBuffer::Type> indices
 		{
 			0, 2, 1,  2, 3, 1,
 			1, 3, 5,  3, 7, 5,

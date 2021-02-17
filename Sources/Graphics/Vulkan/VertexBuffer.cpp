@@ -8,8 +8,8 @@
 
 namespace At0::VulkanTesting
 {
-	VertexBuffer::VertexBuffer(const std::string_view tag, const std::vector<Vertex>& vertices)
-		: Buffer(sizeof(vertices[0]) * vertices.size())
+	VertexBuffer::VertexBuffer(const VertexInput& vertices, std::string_view tag)
+		: Buffer(vertices.SizeBytes())
 	{
 		VkBuffer stagingBuffer;
 		VkDeviceMemory stagingBufferMemory;
@@ -19,7 +19,7 @@ namespace At0::VulkanTesting
 
 		void* data;
 		vkMapMemory(Graphics::Get().GetLogicalDevice(), stagingBufferMemory, 0, m_Size, 0, &data);
-		memcpy(data, vertices.data(), (size_t)m_Size);
+		memcpy(data, vertices.GetData(), (size_t)m_Size);
 		vkUnmapMemory(Graphics::Get().GetLogicalDevice(), stagingBufferMemory);
 
 		CreateBuffer(m_Size, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
@@ -37,7 +37,7 @@ namespace At0::VulkanTesting
 		vkCmdBindVertexBuffers(cmdBuff, 0, 1, &m_Buffer, offsets);
 	}
 
-	std::string VertexBuffer::GetUID(std::string_view tag, const std::vector<Vertex>& indices)
+	std::string VertexBuffer::GetUID(const VertexInput& vertices, std::string_view tag)
 	{
 		using namespace std::string_literals;
 		return typeid(VertexBuffer).name() + "#"s + tag.data();

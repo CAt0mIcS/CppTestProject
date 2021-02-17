@@ -9,7 +9,7 @@
 
 namespace At0::VulkanTesting
 {
-	IndexBuffer::IndexBuffer(std::string_view tag, const std::vector<uint16_t>& indices)
+	IndexBuffer::IndexBuffer(const std::vector<Type>& indices, std::string_view tag)
 		: Buffer(sizeof(indices[0]) * indices.size()), m_NumIndices((uint32_t)indices.size()),
 		  m_Tag(tag)
 	{
@@ -44,7 +44,7 @@ namespace At0::VulkanTesting
 		return m_NumIndices;
 	}
 
-	std::string IndexBuffer::GetUID(std::string_view tag, const std::vector<uint16_t>& indices)
+	std::string IndexBuffer::GetUID(const std::vector<uint16_t>& indices, std::string_view tag)
 	{
 		using namespace std::string_literals;
 		return typeid(IndexBuffer).name() + "#"s + tag.data();

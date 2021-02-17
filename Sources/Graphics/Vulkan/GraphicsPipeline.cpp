@@ -13,9 +13,8 @@
 
 namespace At0::VulkanTesting
 {
-	GraphicsPipeline::GraphicsPipeline(const Renderpass& renderpass,
-		std::string_view vShaderFilepath, std::string_view fShaderFilepath,
-		std::vector<Shader::Define> defines)
+	GraphicsPipeline::GraphicsPipeline(const VertexLayout& vertexLayout,
+		const std::vector<std::string_view>& shaders, std::vector<Shader::Define> defines)
 		: m_Defines(std::move(defines))
 	{
 		static bool glslangInitialized = false;
@@ -25,11 +24,11 @@ namespace At0::VulkanTesting
 			glslangInitialized = true;
 		}
 
-		CreateShaderProgram({ vShaderFilepath, fShaderFilepath });
+		CreateShaderProgram(shaders);
 		CreateDescriptorSetLayout();
 		CreateDescriptorPool();
 		CreatePipelineLayout();
-		CreatePipeline(renderpass);
+		CreatePipeline(vertexLayout);
 	}
 
 	GraphicsPipeline::~GraphicsPipeline()
@@ -42,8 +41,8 @@ namespace At0::VulkanTesting
 		vkDestroyDescriptorPool(Graphics::Get().GetLogicalDevice(), m_DescriptorPool, nullptr);
 	}
 
-	std::string GraphicsPipeline::GetUID(const Renderpass& renderpass,
-		std::string_view vShaderFilepath, std::string_view fShaderFilepath)
+	std::string GraphicsPipeline::GetUID(const VertexLayout& vertexLayout,
+		const std::vector<std::string_view>& shaders, std::vector<Shader::Define> defines)
 	{
 		using namespace std::string_literals;
 
@@ -52,8 +51,10 @@ namespace At0::VulkanTesting
 		if (!oss)
 		{
 			oss = MakeScope<std::ostringstream>();
-			*oss << typeid(GraphicsPipeline).name() << "#" << vShaderFilepath << "#"
-				 << fShaderFilepath;
+			*oss << typeid(GraphicsPipeline).name();
+
+			for (std::string_view filepath : shaders)
+				*oss << "#" << filepath;
 		}
 
 		return oss->str();
@@ -140,12 +141,12 @@ namespace At0::VulkanTesting
 			"Failed to create pipeline layout.");
 	}
 
-	void GraphicsPipeline::CreatePipeline(const Renderpass& renderpass)
+	void GraphicsPipeline::CreatePipeline(const VertexLayout& vertexLayout)
 	{
 		// ---------------------------------------------------------------------------------------
 		// Vertex Input
-		auto bindingDesc = Vertex::GetBindingDescription();
-		auto attribDesc = Vertex::GetAttributeDescriptions(0, 1);
+		auto bindingDesc = vertexLayout.GetBindingDescription();
+		auto attribDesc = vertexLayout.GetAttributeDescriptions();
 
 		VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
 		vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
@@ -243,7 +244,7 @@ namespace At0::VulkanTesting
 		pipelineInfo.pColorBlendState = &colorBlending;
 		pipelineInfo.pDynamicState = &dynamicStateInfo;
 		pipelineInfo.layout = m_Layout;
-		pipelineInfo.renderPass = renderpass;
+		pipelineInfo.renderPass = Graphics::Get().GetRenderpass();
 		pipelineInfo.subpass = 0;  // Index of subpass used with pipeline
 
 		pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;

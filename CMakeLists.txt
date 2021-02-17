@@ -106,10 +106,10 @@ set(SRC
     "Sources/Graphics/Primitives/Drawable.cpp"
     "Sources/Graphics/Primitives/Triangle.h"
     "Sources/Graphics/Primitives/Triangle.cpp"
-    "Sources/Graphics/Primitives/Square.h"
-    "Sources/Graphics/Primitives/Square.cpp"
-    "Sources/Graphics/Primitives/Cube.h"
-    "Sources/Graphics/Primitives/Cube.cpp"
+    # "Sources/Graphics/Primitives/Square.h"
+    # "Sources/Graphics/Primitives/Square.cpp"
+    # "Sources/Graphics/Primitives/Cube.h"
+    # "Sources/Graphics/Primitives/Cube.cpp"
     "Sources/Graphics/Primitives/Model.h"
     "Sources/Graphics/Primitives/Model.cpp"
     "Sources/Graphics/Primitives/Mesh.h"
@@ -121,6 +121,7 @@ set(SRC
     "Sources/Window.cpp"
     "Sources/pch.h"
     "Sources/Components.h"
+    "Sources/Vertex.h"
 )
 
 set(SHADERS
