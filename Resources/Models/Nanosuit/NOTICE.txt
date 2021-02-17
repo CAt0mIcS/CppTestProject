@@ -1,0 +1,8 @@
+Original Nanosuit model by ForrestPL:
+http://tf3dm.com/3d-model/crysis-2-nanosuit-2-97837.html
+or:
+https://sketchfab.com/3d-models/crysis-nano-suit-2-ca311b94a0c249a1abc6697d105253e5
+
+Slightly modified for use as test model in the VulkanTesting engine
+
+For personal use only
