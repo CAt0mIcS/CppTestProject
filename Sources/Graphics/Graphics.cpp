@@ -21,8 +21,8 @@
 
 #include "Core/Codex.h"
 
-//#include "Primitives/Cube.h"
-//#include "Primitives/Square.h"
+#include "Primitives/Cube.h"
+#include "Primitives/Square.h"
 #include "Primitives/Triangle.h"
 #include "Primitives/Model.h"
 #include "Primitives/Mesh.h"
@@ -97,11 +97,16 @@ namespace At0::VulkanTesting
 
 	void Graphics::CreateDrawables()
 	{
-		// m_Drawables.emplace_back(MakeScope<Cube>());
+		m_Drawables.emplace_back(MakeScope<Cube>());
 		m_Drawables.emplace_back(MakeScope<Triangle>());
 
-		// auto& tform = m_Drawables.back()->GetEntity().Get<TransformComponent>();
-		// tform.Translation = { 1.0f, 1.0f, 0.0f };
+		auto& tform = m_Drawables.back()->GetEntity().Get<TransformComponent>();
+		tform.Translation = { 1.0f, 1.0f, 0.0f };
+
+		m_Drawables.emplace_back(MakeScope<Square>());
+
+		tform = m_Drawables.back()->GetEntity().Get<TransformComponent>();
+		tform.Translation = { -1.0f, 1.0f, 0.0f };
 	}
 
 	void Graphics::CreateCommandBuffers()

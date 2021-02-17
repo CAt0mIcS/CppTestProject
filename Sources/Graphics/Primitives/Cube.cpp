@@ -6,24 +6,28 @@
 #include "Graphics/Vulkan/IndexBuffer.h"
 #include "Graphics/Vulkan/GraphicsPipeline.h"
 
+#include "Vertex.h"
+
 
 namespace At0::VulkanTesting
 {
 	Cube::Cube()
 	{
 		// clang-format off
-		std::vector<Vertex> vertices
-		{
-			{ { -0.5f, -0.5f, -0.5f }, { 1.0f, 0.0f, 0.0f } },
-			{ {  0.5f, -0.5f, -0.5f }, { 0.0f, 1.0f, 0.0f } },
-			{ { -0.5f,  0.5f, -0.5f }, { 0.0f, 0.0f, 1.0f } },
-			{ {  0.5f,  0.5f, -0.5f }, { 1.0f, 1.0f, 0.0f } },
-			{ { -0.5f, -0.5f,  0.5f }, { 1.0f, 0.0f, 1.0f } },
-			{ {  0.5f, -0.5f,  0.5f }, { 0.0f, 1.0f, 1.0f } },
-			{ { -0.5f,  0.5f,  0.5f }, { 1.0f, 1.0f, 1.0f } },
-			{ {  0.5f,  0.5f,  0.5f }, { 0.0f, 0.0f, 0.0f } },
-		};
-		EmplaceBindable(Codex::Resolve<VertexBuffer>("Cube", vertices));
+		VertexLayout layout;
+		layout.Append(VertexLayout::Position3D, VertexLayout::Float3Color);
+
+		VertexInput vertexInput(layout);
+		vertexInput.EmplaceBack(glm::vec3{ -0.5f, -0.5f, -0.5f }, glm::vec3{ 1.0f, 0.0f, 0.0f });
+		vertexInput.EmplaceBack(glm::vec3{  0.5f, -0.5f, -0.5f }, glm::vec3{ 0.0f, 1.0f, 0.0f });
+		vertexInput.EmplaceBack(glm::vec3{ -0.5f,  0.5f, -0.5f }, glm::vec3{ 0.0f, 0.0f, 1.0f });
+		vertexInput.EmplaceBack(glm::vec3{  0.5f,  0.5f, -0.5f }, glm::vec3{ 1.0f, 1.0f, 0.0f });
+		vertexInput.EmplaceBack(glm::vec3{ -0.5f, -0.5f,  0.5f }, glm::vec3{ 1.0f, 0.0f, 1.0f });
+		vertexInput.EmplaceBack(glm::vec3{  0.5f, -0.5f,  0.5f }, glm::vec3{ 0.0f, 1.0f, 1.0f });
+		vertexInput.EmplaceBack(glm::vec3{ -0.5f,  0.5f,  0.5f }, glm::vec3{ 1.0f, 1.0f, 1.0f });
+		vertexInput.EmplaceBack(glm::vec3{  0.5f,  0.5f,  0.5f }, glm::vec3{ 0.0f, 0.0f, 0.0f });
+		
+		EmplaceBindable(Codex::Resolve<VertexBuffer>(vertexInput, "Cube"));
 
 		std::vector<IndexBuffer::Type> indices
 		{
@@ -35,11 +39,11 @@ namespace At0::VulkanTesting
 			0, 1, 4,  1, 5, 4
 		};
 		// clang-format on
-		EmplaceBindable(Codex::Resolve<IndexBuffer>("CubeIndices", indices));
+		EmplaceBindable(Codex::Resolve<IndexBuffer>(indices, "CubeIndices"));
 
-		Ref<GraphicsPipeline> graphicsPipeline =
-			Codex::Resolve<GraphicsPipeline>(Graphics::Get().GetRenderpass(),
-				"Resources/Shaders/VertexShader.vert", "Resources/Shaders/FragmentShader.frag");
+		Ref<GraphicsPipeline> graphicsPipeline = Codex::Resolve<GraphicsPipeline>(
+			layout, std::vector<std::string_view>{ "Resources/Shaders/VertexShader.vert",
+						"Resources/Shaders/FragmentShader.frag" });
 		EmplaceBindable(graphicsPipeline);
 	}
 }  // namespace At0::VulkanTesting

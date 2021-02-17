@@ -6,28 +6,33 @@
 #include "Graphics/Vulkan/GraphicsPIpeline.h"
 #include "Graphics/Graphics.h"
 
+#include "Vertex.h"
+
 
 namespace At0::VulkanTesting
 {
 	Square::Square()
 	{
+
 		// clang-format off
-			std::vector<Vertex> vertices
-			{
-				{ { -0.5f, -0.5f }, { 1.0f, 0.0f, 0.0f } },
-				{ {  0.5f, -0.5f }, { 1.0f, 1.0f, 1.0f } },
-				{ {  0.5f,  0.5f }, { 0.0f, 0.0f, 1.0f } },
-				{ { -0.5f,  0.5f }, { 0.0f, 1.0f, 0.0f } },
-			};
+		VertexLayout layout;
+		layout.Append(VertexLayout::Position3D, VertexLayout::Float3Color);
+
+		VertexInput vertexInput(layout);
+		vertexInput.EmplaceBack(glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec3{ 1.0f, 0.0f, 0.0f });
+		vertexInput.EmplaceBack(glm::vec3{  0.5f, -0.5f, 0.0f }, glm::vec3{ 1.0f, 1.0f, 1.0f });
+		vertexInput.EmplaceBack(glm::vec3{  0.5f,  0.5f, 0.0f }, glm::vec3{ 0.0f, 0.0f, 1.0f });
+		vertexInput.EmplaceBack(glm::vec3{ -0.5f,  0.5f, 0.0f }, glm::vec3{ 0.0f, 1.0f, 0.0f });
+
 		// clang-format on
-		EmplaceBindable(Codex::Resolve<VertexBuffer>("Square", vertices));
+		EmplaceBindable(Codex::Resolve<VertexBuffer>(vertexInput, "Square"));
 
 		std::vector<IndexBuffer::Type> indices{ 0, 1, 2, 2, 3, 0 };
-		EmplaceBindable(Codex::Resolve<IndexBuffer>("012230", indices));
+		EmplaceBindable(Codex::Resolve<IndexBuffer>(indices, "012230"));
 
-		Ref<GraphicsPipeline> graphicsPipeline =
-			Codex::Resolve<GraphicsPipeline>(Graphics::Get().GetRenderpass(),
-				"Resources/Shaders/VertexShader.vert", "Resources/Shaders/FragmentShader.frag");
+		Ref<GraphicsPipeline> graphicsPipeline = Codex::Resolve<GraphicsPipeline>(
+			layout, std::vector<std::string_view>{ "Resources/Shaders/VertexShader.vert",
+						"Resources/Shaders/FragmentShader.frag" });
 		EmplaceBindable(graphicsPipeline);
 	}
 }  // namespace At0::VulkanTesting
