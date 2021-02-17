@@ -100,13 +100,15 @@ namespace At0::VulkanTesting
 		m_Drawables.emplace_back(MakeScope<Cube>());
 		m_Drawables.emplace_back(MakeScope<Triangle>());
 
-		auto& tform = m_Drawables.back()->GetEntity().Get<TransformComponent>();
-		tform.Translation = { 1.0f, 1.0f, 0.0f };
+		TransformComponent& triangleTransform =
+			m_Drawables.back()->GetEntity().Get<TransformComponent>();
+		triangleTransform.Translation = { 1.0f, 1.0f, 0.0f };
 
 		m_Drawables.emplace_back(MakeScope<Square>());
 
-		tform = m_Drawables.back()->GetEntity().Get<TransformComponent>();
-		tform.Translation = { -1.0f, 1.0f, 0.0f };
+		TransformComponent& squareTransform =
+			m_Drawables.back()->GetEntity().Get<TransformComponent>();
+		squareTransform.Translation = { -1.0f, 1.0f, 0.0f };
 	}
 
 	void Graphics::CreateCommandBuffers()
