@@ -102,18 +102,18 @@ namespace At0::VulkanTesting
 
 		m_Model2->Translate(glm::vec3(9.0f, 0.0f, 0.0f));
 
-		// m_Drawables.emplace_back(MakeScope<Cube>());
-		// m_Drawables.emplace_back(MakeScope<Triangle>());
+		m_Drawables.emplace_back(MakeScope<Cube>());
+		m_Drawables.emplace_back(MakeScope<Triangle>());
 
-		// TransformComponent& triangleTransform =
-		//	m_Drawables.back()->GetEntity().Get<TransformComponent>();
-		// triangleTransform.Translation = { 1.0f, 1.0f, 0.0f };
+		TransformComponent& triangleTransform =
+			m_Drawables.back()->GetEntity().Get<TransformComponent>();
+		triangleTransform.Translation = { 1.0f, 1.0f, 0.0f };
 
-		// m_Drawables.emplace_back(MakeScope<Square>());
+		m_Drawables.emplace_back(MakeScope<Square>());
 
-		// TransformComponent& squareTransform =
-		//	m_Drawables.back()->GetEntity().Get<TransformComponent>();
-		// squareTransform.Translation = { -1.0f, 1.0f, 0.0f };
+		TransformComponent& squareTransform =
+			m_Drawables.back()->GetEntity().Get<TransformComponent>();
+		squareTransform.Translation = { -1.0f, 1.0f, 0.0f };
 	}
 
 	void Graphics::CreateCommandBuffers()

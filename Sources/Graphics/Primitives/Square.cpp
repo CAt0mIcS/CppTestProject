@@ -27,7 +27,9 @@ namespace At0::VulkanTesting
 		// clang-format on
 		EmplaceBindable(Codex::Resolve<VertexBuffer>(vertexInput, "Square"));
 
-		std::vector<IndexBuffer::Type> indices{ 0, 1, 2, 2, 3, 0 };
+		// VK_TODO: 2D objects are only visible from one side because of backface culling
+		// Specifying the vertices again in the reversed order works for now
+		std::vector<IndexBuffer::Type> indices{ 0, 1, 2, 2, 3, 0 /*|*/, 0, 3, 2, 2, 1, 0 };
 		EmplaceBindable(Codex::Resolve<IndexBuffer>(indices, "012230"));
 
 		Ref<GraphicsPipeline> graphicsPipeline = Codex::Resolve<GraphicsPipeline>(

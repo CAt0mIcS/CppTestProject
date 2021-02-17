@@ -54,18 +54,13 @@ namespace At0::VulkanTesting
 	{
 		using namespace std::string_literals;
 
-		// Only fill oss once
-		static Scope<std::ostringstream> oss;
-		if (!oss)
-		{
-			oss = MakeScope<std::ostringstream>();
-			*oss << typeid(GraphicsPipeline).name();
+		std::ostringstream oss;
+		oss << typeid(GraphicsPipeline).name();
 
-			for (std::string_view filepath : shaders)
-				*oss << "#" << filepath;
-		}
+		for (std::string_view filepath : shaders)
+			oss << "#" << filepath;
 
-		return oss->str();
+		return oss.str();
 	}
 
 	void GraphicsPipeline::CreateShaderProgram(const std::vector<std::string_view>& filepaths)

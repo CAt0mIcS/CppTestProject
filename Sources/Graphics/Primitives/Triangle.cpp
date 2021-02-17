@@ -23,7 +23,9 @@ namespace At0::VulkanTesting
 		vertexInput.EmplaceBack(glm::vec3{  0.0f,  0.5f, 0.0f }, glm::vec3{ 1.0f, 0.0f, 0.0f });
 		// clang-format on
 
-		std::vector<IndexBuffer::Type> indices{ 0, 1, 2 };
+		// VK_TODO: 2D objects are only visible from one side because of backface culling
+		// Specifying the vertices again in the reversed order works for now
+		std::vector<IndexBuffer::Type> indices{ 0, 1, 2 /*|*/, 2, 1, 0 };
 
 		// The codex will check if the bindable already exists and return a "reference" to it
 		// otherwise the codex will create the bindable and return a "reference" to it
