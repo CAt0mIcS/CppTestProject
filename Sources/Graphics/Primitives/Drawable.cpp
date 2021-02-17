@@ -1,4 +1,5 @@
-﻿#include "Drawable.h"
+﻿#include "pch.h"
+#include "Drawable.h"
 #include "Graphics/Graphics.h"
 
 #include "Graphics/Vulkan/Commands/CommandBuffer.h"
@@ -11,7 +12,6 @@ namespace At0::VulkanTesting
 {
 	void Drawable::CmdDraw(const CommandBuffer& cmdBuff)
 	{
-		// m_UniformBuffer->Bind(cmdBuff);
 		for (Ref<Bindable>& bindable : m_Bindables)
 		{
 			bindable->Bind(cmdBuff);
@@ -31,6 +31,10 @@ namespace At0::VulkanTesting
 		glm::mat4 model = tform.GetMatrix();
 		glm::mat4 view = Graphics::Get().SceneCamera.Matrices.View;
 		glm::mat4 proj = Graphics::Get().SceneCamera.Matrices.Perspective;
+
+		// Log::Debug("Model: {0}", glm::to_string(model));
+		// Log::Debug("View: {0}", glm::to_string(view));
+		// Log::Debug("Proj: {0}", glm::to_string(proj));
 
 		m_UniformHandler.Push("model", model);
 		m_UniformHandler.Push("proj", proj);

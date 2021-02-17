@@ -5,6 +5,7 @@
 #include <type_traits>
 
 #include "RString.h"
+#include "Utils/RAssert.h"
 
 
 namespace At0::VulkanTesting
@@ -100,8 +101,7 @@ namespace At0::VulkanTesting
 		else
 		{
 			// static_assert(false, "No output stream can convert the specified type T.");
-			// RAY_ASSERT(false, "No output stream can convert the specified type (typeid={0}).",
-			// 	typeid(T).name());
+			assert(false && "No output stream can convert the specified type");
 		}
 	}
 
