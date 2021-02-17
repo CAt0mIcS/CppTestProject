@@ -28,17 +28,11 @@ namespace At0::VulkanTesting
 	{
 		TransformComponent& tform = m_Entity.Get<TransformComponent>();
 
-		glm::mat4 model = tform.GetMatrix();
-		glm::mat4 view = Graphics::Get().SceneCamera.Matrices.View;
-		glm::mat4 proj = Graphics::Get().SceneCamera.Matrices.Perspective;
+		glm::mat4 modelView = Graphics::Get().SceneCamera.Matrices.View * tform.GetMatrix();
 
-		// Log::Debug("Model: {0}", glm::to_string(model));
-		// Log::Debug("View: {0}", glm::to_string(view));
-		// Log::Debug("Proj: {0}", glm::to_string(proj));
-
-		m_UniformHandler.Push("model", model);
-		m_UniformHandler.Push("proj", proj);
-		m_UniformHandler.Push("view", view);
+		m_UniformHandler.Push("modelView", modelView);
+		m_UniformHandler.Push(
+			"modelViewProj", Graphics::Get().SceneCamera.Matrices.Perspective * modelView);
 	}
 
 	void Drawable::EmplaceBindable(Ref<Bindable> bindable)

@@ -114,6 +114,8 @@ set(SRC
     "Sources/Graphics/Primitives/Model.cpp"
     "Sources/Graphics/Primitives/Mesh.h"
     "Sources/Graphics/Primitives/Mesh.cpp"
+    "Sources/Graphics/Primitives/PointLight.h"
+    "Sources/Graphics/Primitives/PointLight.cpp"
 
 
     "Sources/main.cpp"

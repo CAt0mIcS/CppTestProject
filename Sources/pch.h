@@ -11,6 +11,8 @@
 	#include "glm/gtx/string_cast.hpp"
 #endif
 
+#include <entt/entt.hpp>
+
 #include <sstream>
 #include <fstream>
 #include <vector>
