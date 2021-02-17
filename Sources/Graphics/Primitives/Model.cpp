@@ -120,8 +120,7 @@ namespace At0::VulkanTesting
 
 		VertexLayout layout{};
 		layout.Append(VertexLayout::Position3D);
-		layout.Append(VertexLayout::Float3Color);
-		// layout.Append(VertexLayout::Normal);
+		layout.Append(VertexLayout::Normal);
 
 		// VK_TODO: Different vertex layouts for different combinations of maps
 		if (!hasDiffuseMap && !hasNormalMap && !hasSpecularMap)
@@ -131,8 +130,8 @@ namespace At0::VulkanTesting
 			for (uint32_t i = 0; i < mesh.mNumVertices; ++i)
 			{
 				vertexInput.EmplaceBack(
-					glm::vec3(mesh.mVertices[i].x, mesh.mVertices[i].y, mesh.mVertices[i].z)); /*,
-					 glm::vec3(mesh.mNormals[i].x, mesh.mNormals[i].y, mesh.mNormals[i].z));*/
+					glm::vec3(mesh.mVertices[i].x, mesh.mVertices[i].y, mesh.mVertices[i].z),
+					glm::vec3(mesh.mNormals[i].x, mesh.mNormals[i].y, mesh.mNormals[i].z));
 			}
 
 			std::vector<IndexBuffer::Type> indices;
