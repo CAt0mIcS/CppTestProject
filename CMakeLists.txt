@@ -49,6 +49,10 @@ set(SRC
     "Sources/Graphics/Graphics.cpp"
     
     "Sources/Graphics/Core/Codex.h"
+    "Sources/Graphics/Core/UniformHandler.h"
+    "Sources/Graphics/Core/UniformHandler.cpp"
+    "Sources/Graphics/Core/DescriptorsHandler.h"
+    "Sources/Graphics/Core/DescriptorsHandler.cpp"
 
     "Sources/Graphics/Vulkan/VulkanInstance.h"
     "Sources/Graphics/Vulkan/VulkanInstance.cpp"

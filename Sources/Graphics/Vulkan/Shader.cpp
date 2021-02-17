@@ -336,21 +336,21 @@ namespace At0::VulkanTesting
 		{
 			Log::Error("[Shader] {0}", shader.getInfoLog());
 			Log::Error("[Shader] {0}", shader.getInfoDebugLog());
-			Log::Error("SPIR-V shader preprocess failed!");
+			Log::Error("SPIR-V m_Shader preprocess failed!");
 		}
 
 		if (!shader.parse(&resources, defaultVersion, true, messages, includer))
 		{
 			Log::Error("[Shader] {0}", shader.getInfoLog());
 			Log::Error("[Shader] {0}", shader.getInfoDebugLog());
-			Log::Error("SPIR-V shader parse failed!");
+			Log::Error("SPIR-V m_Shader parse failed!");
 		}
 
 		program.addShader(&shader);
 
 		if (!program.link(messages) || !program.mapIO())
 		{
-			Log::Error("Error while linking shader program!");
+			Log::Error("Error while linking m_Shader program!");
 		}
 
 		program.buildReflection();

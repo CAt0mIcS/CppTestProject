@@ -61,6 +61,17 @@ namespace At0::VulkanTesting
 		vkDestroyInstance(m_Instance, nullptr);
 	}
 
+	void VulkanInstance::FvkCmdPushDescriptorSetKHR(VkDevice device, VkCommandBuffer commandBuffer,
+		VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout layout, uint32_t set,
+		uint32_t descriptorWriteCount, const VkWriteDescriptorSet* pDescriptorWrites)
+	{
+		auto func = reinterpret_cast<PFN_vkCmdPushDescriptorSetKHR>(
+			vkGetDeviceProcAddr(device, "vkCmdPushDescriptorSetKHR"));
+		if (func)
+			func(commandBuffer, pipelineBindPoint, layout, set, descriptorWriteCount,
+				pDescriptorWrites);
+	}
+
 	void VulkanInstance::CreateInstance()
 	{
 		// Default app info

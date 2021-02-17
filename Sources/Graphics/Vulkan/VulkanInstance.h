@@ -18,6 +18,10 @@ namespace At0::VulkanTesting
 		bool ValidationLayersEnabled() const { return m_ValidationLayerEnabled; }
 		static const std::vector<const char*>& ValidationLayers() { return s_ValidationLayers; }
 
+		static void FvkCmdPushDescriptorSetKHR(VkDevice device, VkCommandBuffer commandBuffer,
+			VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout layout, uint32_t set,
+			uint32_t descriptorWriteCount, const VkWriteDescriptorSet* pDescriptorWrites);
+
 	private:
 		void CreateInstance();
 		void CreateDebugMessenger();

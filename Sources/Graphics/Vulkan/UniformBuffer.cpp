@@ -5,22 +5,37 @@
 
 namespace At0::VulkanTesting
 {
-	UniformBuffer::UniformBuffer(const Pipeline& pipeline, std::string_view tag)
-		: m_DescriptorSet(pipeline)
+	UniformBuffer::UniformBuffer(VkDeviceSize size, const void* data)
+		: Buffer(size, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+			  VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, data)
 	{
-		VkDeviceSize bufferSize = sizeof(UniformBufferObject);
-
-		CreateBuffer(bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, m_Buffer,
-			m_BufferMemory);
 	}
 
-	void UniformBuffer::Update(const UniformBufferObject& ubo)
+	void UniformBuffer::Update(const void* newData)
 	{
 		void* data;
-		vkMapMemory(Graphics::Get().GetLogicalDevice(), m_BufferMemory, 0, sizeof(ubo), 0, &data);
-		memcpy(data, &ubo, sizeof(ubo));
-		vkUnmapMemory(Graphics::Get().GetLogicalDevice(), m_BufferMemory);
+		MapMemory(&data);
+		memcpy(data, newData, (size_t)m_Size);
+		UnmapMemory();
+	}
+
+	WriteDescriptorSet UniformBuffer::GetWriteDescriptor(
+		uint32_t binding, VkDescriptorType descriptorType) const
+	{
+		VkDescriptorBufferInfo bufferInfo{};
+		bufferInfo.buffer = m_Buffer;
+		bufferInfo.offset = 0;
+		bufferInfo.range = m_Size;
+
+		VkWriteDescriptorSet descriptorWrite{};
+		descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		descriptorWrite.dstSet = VK_NULL_HANDLE;  // Will be set in the descriptor handler
+		descriptorWrite.dstBinding = binding;
+		descriptorWrite.dstArrayElement = 0;
+		descriptorWrite.descriptorCount = 1;
+		descriptorWrite.descriptorType = descriptorType;
+
+		return { descriptorWrite, bufferInfo };
 	}
 
 	VkDescriptorSetLayoutBinding UniformBuffer::GetDescriptorSetLayout(
@@ -34,18 +49,4 @@ namespace At0::VulkanTesting
 		descriptorSetLayoutBinding.pImmutableSamplers = nullptr;
 		return descriptorSetLayoutBinding;
 	}
-
-	std::string UniformBuffer::GetUID(const Pipeline& pipeline, std::string_view tag)
-	{
-		static uint64_t nextID = 0;
-		if (tag.empty())
-		{
-			++nextID;
-			return typeid(UniformBuffer).name() + std::to_string(nextID);
-		}
-
-		return typeid(UniformBuffer).name() + std::string(tag);
-	}
-
-	void UniformBuffer::Bind(const CommandBuffer& cmdBuff) { m_DescriptorSet.Bind(cmdBuff); }
 }  // namespace At0::VulkanTesting

@@ -8,6 +8,8 @@
 
 namespace At0::VulkanTesting
 {
+	class Shader;
+
 	class Pipeline : public Bindable
 	{
 	public:
@@ -25,5 +27,6 @@ namespace At0::VulkanTesting
 
 		virtual const VkDescriptorSetLayout& GetDescriptorSetLayout() const = 0;
 		virtual const VkDescriptorPool& GetDescriptorPool() const = 0;
+		virtual const Shader& GetShader() const = 0;
 	};
 }  // namespace At0::VulkanTesting

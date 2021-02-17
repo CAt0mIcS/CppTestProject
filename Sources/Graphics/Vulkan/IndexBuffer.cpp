@@ -6,27 +6,24 @@
 namespace At0::VulkanTesting
 {
 	IndexBuffer::IndexBuffer(std::string_view tag, const std::vector<uint16_t>& indices)
-		: m_NumIndices((uint32_t)indices.size()), m_Tag(tag)
+		: Buffer(sizeof(indices[0]) * indices.size()), m_NumIndices((uint32_t)indices.size()),
+		  m_Tag(tag)
 	{
-		VkDeviceSize bufferSize = sizeof(indices[0]) * indices.size();
-
 		VkBuffer stagingBuffer;
 		VkDeviceMemory stagingBufferMemory;
-		CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+		CreateBuffer(m_Size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
 			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
 			stagingBuffer, stagingBufferMemory);
 
 		void* data;
-		vkMapMemory(
-			Graphics::Get().GetLogicalDevice(), stagingBufferMemory, 0, bufferSize, 0, &data);
-		memcpy(data, indices.data(), (size_t)bufferSize);
+		vkMapMemory(Graphics::Get().GetLogicalDevice(), stagingBufferMemory, 0, m_Size, 0, &data);
+		memcpy(data, indices.data(), (size_t)m_Size);
 		vkUnmapMemory(Graphics::Get().GetLogicalDevice(), stagingBufferMemory);
 
-		CreateBuffer(bufferSize,
-			VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
+		CreateBuffer(m_Size, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
 			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_Buffer, m_BufferMemory);
 
-		CopyBuffer(stagingBuffer, m_Buffer, bufferSize);
+		CopyBuffer(stagingBuffer, m_Buffer, m_Size);
 
 		vkDestroyBuffer(Graphics::Get().GetLogicalDevice(), stagingBuffer, nullptr);
 		vkFreeMemory(Graphics::Get().GetLogicalDevice(), stagingBufferMemory, nullptr);
@@ -46,7 +43,6 @@ namespace At0::VulkanTesting
 	std::string IndexBuffer::GetUID(std::string_view tag, const std::vector<uint16_t>& indices)
 	{
 		using namespace std::string_literals;
-		static std::string uid = typeid(IndexBuffer).name() + "#"s + tag.data();
-		return uid;
+		return typeid(IndexBuffer).name() + "#"s + tag.data();
 	}
 }  // namespace At0::VulkanTesting

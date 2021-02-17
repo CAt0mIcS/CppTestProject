@@ -171,13 +171,14 @@ namespace At0::VulkanTesting
 			enabledFeatures.shaderStorageImageExtendedFormats = VK_TRUE;
 		else
 			Log::Warn(
-				"[LogicalDevice] Selected GPU does not support shader storage extended formats.");
+				"[LogicalDevice] Selected GPU does not support m_Shader storage extended formats.");
 
 		if (physicalDeviceFeatures.shaderStorageImageWriteWithoutFormat)
 			enabledFeatures.shaderStorageImageWriteWithoutFormat = VK_TRUE;
 		else
-			Log::Warn("[LogicalDevice] Selected GPU does not support shader storage write without "
-					  "format.");
+			Log::Warn(
+				"[LogicalDevice] Selected GPU does not support m_Shader storage write without "
+				"format.");
 
 		if (physicalDeviceFeatures.geometryShader)
 			enabledFeatures.geometryShader = VK_TRUE;

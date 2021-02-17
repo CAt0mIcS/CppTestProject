@@ -38,7 +38,5 @@ namespace At0::VulkanTesting
 			Codex::Resolve<GraphicsPipeline>(Graphics::Get().GetRenderpass(),
 				"Resources/Shaders/VertexShader.vert", "Resources/Shaders/FragmentShader.frag");
 		EmplaceBindable(graphicsPipeline);
-
-		EmplaceBindable(Codex::Resolve<UniformBuffer>(*graphicsPipeline));
 	}
 }  // namespace At0::VulkanTesting

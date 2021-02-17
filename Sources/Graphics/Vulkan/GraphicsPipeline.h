@@ -32,6 +32,7 @@ namespace At0::VulkanTesting
 			return m_DescriptorSetLayout;
 		}
 		const VkDescriptorPool& GetDescriptorPool() const override { return m_DescriptorPool; }
+		const Shader& GetShader() const override { return m_Shader; }
 
 		VkPipelineBindPoint GetBindPoint() const override
 		{

@@ -43,7 +43,7 @@ namespace At0::VulkanTesting
 		case VK_SUBOPTIMAL_KHR: return "Vulkan suboptimal.";
 		case VK_ERROR_OUT_OF_DATE_KHR: return "Vulkan out of date.";
 		case VK_ERROR_INCOMPATIBLE_DISPLAY_KHR: return "Vulkan incompatible display.";
-		case VK_ERROR_INVALID_SHADER_NV: return "Vulkan invalid shader.";
+		case VK_ERROR_INVALID_SHADER_NV: return "Vulkan invalid m_Shader.";
 		case VK_ERROR_INVALID_DRM_FORMAT_MODIFIER_PLANE_LAYOUT_EXT:
 			return "Vulkan invalid DRM format modifier plane layout.";
 		case VK_ERROR_NOT_PERMITTED_EXT: return "Vulkan not permitted.";

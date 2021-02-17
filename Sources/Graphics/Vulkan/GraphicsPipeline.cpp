@@ -69,7 +69,7 @@ namespace At0::VulkanTesting
 			auto fileLoaded = Shader::ReadFile(shaderStage);
 
 			if (!fileLoaded)
-				RAY_THROW_RUNTIME("Unable to create pipeline because of missing shader stage");
+				RAY_THROW_RUNTIME("Unable to create pipeline because of missing m_Shader stage");
 
 			VkShaderStageFlagBits stageFlag = Shader::GetShaderStage(shaderStage);
 			VkShaderModule shaderModule =

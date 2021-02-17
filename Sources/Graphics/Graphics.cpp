@@ -359,24 +359,24 @@ namespace At0::VulkanTesting
 
 	void Graphics::WriteDescriptorSets()
 	{
-		for (Scope<Drawable>& drawable : m_Drawables)
-		{
-			VkDescriptorBufferInfo bufferInfo{};
-			bufferInfo.buffer = drawable->GetUniformBuffer();
-			bufferInfo.offset = 0;
-			bufferInfo.range = sizeof(UniformBufferObject);
+		// for (Scope<Drawable>& drawable : m_Drawables)
+		//{
+		//	VkDescriptorBufferInfo bufferInfo{};
+		//	bufferInfo.buffer = drawable->GetUniformBuffer();
+		//	bufferInfo.offset = 0;
+		//	bufferInfo.range = sizeof(UniformBufferObject);
 
-			VkWriteDescriptorSet descriptorWrite{};
-			descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-			descriptorWrite.dstSet = drawable->GetUniformBuffer().GetDescriptorSet();
-			descriptorWrite.dstBinding = 0;
-			descriptorWrite.dstArrayElement = 0;
+		//	VkWriteDescriptorSet descriptorWrite{};
+		//	descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		//	descriptorWrite.dstSet = drawable->GetUniformBuffer().GetDescriptorSet();
+		//	descriptorWrite.dstBinding = 0;
+		//	descriptorWrite.dstArrayElement = 0;
 
-			descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-			descriptorWrite.descriptorCount = 1;
-			descriptorWrite.pBufferInfo = &bufferInfo;
+		//	descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		//	descriptorWrite.descriptorCount = 1;
+		//	descriptorWrite.pBufferInfo = &bufferInfo;
 
-			DescriptorSet::Update({ descriptorWrite });
-		}
+		//	DescriptorSet::Update({ descriptorWrite });
+		//}
 	}
 }  // namespace At0::VulkanTesting

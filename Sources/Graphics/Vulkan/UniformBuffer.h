@@ -24,22 +24,17 @@ namespace At0::VulkanTesting
 		alignas(16) glm::mat4 proj;
 	};
 
-	class UniformBuffer : public Buffer, public Bindable
+	class UniformBuffer : public Descriptor, public Buffer
 	{
 	public:
-		UniformBuffer(const Pipeline& pipeline, std::string_view tag = "");
+		UniformBuffer(VkDeviceSize size, const void* data = nullptr);
 
-		void Bind(const CommandBuffer& cmdBuff) override;
-		void Update(const UniformBufferObject& ubo);
+		void Update(const void* newData);
 
-		const DescriptorSet& GetDescriptorSet() const { return m_DescriptorSet; }
+		WriteDescriptorSet GetWriteDescriptor(
+			uint32_t binding, VkDescriptorType descriptorType) const override;
 
 		static VkDescriptorSetLayoutBinding GetDescriptorSetLayout(uint32_t binding,
 			VkDescriptorType descriptorType, VkShaderStageFlags stage, uint32_t count);
-
-		static std::string GetUID(const Pipeline& pipeline, std::string_view tag = "");
-
-	private:
-		DescriptorSet m_DescriptorSet;
 	};
 }  // namespace At0::VulkanTesting
