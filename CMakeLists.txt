@@ -116,14 +116,25 @@ set(SHADERS
     "${CMAKE_SOURCE_DIR}/Resources/Shaders/FragmentShader.frag"
 )
 
+find_package("Vulkan" REQUIRED FATAL_ERROR)
+
+set(INC
+    "${Vulkan_INCLUDE_DIRS}"
+    "${CMAKE_SOURCE_DIR}/Extern/glfw/include"
+    "${CMAKE_SOURCE_DIR}/Sources"
+    "${CMAKE_SOURCE_DIR}/Extern/entt/src"
+)
+
+set(LIB
+    "${Vulkan_LIBRARIES}" "glfw" "glm" "glslang" "SPIRV"
+)
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-find_package("Vulkan" REQUIRED FATAL_ERROR)
-
 add_executable("VulkanTesting" "${SRC}" "${SHADERS}")
-target_include_directories("VulkanTesting" PRIVATE "${Vulkan_INCLUDE_DIRS}" "${CMAKE_SOURCE_DIR}/Extern/glfw/include" "Sources")
-target_link_libraries("VulkanTesting" PRIVATE "${Vulkan_LIBRARIES}" "glfw" "glm" "glslang" "SPIRV")
+target_include_directories("VulkanTesting" PRIVATE "${INC}")
+target_link_libraries("VulkanTesting" PRIVATE "${LIB}")
 target_precompile_headers("VulkanTesting" PRIVATE "Sources/pch.h")
 
 # ------------------------------------------------------------------------------------------------

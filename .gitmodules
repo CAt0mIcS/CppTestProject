@@ -7,3 +7,6 @@
 [submodule "Extern/glslang"]
 	path = Extern/glslang
 	url = https://github.com/KhronosGroup/glslang.git
+[submodule "Extern/entt"]
+	path = Extern/entt
+	url = https://github.com/skypjack/entt.git
