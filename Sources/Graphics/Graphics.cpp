@@ -98,7 +98,8 @@ namespace At0::VulkanTesting
 		m_Drawables.emplace_back(MakeScope<Cube>());
 		m_Drawables.emplace_back(MakeScope<Triangle>());
 
-		m_Drawables.back()->Translate({ 1.0f, 1.0f, 0.0f });
+		auto& tform = m_Drawables.back()->GetEntity().Get<TransformComponent>();
+		tform.Translation = { 1.0f, 1.0f, 0.0f };
 	}
 
 	void Graphics::CreateCommandBuffers()

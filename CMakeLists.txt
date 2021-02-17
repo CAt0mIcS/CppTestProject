@@ -53,6 +53,9 @@ set(SRC
     "Sources/Graphics/Core/UniformHandler.cpp"
     "Sources/Graphics/Core/DescriptorsHandler.h"
     "Sources/Graphics/Core/DescriptorsHandler.cpp"
+    "Sources/Graphics/Core/Entity.h"
+    "Sources/Graphics/Core/Scene.h"
+    "Sources/Graphics/Core/Scene.cpp"
 
     "Sources/Graphics/Vulkan/VulkanInstance.h"
     "Sources/Graphics/Vulkan/VulkanInstance.cpp"
@@ -103,12 +106,17 @@ set(SRC
     "Sources/Graphics/Primitives/Square.cpp"
     "Sources/Graphics/Primitives/Cube.h"
     "Sources/Graphics/Primitives/Cube.cpp"
+    "Sources/Graphics/Primitives/Model.h"
+    "Sources/Graphics/Primitives/Model.cpp"
+    "Sources/Graphics/Primitives/Mesh.h"
+    "Sources/Graphics/Primitives/Mesh.cpp"
 
 
     "Sources/main.cpp"
     "Sources/Window.h"
     "Sources/Window.cpp"
     "Sources/pch.h"
+    "Sources/Components.h"
 )
 
 set(SHADERS

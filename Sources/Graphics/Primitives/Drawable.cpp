@@ -26,12 +26,9 @@ namespace At0::VulkanTesting
 
 	void Drawable::Update()
 	{
-		glm::mat4 model = glm::scale(glm::mat4(1.0f), m_Scale) *
-						  glm::rotate(glm::mat4(1.0f), m_Rotation.x, glm::vec3(1.0f, 0.0f, 0.0f)) *
-						  glm::rotate(glm::mat4(1.0f), m_Rotation.y, glm::vec3(0.0f, 1.0f, 0.0f)) *
-						  glm::rotate(glm::mat4(1.0f), m_Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f)) *
-						  glm::translate(glm::mat4(1.0f), m_Translation);
+		TransformComponent& tform = m_Entity.Get<TransformComponent>();
 
+		glm::mat4 model = tform.GetMatrix();
 		glm::mat4 view = Graphics::Get().SceneCamera.Matrices.View;
 		glm::mat4 proj = Graphics::Get().SceneCamera.Matrices.Perspective;
 

@@ -6,6 +6,8 @@
 
 #include "Graphics/Core/UniformHandler.h"
 #include "Graphics/Core/DescriptorsHandler.h"
+#include "Graphics/Core/Entity.h"
+#include "Graphics/Core/Scene.h"
 
 
 namespace At0::VulkanTesting
@@ -25,9 +27,8 @@ namespace At0::VulkanTesting
 		const IndexBuffer& GetIndexBuffer() const { return *m_IndexBuffer; }
 		const GraphicsPipeline& GetGraphicsPipeline() const { return *m_GraphicsPipeline; }
 
-		void Translate(glm::vec3 translation) { m_Translation += translation; }
-		void Scale(glm::vec3 scale) { m_Scale += scale; }
-		void Rotate(glm::vec3 rotation) { m_Rotation += rotation; }
+		Entity& GetEntity() { return m_Entity; }
+		const Entity& GetEntity() const { return m_Entity; }
 
 		virtual ~Drawable() = default;
 
@@ -41,12 +42,10 @@ namespace At0::VulkanTesting
 		IndexBuffer* m_IndexBuffer;
 		GraphicsPipeline* m_GraphicsPipeline;
 
-		glm::vec3 m_Translation{ 0.0f, 0.0f, 0.0f };
-		glm::vec3 m_Scale{ 1.0f, 1.0f, 1.0f };
-		glm::vec3 m_Rotation{ 0.0f, 0.0f, 0.0f };
-
 		DescriptorsHandler m_DescriptorsHandler;
 		UniformHandler m_UniformHandler;
+
+		Entity m_Entity = Scene::Get().CreateEntity();
 	};
 
 }  // namespace At0::VulkanTesting
