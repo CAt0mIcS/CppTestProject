@@ -1,6 +1,12 @@
 ﻿#include "Renderpass.h"
 #include "Graphics/Graphics.h"
 
+#include "Graphics/Vulkan/Framebuffer.h"
+#include "Graphics/Vulkan/LogicalDevice.h"
+#include "Graphics/Vulkan/Swapchain.h"
+#include "Graphics/Vulkan/Commands/CommandBuffer.h"
+
+
 namespace At0::VulkanTesting
 {
 	Renderpass::Renderpass(const std::vector<VkAttachmentDescription>& attachments,
@@ -34,8 +40,8 @@ namespace At0::VulkanTesting
 		vkDestroyRenderPass(Graphics::Get().GetLogicalDevice(), m_Renderpass, nullptr);
 	}
 
-	void Renderpass::Begin(
-		CommandBuffer& cmdBuff, Framebuffer& framebuffer, const VkClearValue& clearColor) const
+	void Renderpass::Begin(CommandBuffer& cmdBuff, const Framebuffer& framebuffer,
+		const VkClearValue& clearColor) const
 	{
 		VkRenderPassBeginInfo renderPassInfo{};
 		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;

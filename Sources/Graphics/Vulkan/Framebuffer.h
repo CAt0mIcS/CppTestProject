@@ -17,6 +17,6 @@ namespace At0::VulkanTesting
 		operator const VkFramebuffer&() const { return m_Framebuffer; }
 
 	private:
-		VkFramebuffer m_Framebuffer = nullptr;
+		VkFramebuffer m_Framebuffer;
 	};
 }  // namespace At0::VulkanTesting

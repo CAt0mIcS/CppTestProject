@@ -14,6 +14,6 @@ namespace At0::VulkanTesting
 		operator const VkImageView&() const { return m_View; }
 
 	private:
-		VkImageView m_View = nullptr;
+		VkImageView m_View;
 	};
 }  // namespace At0::VulkanTesting

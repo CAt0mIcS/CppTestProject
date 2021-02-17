@@ -1,5 +1,11 @@
-﻿#include "LogicalDevice.h"
+﻿#include "pch.h"
+#include "LogicalDevice.h"
 #include "Graphics/Graphics.h"
+
+#include "VulkanInstance.h"
+#include "PhysicalDevice.h"
+#include "Surface.h"
+
 #include "Utils/RLogger.h"
 #include "Utils/RException.h"
 #include "Utils/RAssert.h"

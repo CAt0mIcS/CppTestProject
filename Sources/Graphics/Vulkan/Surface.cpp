@@ -1,6 +1,10 @@
-﻿#include "Surface.h"
+﻿#include "pch.h"
+#include "Surface.h"
+
 #include "Graphics/Graphics.h"
 #include "Window.h"
+#include "VulkanInstance.h"
+
 #include "Utils/RLogger.h"
 #include "Utils/RException.h"
 #include "Utils/RAssert.h"

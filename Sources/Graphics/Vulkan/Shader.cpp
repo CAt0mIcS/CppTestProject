@@ -1,6 +1,10 @@
 ﻿#include "pch.h"
 #include "Shader.h"
+
 #include "Graphics/Graphics.h"
+#include "LogicalDevice.h"
+#include "UniformBuffer.h"
+
 #include "Utils/RString.h"
 
 #include <glslang/SPIRV/GlslangToSpv.h>

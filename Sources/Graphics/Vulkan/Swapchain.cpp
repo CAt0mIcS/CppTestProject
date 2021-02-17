@@ -1,5 +1,10 @@
-﻿#include "Swapchain.h"
+﻿#include "pch.h"
+#include "Swapchain.h"
+
 #include "Graphics/Graphics.h"
+#include "Surface.h"
+#include "LogicalDevice.h"
+#include "PhysicalDevice.h"
 #include "Window.h"
 
 #include <algorithm>

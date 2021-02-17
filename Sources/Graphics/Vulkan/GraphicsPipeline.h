@@ -6,7 +6,6 @@
 
 #include "Pipeline.h"
 
-#include "Bindable.h"
 #include "Shader.h"
 
 

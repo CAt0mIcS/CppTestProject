@@ -1,6 +1,9 @@
 ﻿#include "Attachment.h"
 #include "Graphics/Graphics.h"
 
+#include "Graphics/Vulkan/Swapchain.h"
+
+
 namespace At0::VulkanTesting
 {
 	Attachment::Attachment()

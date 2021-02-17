@@ -5,32 +5,25 @@
 #include <memory>
 #include <array>
 
-#include "Utils/RAssert.h"
-#include "Utils/RException.h"
-
-#include "Vulkan/Commands/CommandBuffer.h"
-#include "Vulkan/Commands/CommandPool.h"
-#include "Vulkan/Framebuffer.h"
-#include "Vulkan/VulkanInstance.h"
-#include "Vulkan/PhysicalDevice.h"
-#include "Vulkan/Surface.h"
-#include "Vulkan/LogicalDevice.h"
-#include "Vulkan/Swapchain.h"
-#include "Vulkan/GraphicsPipeline.h"
-#include "Vulkan/Renderpass/Renderpass.h"
-#include "Vulkan/Framebuffer.h"
-#include "Vulkan/Descriptor.h"
-#include "Vulkan/UniformBuffer.h"
-
 #include "Camera.h"
 
-#include "Primitives/Triangle.h"
-#include "Primitives/Square.h"
-#include "Primitives/Cube.h"
+#include "Utils/RAssert.h"
+#include "Utils/RException.h"
 
 
 namespace At0::VulkanTesting
 {
+	class VulkanInstance;
+	class PhysicalDevice;
+	class LogicalDevice;
+	class Surface;
+	class Swapchain;
+	class CommandPool;
+	class CommandBuffer;
+	class Renderpass;
+	class Framebuffer;
+	class Drawable;
+
 	class Graphics
 	{
 		friend std::unique_ptr<Graphics> std::make_unique<Graphics>();
@@ -64,7 +57,7 @@ namespace At0::VulkanTesting
 		void CreateFramebuffers();
 		void CreateDrawables();
 		void CreateCommandBuffers();
-		void RecordCommandBuffer(Scope<CommandBuffer>& cmdBuff, Scope<Framebuffer>& framebuffer);
+		void RecordCommandBuffer(CommandBuffer& cmdBuff, const Framebuffer& framebuffer);
 		void CreateSyncObjects();
 		void RecreateSwapchain();
 

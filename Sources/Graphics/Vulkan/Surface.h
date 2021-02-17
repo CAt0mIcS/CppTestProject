@@ -5,9 +5,6 @@
 
 namespace At0::VulkanTesting
 {
-	class VulkanInstance;
-	class PhysicalDevice;
-
 	class Surface
 	{
 	public:

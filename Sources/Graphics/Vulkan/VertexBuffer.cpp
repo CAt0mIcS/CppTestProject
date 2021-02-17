@@ -1,5 +1,9 @@
-﻿#include "VertexBuffer.h"
+﻿#include "pch.h"
+#include "VertexBuffer.h"
+
 #include "Graphics/Graphics.h"
+#include "LogicalDevice.h"
+#include "Commands/CommandBuffer.h"
 
 
 namespace At0::VulkanTesting

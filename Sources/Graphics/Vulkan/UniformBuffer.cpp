@@ -1,4 +1,5 @@
-﻿#include "UniformBuffer.h"
+﻿#include "pch.h"
+#include "UniformBuffer.h"
 
 #include "Graphics/Graphics.h"
 

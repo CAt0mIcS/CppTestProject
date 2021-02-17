@@ -1,16 +1,29 @@
-﻿#include "Graphics/Graphics.h"
+﻿#include "pch.h"
+#include "Graphics/Graphics.h"
 #include "Utils/RLogger.h"
 #include "Utils/RException.h"
 #include "Utils/RAssert.h"
 #include "Window.h"
 
-#include <vulkan/vulkan.h>
-
-#define GLM_FORCE_RADIANS
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-
 #include <chrono>
+
+#include "Vulkan/Swapchain.h"
+#include "Vulkan/VulkanInstance.h"
+#include "Vulkan/Surface.h"
+#include "Vulkan/PhysicalDevice.h"
+#include "Vulkan/LogicalDevice.h"
+#include "Vulkan/Framebuffer.h"
+#include "Vulkan/Renderpass/Renderpass.h"
+#include "Vulkan/Renderpass/Attachment.h"
+#include "Vulkan/Renderpass/Subpass.h"
+#include "Vulkan/Commands/CommandPool.h"
+#include "Vulkan/Commands/CommandBuffer.h"
+
+#include "Core/Codex.h"
+
+#include "Primitives/Cube.h"
+#include "Primitives/Square.h"
+#include "Primitives/Triangle.h"
 
 
 namespace At0::VulkanTesting
@@ -97,31 +110,30 @@ namespace At0::VulkanTesting
 			m_CommandBuffers[i] = MakeScope<CommandBuffer>();
 
 			// Prerecord commands
-			RecordCommandBuffer(m_CommandBuffers[i], m_Framebuffers[i]);
+			RecordCommandBuffer(*m_CommandBuffers[i], *m_Framebuffers[i]);
 		}
 	}
 
-	void Graphics::RecordCommandBuffer(
-		Scope<CommandBuffer>& cmdBuff, Scope<Framebuffer>& framebuffer)
+	void Graphics::RecordCommandBuffer(CommandBuffer& cmdBuff, const Framebuffer& framebuffer)
 	{
-		cmdBuff->Begin();
+		cmdBuff.Begin();
 
 		VkClearValue clearColor{ 0.0137254f, 0.014117f, 0.0149019f };
-		m_Renderpass->Begin(*cmdBuff, *framebuffer, clearColor);
+		m_Renderpass->Begin(cmdBuff, framebuffer, clearColor);
 
 		const VkViewport viewports[] = { m_Viewport };
 		const VkRect2D scissors[] = { m_Scissor };
-		vkCmdSetViewport(*cmdBuff, 0, std::size(viewports), viewports);
-		vkCmdSetScissor(*cmdBuff, 0, std::size(scissors), scissors);
+		vkCmdSetViewport(cmdBuff, 0, std::size(viewports), viewports);
+		vkCmdSetScissor(cmdBuff, 0, std::size(scissors), scissors);
 
 		for (Scope<Drawable>& drawable : m_Drawables)
 		{
-			drawable->CmdDraw(*cmdBuff);
+			drawable->CmdDraw(cmdBuff);
 		}
 
-		m_Renderpass->End(*cmdBuff);
+		m_Renderpass->End(cmdBuff);
 
-		cmdBuff->End();
+		cmdBuff.End();
 	}
 
 	void Graphics::CreateSyncObjects()

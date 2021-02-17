@@ -1,7 +1,8 @@
-﻿#include "Descriptor.h"
+﻿#include "pch.h"
+#include "Descriptor.h"
 #include "Graphics/Graphics.h"
-
-#include <vulkan/vulkan.h>
+#include "Graphics/Vulkan/Pipeline.h"
+#include "Graphics/Vulkan/LogicalDevice.h"
 
 
 namespace At0::VulkanTesting

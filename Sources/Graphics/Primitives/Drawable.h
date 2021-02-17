@@ -4,13 +4,6 @@
 
 #include <glm/glm.hpp>
 
-#include "Graphics/Vulkan/VertexBuffer.h"
-#include "Graphics/Vulkan/IndexBuffer.h"
-#include "Graphics/Vulkan/GraphicsPipeline.h"
-
-#include "Graphics/Core/Codex.h"
-
-
 #include "Graphics/Core/UniformHandler.h"
 #include "Graphics/Core/DescriptorsHandler.h"
 
@@ -18,6 +11,10 @@
 namespace At0::VulkanTesting
 {
 	class CommandBuffer;
+	class GraphicsPipeline;
+	class IndexBuffer;
+	class Bindable;
+
 
 	class Drawable
 	{

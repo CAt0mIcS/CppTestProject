@@ -1,5 +1,8 @@
-﻿#include "DescriptorsHandler.h"
+﻿#include "pch.h"
+#include "DescriptorsHandler.h"
 
+#include "Graphics/Vulkan/VulkanInstance.h"
+#include "Graphics/Vulkan/LogicalDevice.h"
 #include "Graphics/Vulkan/Pipeline.h"
 #include "UniformHandler.h"
 

@@ -2,6 +2,9 @@
 #include "Graphics/Core/Codex.h"
 
 #include "Graphics/Graphics.h"
+#include "Graphics/Vulkan/IndexBuffer.h"
+#include "Graphics/Vulkan/VertexBuffer.h"
+#include "Graphics/Vulkan/GraphicsPipeline.h"
 
 
 namespace At0::VulkanTesting

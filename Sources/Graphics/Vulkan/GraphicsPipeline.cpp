@@ -1,13 +1,14 @@
-﻿#include "GraphicsPipeline.h"
-#include "Graphics/Graphics.h"
-#include "Window.h"
+﻿#include "pch.h"
+#include "GraphicsPipeline.h"
 
-#include <glslang/SPIRV/GlslangToSpv.h>
+#include "Graphics/Graphics.h"
+#include "LogicalDevice.h"
+#include "Renderpass/Renderpass.h"
+#include "Window.h"
 
 #include "VertexBuffer.h"
 
-#include <fstream>
-#include <sstream>
+#include <glslang/SPIRV/GlslangToSpv.h>
 
 
 namespace At0::VulkanTesting

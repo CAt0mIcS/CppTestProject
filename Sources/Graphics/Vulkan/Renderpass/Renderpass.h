@@ -21,8 +21,8 @@ namespace At0::VulkanTesting
 
 		operator const VkRenderPass&() const { return m_Renderpass; }
 
-		void Begin(
-			CommandBuffer& cmdBuff, Framebuffer& framebuffer, const VkClearValue& clearColor) const;
+		void Begin(CommandBuffer& cmdBuff, const Framebuffer& framebuffer,
+			const VkClearValue& clearColor) const;
 		void End(CommandBuffer& cmdBuff);
 
 	private:

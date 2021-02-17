@@ -1,11 +1,11 @@
 ﻿#pragma once
 
-#include "pch.h"
-
 #include <string>
+#include <map>
 #include <optional>
 
 #include "Graphics/Vulkan/Descriptor.h"
+#include "Graphics/Vulkan/UniformBuffer.h"
 
 
 namespace At0::VulkanTesting
@@ -38,12 +38,6 @@ namespace At0::VulkanTesting
 				}
 
 				m_Descriptors.erase(it);
-			}
-
-			// Only non-null descriptors can be mapped.
-			if (!&descriptor)
-			{
-				return;
 			}
 
 			// When adding the descriptor find the location in the shader.

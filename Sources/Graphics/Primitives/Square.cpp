@@ -1,6 +1,9 @@
 ﻿#include "Square.h"
 
 #include "Graphics/Core/Codex.h"
+#include "Graphics/Vulkan/IndexBuffer.h"
+#include "Graphics/Vulkan/VertexBuffer.h"
+#include "Graphics/Vulkan/GraphicsPIpeline.h"
 #include "Graphics/Graphics.h"
 
 
