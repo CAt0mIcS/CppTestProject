@@ -34,9 +34,11 @@ namespace At0::VulkanTesting
 		// clang-format on
 		EmplaceBindable(Codex::Resolve<IndexBuffer>("CubeIndices", indices));
 
-		EmplaceBindable(Codex::Resolve<GraphicsPipeline>(Graphics::Get().GetRenderpass(),
-			"Resources/Shaders/VertexShader.vert", "Resources/Shaders/FragmentShader.frag"));
+		Ref<GraphicsPipeline> graphicsPipeline =
+			Codex::Resolve<GraphicsPipeline>(Graphics::Get().GetRenderpass(),
+				"Resources/Shaders/VertexShader.vert", "Resources/Shaders/FragmentShader.frag");
+		EmplaceBindable(graphicsPipeline);
 
-		Drawable::InternalInit();
+		EmplaceBindable(Codex::Resolve<UniformBuffer>(*graphicsPipeline));
 	}
 }  // namespace At0::VulkanTesting

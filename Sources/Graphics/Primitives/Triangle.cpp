@@ -24,10 +24,12 @@ namespace At0::VulkanTesting
 		EmplaceBindable(Codex::Resolve<VertexBuffer>("Triangle", vertices));
 		EmplaceBindable(Codex::Resolve<IndexBuffer>("012", indices));
 
-		EmplaceBindable(Codex::Resolve<GraphicsPipeline>(Graphics::Get().GetRenderpass(),
-			"Resources/Shaders/VertexShader.vert", "Resources/Shaders/FragmentShader.frag"));
+		Ref<GraphicsPipeline> graphicsPipeline =
+			Codex::Resolve<GraphicsPipeline>(Graphics::Get().GetRenderpass(),
+				"Resources/Shaders/VertexShader.vert", "Resources/Shaders/FragmentShader.frag");
+		EmplaceBindable(graphicsPipeline);
 
-		Drawable::InternalInit();
+		EmplaceBindable(Codex::Resolve<UniformBuffer>(*graphicsPipeline));
 	}
 
 }  // namespace At0::VulkanTesting

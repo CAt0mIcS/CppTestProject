@@ -368,7 +368,7 @@ namespace At0::VulkanTesting
 
 			VkWriteDescriptorSet descriptorWrite{};
 			descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-			descriptorWrite.dstSet = drawable->GetDescriptorSet();
+			descriptorWrite.dstSet = drawable->GetUniformBuffer().GetDescriptorSet();
 			descriptorWrite.dstBinding = 0;
 			descriptorWrite.dstArrayElement = 0;
 

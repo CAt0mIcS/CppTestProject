@@ -22,9 +22,11 @@ namespace At0::VulkanTesting
 		std::vector<uint16_t> indices{ 0, 1, 2, 2, 3, 0 };
 		EmplaceBindable(Codex::Resolve<IndexBuffer>("012230", indices));
 
-		EmplaceBindable(Codex::Resolve<GraphicsPipeline>(Graphics::Get().GetRenderpass(),
-			"Resources/Shaders/VertexShader.vert", "Resources/Shaders/FragmentShader.frag"));
+		Ref<GraphicsPipeline> graphicsPipeline =
+			Codex::Resolve<GraphicsPipeline>(Graphics::Get().GetRenderpass(),
+				"Resources/Shaders/VertexShader.vert", "Resources/Shaders/FragmentShader.frag");
+		EmplaceBindable(graphicsPipeline);
 
-		Drawable::InternalInit();
+		EmplaceBindable(Codex::Resolve<UniformBuffer>(*graphicsPipeline));
 	}
 }  // namespace At0::VulkanTesting

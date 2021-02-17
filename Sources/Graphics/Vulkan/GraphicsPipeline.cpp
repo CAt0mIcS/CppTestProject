@@ -58,37 +58,6 @@ namespace At0::VulkanTesting
 		return oss->str();
 	}
 
-	VkShaderModule GraphicsPipeline::CreateShader(std::vector<char> src)
-	{
-		VkShaderModule shaderModule;
-
-		VkShaderModuleCreateInfo createInfo{};
-		createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-		createInfo.codeSize = src.size();
-		createInfo.pCode = reinterpret_cast<uint32_t*>(src.data());
-
-		RAY_VK_THROW_FAILED(vkCreateShaderModule(Graphics::Get().GetLogicalDevice(), &createInfo,
-								nullptr, &shaderModule),
-			"Failed to create fragment shader module.");
-
-		return shaderModule;
-	}
-
-	std::vector<char> GraphicsPipeline::ReadShader(std::string_view filepath)
-	{
-		std::ifstream reader(filepath.data(), std::ios::ate | std::ios::binary);
-
-		size_t filesize = (size_t)reader.tellg();
-		RAY_MEXPECTS(filesize != 0 && filesize != SIZE_MAX, "Shader file not found");
-		std::vector<char> code(filesize);
-
-		reader.seekg(0);
-		reader.read(code.data(), filesize);
-		reader.close();
-
-		return code;
-	}
-
 	void GraphicsPipeline::CreateShaderProgram(const std::vector<std::string_view>& filepaths)
 	{
 		std::ostringstream defineBlock;

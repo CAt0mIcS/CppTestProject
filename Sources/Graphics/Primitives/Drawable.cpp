@@ -6,11 +6,9 @@
 
 namespace At0::VulkanTesting
 {
-	void Drawable::CmdDraw(CommandBuffer& cmdBuff)
+	void Drawable::CmdDraw(const CommandBuffer& cmdBuff)
 	{
-		VkDescriptorSet descSet = *m_DescriptorSet;
-
-		m_DescriptorSet->Bind(cmdBuff);
+		m_UniformBuffer->Bind(cmdBuff);
 		for (Ref<Bindable>& bindable : m_Bindables)
 		{
 			bindable->Bind(cmdBuff);
@@ -41,14 +39,9 @@ namespace At0::VulkanTesting
 			m_IndexBuffer = (IndexBuffer*)bindable.get();
 		else if (dynamic_cast<GraphicsPipeline*>(bindable.get()))
 			m_GraphicsPipeline = (GraphicsPipeline*)bindable.get();
+		else if (dynamic_cast<UniformBuffer*>(bindable.get()))
+			m_UniformBuffer = (UniformBuffer*)bindable.get();
 
 		m_Bindables.emplace_back(std::move(bindable));
-	}
-
-	void Drawable::InternalInit()
-	{
-		// Note: Pipeline needs to be set at this point
-		m_DescriptorSet = MakeScope<DescriptorSet>(GetGraphicsPipeline());
-		m_UniformBuffer = MakeScope<UniformBuffer>();
 	}
 }  // namespace At0::VulkanTesting

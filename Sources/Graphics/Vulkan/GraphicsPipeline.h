@@ -39,9 +39,6 @@ namespace At0::VulkanTesting
 		}
 
 	private:
-		static VkShaderModule CreateShader(std::vector<char> src);
-		static std::vector<char> ReadShader(std::string_view filepath);
-
 		void CreateShaderProgram(const std::vector<std::string_view>& filepaths);
 		void CreateDescriptorSetLayout();
 		void CreateDescriptorPool();

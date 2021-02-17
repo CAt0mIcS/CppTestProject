@@ -5,7 +5,8 @@
 
 namespace At0::VulkanTesting
 {
-	UniformBuffer::UniformBuffer()
+	UniformBuffer::UniformBuffer(const Pipeline& pipeline, std::string_view tag)
+		: m_DescriptorSet(pipeline)
 	{
 		VkDeviceSize bufferSize = sizeof(UniformBufferObject);
 
@@ -33,4 +34,18 @@ namespace At0::VulkanTesting
 		descriptorSetLayoutBinding.pImmutableSamplers = nullptr;
 		return descriptorSetLayoutBinding;
 	}
+
+	std::string UniformBuffer::GetUID(const Pipeline& pipeline, std::string_view tag)
+	{
+		static uint64_t nextID = 0;
+		if (tag.empty())
+		{
+			++nextID;
+			return typeid(UniformBuffer).name() + std::to_string(nextID);
+		}
+
+		return typeid(UniformBuffer).name() + std::string(tag);
+	}
+
+	void UniformBuffer::Bind(const CommandBuffer& cmdBuff) { m_DescriptorSet.Bind(cmdBuff); }
 }  // namespace At0::VulkanTesting
