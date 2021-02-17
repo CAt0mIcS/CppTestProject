@@ -23,6 +23,10 @@ set(SKIP_GLSLANG_INSTALL ON CACHE BOOL "" FORCE)
 set(ENABLE_OPT ON CACHE BOOL "" FORCE)
 set(ENABLE_CTEST OFF CACHE BOOL "" FORCE)
 
+set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(ASSIMP_INSTALL OFF CACHE BOOL "" FORCE)
+
+
 add_subdirectory("Extern")
 
 set(SRC
@@ -134,7 +138,12 @@ set(INC
 )
 
 set(LIB
-    "${Vulkan_LIBRARIES}" "glfw" "glm" "glslang" "SPIRV"
+    "${Vulkan_LIBRARIES}"
+    "glfw"
+    "glm"
+    "glslang"
+    "SPIRV"
+    "assimp"
 )
 
 set(CMAKE_CXX_STANDARD 17)
