@@ -67,7 +67,6 @@ namespace At0::VulkanTesting
 		void RecordCommandBuffer(Scope<CommandBuffer>& cmdBuff, Scope<Framebuffer>& framebuffer);
 		void CreateSyncObjects();
 		void RecreateSwapchain();
-		void WriteDescriptorSets();
 
 		void UpdateViewport();
 		void UpdateScissor();

@@ -38,7 +38,6 @@ namespace At0::VulkanTesting
 		// --------------------------------------------------------------
 		// Create all drawables
 		CreateDrawables();
-		WriteDescriptorSets();
 
 		CreateCommandBuffers();
 		CreateSyncObjects();
@@ -317,7 +316,6 @@ namespace At0::VulkanTesting
 		UpdateViewport();
 		UpdateScissor();
 		CreateFramebuffers();
-		WriteDescriptorSets();
 		m_CommandPool = MakeScope<CommandPool>();
 		CreateCommandBuffers();
 
@@ -355,28 +353,5 @@ namespace At0::VulkanTesting
 		{
 			drawable->Update();
 		}
-	}
-
-	void Graphics::WriteDescriptorSets()
-	{
-		// for (Scope<Drawable>& drawable : m_Drawables)
-		//{
-		//	VkDescriptorBufferInfo bufferInfo{};
-		//	bufferInfo.buffer = drawable->GetUniformBuffer();
-		//	bufferInfo.offset = 0;
-		//	bufferInfo.range = sizeof(UniformBufferObject);
-
-		//	VkWriteDescriptorSet descriptorWrite{};
-		//	descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		//	descriptorWrite.dstSet = drawable->GetUniformBuffer().GetDescriptorSet();
-		//	descriptorWrite.dstBinding = 0;
-		//	descriptorWrite.dstArrayElement = 0;
-
-		//	descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		//	descriptorWrite.descriptorCount = 1;
-		//	descriptorWrite.pBufferInfo = &bufferInfo;
-
-		//	DescriptorSet::Update({ descriptorWrite });
-		//}
 	}
 }  // namespace At0::VulkanTesting
