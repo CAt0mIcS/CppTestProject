@@ -14,8 +14,6 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-#include <random>
-
 
 namespace At0::VulkanTesting
 {
@@ -118,8 +116,6 @@ namespace At0::VulkanTesting
 		//	}
 		//}
 
-		static std::mt19937 mtDevice;
-
 		const std::string meshTag = base + "%" + mesh.mName.C_Str();
 
 		VertexLayout layout{};
@@ -134,15 +130,9 @@ namespace At0::VulkanTesting
 
 			for (uint32_t i = 0; i < mesh.mNumVertices; ++i)
 			{
-				std::uniform_real_distribution<float> colDist(0.0f, 1.0f);
-				float r = colDist(mtDevice);
-				float g = colDist(mtDevice);
-				float b = colDist(mtDevice);
-
 				vertexInput.EmplaceBack(
-					glm::vec3(mesh.mVertices[i].x, mesh.mVertices[i].y, mesh.mVertices[i].z),
-					glm::vec3(r, g, b)); /*,
-glm::vec3(mesh.mNormals[i].x, mesh.mNormals[i].y, mesh.mNormals[i].z));*/
+					glm::vec3(mesh.mVertices[i].x, mesh.mVertices[i].y, mesh.mVertices[i].z)); /*,
+					 glm::vec3(mesh.mNormals[i].x, mesh.mNormals[i].y, mesh.mNormals[i].z));*/
 			}
 
 			std::vector<IndexBuffer::Type> indices;
