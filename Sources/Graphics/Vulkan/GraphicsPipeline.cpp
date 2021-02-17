@@ -11,6 +11,14 @@
 #include <glslang/SPIRV/GlslangToSpv.h>
 
 
+bool operator==(
+	const VkVertexInputAttributeDescription& left, const VkVertexInputAttributeDescription& right)
+{
+	return left.location == right.location && left.binding == right.binding &&
+		   left.format == right.format && left.offset == right.offset;
+}
+
+
 namespace At0::VulkanTesting
 {
 	GraphicsPipeline::GraphicsPipeline(const VertexLayout& vertexLayout,
@@ -146,7 +154,13 @@ namespace At0::VulkanTesting
 		// ---------------------------------------------------------------------------------------
 		// Vertex Input
 		auto bindingDesc = vertexLayout.GetBindingDescription();
+
+		// VK_TODO: Use shader reflection
 		auto attribDesc = vertexLayout.GetAttributeDescriptions();
+		// auto attribDesc = m_Shader.GetAttributeDescriptions();
+
+		// RAY_MEXPECTS(attribDesc == vertexLayout.GetAttributeDescriptions(),
+		//	"Attribute descriptions in shader and vertex layout don't match");
 
 		VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
 		vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;

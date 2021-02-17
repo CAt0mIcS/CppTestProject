@@ -506,7 +506,7 @@ namespace At0::VulkanTesting
 			m_DescriptorTypes.emplace(descriptor.binding, descriptor.descriptorType);
 
 		// Process attribute descriptions.
-		uint32_t currentOffset = 4;
+		uint32_t currentOffset = 0;
 
 		for (const auto& [attributeName, attribute] : m_Attributes)
 		{
