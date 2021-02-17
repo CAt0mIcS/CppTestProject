@@ -51,8 +51,6 @@ namespace At0::VulkanTesting
 			m_GraphicsPipeline = (GraphicsPipeline*)bindable.get();
 			m_DescriptorsHandler = DescriptorsHandler(GetGraphicsPipeline());
 		}
-		// else if (dynamic_cast<UniformBuffer*>(bindable.get()))
-		//	m_UniformBuffer = (UniformBuffer*)bindable.get();
 
 		m_Bindables.emplace_back(std::move(bindable));
 	}

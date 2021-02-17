@@ -75,6 +75,7 @@ namespace At0::VulkanTesting
 	private:
 		// Utils
 		float m_Dt;
+		bool m_FramebufferResized = false;
 
 		// Specifies the maximum amount of images which we can work on concurrently
 		// (1 image is presenting, the other 2 of triple buffering can be worked on)
@@ -110,8 +111,6 @@ namespace At0::VulkanTesting
 
 		// We need to track for each swap chain image if a frame in flight is currently using it
 		std::vector<VkFence> m_ImagesInFlight;
-
-		bool m_FramebufferResized = false;
 
 		std::vector<Scope<Drawable>> m_Drawables;
 	};
