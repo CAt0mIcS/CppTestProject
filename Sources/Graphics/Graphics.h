@@ -109,5 +109,6 @@ namespace At0::VulkanTesting
 
 		std::vector<Scope<Drawable>> m_Drawables;
 		Scope<Model> m_Model;
+		Scope<Model> m_Model2;
 	};
 }  // namespace At0::VulkanTesting

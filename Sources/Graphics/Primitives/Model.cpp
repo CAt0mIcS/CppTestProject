@@ -20,9 +20,10 @@ namespace At0::VulkanTesting
 	Model::Model(std::string_view filename)
 	{
 		Assimp::Importer imp;
-		const auto pScene = imp.ReadFile(filename.data(),
-			aiProcess_Triangulate | /*aiProcess_JoinIdenticalVertices |*/
-				aiProcess_ConvertToLeftHanded | aiProcess_GenNormals | aiProcess_CalcTangentSpace);
+		const auto pScene = imp.ReadFile(
+			filename.data(), aiProcess_Triangulate | aiProcess_JoinIdenticalVertices |
+								 aiProcess_ConvertToLeftHanded |
+								 aiProcess_GenNormals /* | aiProcess_CalcTangentSpace*/);
 
 		if (!pScene)
 			RAY_THROW_RUNTIME("Failed to load model: {0}", imp.GetErrorString());
@@ -36,7 +37,14 @@ namespace At0::VulkanTesting
 		// m_RootNode = ParseNode(nextID, *pScene->mRootNode);
 	}
 
-	void Model::SetRootTransform(const glm::mat4& transform) {}
+	void Model::Translate(glm::vec3 translation)
+	{
+		for (Scope<Mesh>& mesh : m_Meshes)
+		{
+			auto& tform = mesh->GetEntity().Get<TransformComponent>();
+			tform.Translation += translation;
+		}
+	}
 
 	void Model::CmdDraw(const CommandBuffer& cmdBuff)
 	{
@@ -127,21 +135,16 @@ namespace At0::VulkanTesting
 			}
 
 			std::vector<IndexBuffer::Type> indices;
-			indices.resize(vertexInput.Size());
+			indices.reserve(mesh.mNumFaces * 3);
 
-			for (uint32_t i = 0; i < indices.size(); ++i)
-				indices[i] = i;
-
-			// indices.resize(mesh.mNumFaces * 3);
-
-			// for (uint32_t i = 0; i < mesh.mNumFaces; ++i)
-			//{
-			//	const aiFace& face = mesh.mFaces[i];
-			//	RAY_MEXPECTS(face.mNumIndices == 3, "Faces weren't triangulated");
-			//	indices[i] = (face.mIndices[0]);
-			//	indices[i] = (face.mIndices[1]);
-			//	indices[i] = (face.mIndices[2]);
-			//}
+			for (uint32_t i = 0; i < mesh.mNumFaces; ++i)
+			{
+				const auto& face = mesh.mFaces[i];
+				RAY_MEXPECTS(face.mNumIndices == 3, "Model was not triangulated.");
+				indices.push_back(face.mIndices[0]);
+				indices.push_back(face.mIndices[1]);
+				indices.push_back(face.mIndices[2]);
+			}
 
 			bindables.emplace_back(Codex::Resolve<VertexBuffer>(std::move(vertexInput), meshTag));
 			bindables.emplace_back(Codex::Resolve<IndexBuffer>(std::move(indices), meshTag));

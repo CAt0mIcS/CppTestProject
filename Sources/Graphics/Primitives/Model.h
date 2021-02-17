@@ -20,7 +20,7 @@ namespace At0::VulkanTesting
 	{
 	public:
 		Model(std::string_view filename);
-		void SetRootTransform(const glm::mat4& transform);
+		void Translate(glm::vec3 translation);
 
 		void CmdDraw(const CommandBuffer& cmdBuff);
 		void Update();
