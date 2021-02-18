@@ -1,11 +1,11 @@
 ﻿#pragma once
 
-#include "Image.h"
+#include "Image2D.h"
 
 
 namespace At0::VulkanTesting
 {
-	class DepthImage : public Image
+	class DepthImage : public Image2D
 	{
 	public:
 		DepthImage();

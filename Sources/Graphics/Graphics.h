@@ -9,6 +9,7 @@
 
 #include "Utils/RAssert.h"
 #include "Utils/RException.h"
+#include "Utils/RLogger.h"
 
 
 namespace At0::VulkanTesting

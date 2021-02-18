@@ -4,7 +4,7 @@
 #include "Graphics/Graphics.h"
 #include "LogicalDevice.h"
 #include "UniformBuffer.h"
-#include "Images/Image.h"
+#include "Images/Image2D.h"
 
 #include "Utils/RString.h"
 
@@ -449,7 +449,7 @@ namespace At0::VulkanTesting
 			case 0x9055:  // GL_IMAGE_2D_MULTISAMPLE
 				descriptorType = uniform.IsWriteOnly() ? VK_DESCRIPTOR_TYPE_STORAGE_IMAGE :
 														 VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-				m_DescriptorSetLayouts.emplace_back(Image /*2D*/ ::GetDescriptorSetLayout(
+				m_DescriptorSetLayouts.emplace_back(Image2D /*2D*/ ::GetDescriptorSetLayout(
 					(uint32_t)uniform.GetBinding(), descriptorType, uniform.GetStageFlags(), 1));
 				break;
 			// case 0x8B60:  // GL_SAMPLER_CUBE

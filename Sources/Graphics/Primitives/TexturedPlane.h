@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "Drawable.h"
-#include "Graphics/Vulkan/Images/Image.h"
+#include "Graphics/Vulkan/Images/Image2D.h"
 #include "Base.h"
 
 
@@ -14,6 +14,6 @@ namespace At0::VulkanTesting
 		virtual void CmdDraw(const CommandBuffer& cmdBuff) override;
 
 	private:
-		Image m_Texture;
+		Image2D m_Texture;
 	};
 }  // namespace At0::VulkanTesting
