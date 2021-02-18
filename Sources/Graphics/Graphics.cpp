@@ -26,6 +26,7 @@
 #include "Primitives/Model.h"
 #include "Primitives/Mesh.h"
 #include "Primitives/TexturedPlane.h"
+#include "Primitives/PointLight.h"
 
 
 namespace At0::VulkanTesting
@@ -145,6 +146,11 @@ namespace At0::VulkanTesting
 		TransformComponent& texPlaneTransform =
 			m_Drawables.back()->GetEntity().Get<TransformComponent>();
 		texPlaneTransform.Translation = { 0.0f, 5.0f, 0.0f };
+
+		m_Drawables.emplace_back(MakeScope<PointLight>());
+		TransformComponent& ptLightTransform =
+			m_Drawables.back()->GetEntity().Get<TransformComponent>();
+		ptLightTransform.Translation = { 5.0f, 5.0f, 0.0f };
 	}
 
 	void Graphics::CreateCommandBuffers()
