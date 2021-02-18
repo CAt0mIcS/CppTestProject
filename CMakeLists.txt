@@ -127,6 +127,8 @@ set(SRC
     "Sources/Graphics/Primitives/PointLight.cpp"
     "Sources/Graphics/Primitives/TexturedPlane.h"
     "Sources/Graphics/Primitives/TexturedPlane.cpp"
+    "Sources/Graphics/Primitives/IndexedTriangleList.h"
+    "Sources/Graphics/Primitives/IndexedTriangleList.cpp"
 
 
     "Sources/main.cpp"
