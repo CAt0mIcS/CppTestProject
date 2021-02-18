@@ -49,7 +49,10 @@ namespace At0::VulkanTesting
 	void Model::CmdDraw(const CommandBuffer& cmdBuff)
 	{
 		for (Scope<Mesh>& mesh : m_Meshes)
+		{
+			mesh->CmdBind(cmdBuff);
 			mesh->CmdDraw(cmdBuff);
+		}
 	}
 
 	void Model::Update()
