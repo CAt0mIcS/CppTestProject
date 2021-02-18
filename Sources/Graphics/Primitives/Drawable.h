@@ -10,6 +10,9 @@
 #include "Graphics/Core/Entity.h"
 #include "Graphics/Core/Scene.h"
 
+#include "Graphics/Vulkan/Descriptor.h"
+#include "Graphics/Vulkan/UniformBuffer.h"
+
 
 namespace At0::VulkanTesting
 {
@@ -32,7 +35,12 @@ namespace At0::VulkanTesting
 		Entity& GetEntity() { return m_Entity; }
 		const Entity& GetEntity() const { return m_Entity; }
 
-		virtual ~Drawable() = default;
+		virtual ~Drawable();
+
+		Scope<DescriptorSet> mvdescriptorSet;
+		Scope<DescriptorSet> mvpdescriptorSet;
+		Scope<UniformBuffer> mvUniformBuffer;
+		Scope<UniformBuffer> mvpUniformBuffer;
 
 	protected:
 		Drawable() = default;

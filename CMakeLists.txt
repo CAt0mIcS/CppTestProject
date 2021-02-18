@@ -92,6 +92,8 @@ set(SRC
     "Sources/Graphics/Vulkan/Pipeline.h"
     "Sources/Graphics/Vulkan/GraphicsPipeline.h"
     "Sources/Graphics/Vulkan/GraphicsPipeline.cpp"
+    "Sources/Graphics/Vulkan/Descriptor.h"
+    "Sources/Graphics/Vulkan/Descriptor.cpp"
     "Sources/Graphics/Vulkan/Buffer.h"
     "Sources/Graphics/Vulkan/Buffer.cpp"
     "Sources/Graphics/Vulkan/VertexBuffer.h"

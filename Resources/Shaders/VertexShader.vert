@@ -3,7 +3,6 @@
 
 layout(binding = 0) uniform Transforms
 {
-    mat4 modelView;
     mat4 modelViewProj;
 } ubo;
 
