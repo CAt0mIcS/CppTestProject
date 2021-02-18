@@ -1,12 +1,9 @@
 ﻿#include "pch.h"
 #include "IndexedTriangleList.h"
 
-#include <DirectXMath.h>
-
 
 namespace At0::VulkanTesting
 {
-	static constexpr double PI_D = 3.14159265358979323846;
 	static constexpr float PI = 3.14159265f;
 
 	IndexedTriangleList::IndexedTriangleList(
@@ -17,49 +14,47 @@ namespace At0::VulkanTesting
 
 	IndexedTriangleList IndexedTriangleList::UVSphere(VertexLayout layout, int latDiv, int longDiv)
 	{
-		namespace dx = DirectX;
-
 		constexpr float radius = 1.0f;
-		const auto base = dx::XMVectorSet(0.0f, 0.0f, radius, 0.0f);
+		const glm::vec4 base = glm::vec4{ 0.0f, 0.0f, radius, 0.0f };
 		const float lattitudeAngle = PI / latDiv;
 		const float longitudeAngle = 2.0f * PI / longDiv;
 
 		VertexInput vb{ std::move(layout) };
 		for (int iLat = 1; iLat < latDiv; iLat++)
 		{
-			const auto latBase =
-				dx::XMVector3Transform(base, dx::XMMatrixRotationX(lattitudeAngle * iLat));
+			glm::vec4 latBase = base * glm::rotate(glm::mat4(1.0f), lattitudeAngle * iLat,
+										   glm::vec3(1.0f, 0.0f, 0.0f));
+
 			for (int iLong = 0; iLong < longDiv; iLong++)
 			{
-				dx::XMFLOAT3 calculatedPos;
-				auto v =
-					dx::XMVector3Transform(latBase, dx::XMMatrixRotationZ(longitudeAngle * iLong));
-				dx::XMStoreFloat3(&calculatedPos, v);
-				vb.EmplaceBack(*(glm::vec3*)&calculatedPos);
+				glm::vec3 calculatedPos =
+					latBase * glm::rotate(glm::mat4(1.0f), longitudeAngle * iLong,
+								  glm::vec3(0.0f, 0.0f, 1.0f));
+
+				vb.EmplaceBack(calculatedPos);
 			}
 		}
 
 		// add the cap vertices
-		const auto iNorthPole = (unsigned short)vb.Size();
+		const uint16_t iNorthPole = (uint16_t)vb.Size();
 		{
-			dx::XMFLOAT3 northPos;
-			dx::XMStoreFloat3(&northPos, base);
-			vb.EmplaceBack(*(glm::vec3*)&northPos);
+			glm::vec3 northPos = base;
+			vb.EmplaceBack(northPos);
 		}
-		const auto iSouthPole = (unsigned short)vb.Size();
+		const uint16_t iSouthPole = (uint16_t)vb.Size();
 		{
-			dx::XMFLOAT3 southPos;
-			dx::XMStoreFloat3(&southPos, dx::XMVectorNegate(base));
-			vb.EmplaceBack(*(glm::vec3*)&southPos);
+			glm::vec3 southPos = -base;
+			vb.EmplaceBack(southPos);
 		}
 
-		const auto calcIdx = [latDiv, longDiv](unsigned short iLat, unsigned short iLong) {
+		const auto calcIdx = [latDiv, longDiv](IndexBuffer::Type iLat, IndexBuffer::Type iLong) {
 			return iLat * longDiv + iLong;
 		};
-		std::vector<unsigned short> indices;
-		for (unsigned short iLat = 0; iLat < latDiv - 2; iLat++)
+
+		std::vector<IndexBuffer::Type> indices;
+		for (IndexBuffer::Type iLat = 0; iLat < latDiv - 2; iLat++)
 		{
-			for (unsigned short iLong = 0; iLong < longDiv - 1; iLong++)
+			for (IndexBuffer::Type iLong = 0; iLong < longDiv - 1; iLong++)
 			{
 				indices.push_back(calcIdx(iLat, iLong));
 				indices.push_back(calcIdx(iLat + 1, iLong));
@@ -78,7 +73,7 @@ namespace At0::VulkanTesting
 		}
 
 		// cap fans
-		for (unsigned short iLong = 0; iLong < longDiv - 1; iLong++)
+		for (IndexBuffer::Type iLong = 0; iLong < longDiv - 1; iLong++)
 		{
 			// north
 			indices.push_back(iNorthPole);

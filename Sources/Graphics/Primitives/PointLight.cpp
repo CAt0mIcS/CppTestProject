@@ -23,8 +23,8 @@ namespace At0::VulkanTesting
 		EmplaceBindable(Codex::Resolve<IndexBuffer>(uvSphereModel.GetIndices(), "UVSphere"));
 
 		EmplaceBindable(Codex::Resolve<GraphicsPipeline>(
-			layout, std::vector<std::string_view>{ "Resources/Shaders/Default/DefaultShader.vert",
-						"Resources/Shaders/Default/DefaultShader.frag" }));
+			layout, std::vector<std::string_view>{ "Resources/Shaders/VertexShader.vert",
+						"Resources/Shaders/FragmentShader.frag" }));
 	}
 
 	void PointLight::CmdDraw(const CommandBuffer& cmdBuff)
