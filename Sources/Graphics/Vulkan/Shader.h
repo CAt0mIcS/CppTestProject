@@ -4,7 +4,6 @@
 
 #include <string>
 #include <vector>
-#include <map>
 #include <unordered_map>
 #include <optional>
 #include <filesystem>
@@ -259,20 +258,20 @@ namespace At0::VulkanTesting
 
 	private:
 		std::vector<std::string> m_Stages;
-		std::map<std::string, Uniform> m_Uniforms;
-		std::map<std::string, UniformBlock> m_UniformBlocks;
-		std::map<std::string, Attribute> m_Attributes;
-		std::map<std::string, Constant> m_Constants;
+		std::unordered_map<std::string, Uniform> m_Uniforms;
+		std::unordered_map<std::string, UniformBlock> m_UniformBlocks;
+		std::unordered_map<std::string, Attribute> m_Attributes;
+		std::unordered_map<std::string, Constant> m_Constants;
 
 		std::array<std::optional<uint32_t>, 3> m_LocalSizes;
 
-		std::map<std::string, uint32_t> m_DescriptorLocations;
-		std::map<std::string, uint32_t> m_DescriptorSizes;
+		std::unordered_map<std::string, uint32_t> m_DescriptorLocations;
+		std::unordered_map<std::string, uint32_t> m_DescriptorSizes;
 
 		std::vector<VkDescriptorSetLayoutBinding> m_DescriptorSetLayouts;
 		uint32_t m_LastDescriptorBinding = 0;
 		std::vector<VkDescriptorPoolSize> m_DescriptorPools;
-		std::map<uint32_t, VkDescriptorType> m_DescriptorTypes;
+		std::unordered_map<uint32_t, VkDescriptorType> m_DescriptorTypes;
 		std::vector<VkVertexInputAttributeDescription> m_AttributeDescriptions;
 
 		mutable std::vector<std::string> m_NotFoundNames;
