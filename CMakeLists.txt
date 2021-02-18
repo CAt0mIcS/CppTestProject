@@ -83,6 +83,8 @@ set(SRC
     "Sources/Graphics/Vulkan/Commands/CommandPool.cpp"
     "Sources/Graphics/Vulkan/Images/ImageView.h"
     "Sources/Graphics/Vulkan/Images/ImageView.cpp"
+    "Sources/Graphics/Vulkan/Images/Image.h"
+    "Sources/Graphics/Vulkan/Images/Image.cpp"
     "Sources/Graphics/Vulkan/Bindable.h"
     "Sources/Graphics/Vulkan/Pipeline.h"
     "Sources/Graphics/Vulkan/GraphicsPipeline.h"
@@ -101,6 +103,8 @@ set(SRC
     "Sources/Graphics/Vulkan/Renderpass/Subpass.cpp"
     "Sources/Graphics/Vulkan/Renderpass/Attachment.h"
     "Sources/Graphics/Vulkan/Renderpass/Attachment.cpp"
+    "Sources/Graphics/Vulkan/Textures/Sampler.h"
+    "Sources/Graphics/Vulkan/Textures/Sampler.cpp"
 
     "Sources/Graphics/Primitives/Drawable.h"
     "Sources/Graphics/Primitives/Drawable.cpp"
@@ -116,6 +120,8 @@ set(SRC
     "Sources/Graphics/Primitives/Mesh.cpp"
     "Sources/Graphics/Primitives/PointLight.h"
     "Sources/Graphics/Primitives/PointLight.cpp"
+    "Sources/Graphics/Primitives/TexturedPlane.h"
+    "Sources/Graphics/Primitives/TexturedPlane.cpp"
 
 
     "Sources/main.cpp"
@@ -131,6 +137,8 @@ set(SHADERS
     "${CMAKE_SOURCE_DIR}/Resources/Shaders/FragmentShader.frag"
     "${CMAKE_SOURCE_DIR}/Resources/Shaders/PhongModelShader.vert"
     "${CMAKE_SOURCE_DIR}/Resources/Shaders/PhongModelShader.frag"
+    "${CMAKE_SOURCE_DIR}/Resources/Shaders/FlatTextureShader.vert"
+    "${CMAKE_SOURCE_DIR}/Resources/Shaders/FlatTextureShader.frag"
 )
 
 find_package("Vulkan" REQUIRED FATAL_ERROR)
@@ -140,6 +148,7 @@ set(INC
     "${CMAKE_SOURCE_DIR}/Extern/glfw/include"
     "${CMAKE_SOURCE_DIR}/Sources"
     "${CMAKE_SOURCE_DIR}/Extern/entt/src"
+    "${CMAKE_SOURCE_DIR}/Extern/"
 )
 
 set(LIB

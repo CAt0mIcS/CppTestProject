@@ -21,7 +21,8 @@ namespace At0::VulkanTesting
 	class Drawable
 	{
 	public:
-		void CmdDraw(const CommandBuffer& cmdBuff);
+		void CmdBind(const CommandBuffer& cmdBuff);
+		virtual void CmdDraw(const CommandBuffer& cmdBuff);
 		void Update();
 
 		const IndexBuffer& GetIndexBuffer() const { return *m_IndexBuffer; }
@@ -37,13 +38,14 @@ namespace At0::VulkanTesting
 
 		void EmplaceBindable(Ref<Bindable> bindable);
 
+	protected:
+		DescriptorsHandler m_DescriptorsHandler;
+		UniformHandler m_UniformHandler;
+
 	private:
 		std::vector<Ref<Bindable>> m_Bindables;
 		IndexBuffer* m_IndexBuffer;
 		GraphicsPipeline* m_GraphicsPipeline;
-
-		DescriptorsHandler m_DescriptorsHandler;
-		UniformHandler m_UniformHandler;
 
 		Entity m_Entity = Scene::Get().CreateEntity();
 	};

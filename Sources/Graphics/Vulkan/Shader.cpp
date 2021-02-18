@@ -4,6 +4,7 @@
 #include "Graphics/Graphics.h"
 #include "LogicalDevice.h"
 #include "UniformBuffer.h"
+#include "Images/Image.h"
 
 #include "Utils/RString.h"
 
@@ -439,28 +440,28 @@ namespace At0::VulkanTesting
 		for (const auto& [uniformName, uniform] : m_Uniforms)
 		{
 			VkDescriptorType descriptorType = VK_DESCRIPTOR_TYPE_MAX_ENUM;
-			// switch (uniform.GetGlType())
-			//{
-			// case 0x8B5E:  // GL_SAMPLER_2D
-			// case 0x904D:  // GL_IMAGE_2D
-			// case 0x8DC1:  // GL_TEXTURE_2D_ARRAY
-			// case 0x9108:  // GL_SAMPLER_2D_MULTISAMPLE
-			// case 0x9055:  // GL_IMAGE_2D_MULTISAMPLE
-			//	descriptorType = uniform.IsWriteOnly() ? VK_DESCRIPTOR_TYPE_STORAGE_IMAGE :
-			//											 VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-			//	m_DescriptorSetLayouts.emplace_back(Image2D::GetDescriptorSetLayout(
-			//		(uint32_t)uniform.GetBinding(), descriptorType, uniform.GetStageFlags(), 1));
-			//	break;
+			switch (uniform.GetGlType())
+			{
+			case 0x8B5E:  // GL_SAMPLER_2D
+			case 0x904D:  // GL_IMAGE_2D
+			case 0x8DC1:  // GL_TEXTURE_2D_ARRAY
+			case 0x9108:  // GL_SAMPLER_2D_MULTISAMPLE
+			case 0x9055:  // GL_IMAGE_2D_MULTISAMPLE
+				descriptorType = uniform.IsWriteOnly() ? VK_DESCRIPTOR_TYPE_STORAGE_IMAGE :
+														 VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+				m_DescriptorSetLayouts.emplace_back(Image /*2D*/ ::GetDescriptorSetLayout(
+					(uint32_t)uniform.GetBinding(), descriptorType, uniform.GetStageFlags(), 1));
+				break;
 			// case 0x8B60:  // GL_SAMPLER_CUBE
 			// case 0x9050:  // GL_IMAGE_CUBE
 			// case 0x9054:  // GL_IMAGE_CUBE_MAP_ARRAY
-			//	descriptorType = uniform.IsWriteOnly() ? VK_DESCRIPTOR_TYPE_STORAGE_IMAGE :
-			//											 VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-			//	m_DescriptorSetLayouts.emplace_back(ImageCube::GetDescriptorSetLayout(
-			//		(uint32_t)uniform.GetBinding(), descriptorType, uniform.GetStageFlags(), 1));
-			//	break;
-			// default: break;
-			//}
+			// descriptorType = uniform.IsWriteOnly() ? VK_DESCRIPTOR_TYPE_STORAGE_IMAGE :
+			//										 VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+			// m_DescriptorSetLayouts.emplace_back(ImageCube::GetDescriptorSetLayout(
+			//	(uint32_t)uniform.GetBinding(), descriptorType, uniform.GetStageFlags(), 1));
+			// break;
+			default: break;
+			}
 
 			IncrementDescriptorPool(descriptorPoolCounts, descriptorType);
 			m_DescriptorLocations.emplace(uniformName, uniform.GetBinding());

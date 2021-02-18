@@ -38,9 +38,10 @@ namespace At0::VulkanTesting
 		static void CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage,
 			VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
 		static void CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
+		static uint32_t FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
+
 
 	protected:
-		static uint32_t FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 		Buffer(VkDeviceSize size);
 
 	protected:

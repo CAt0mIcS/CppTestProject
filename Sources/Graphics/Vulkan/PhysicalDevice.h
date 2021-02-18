@@ -16,6 +16,7 @@ namespace At0::VulkanTesting
 
 		operator const VkPhysicalDevice&() const { return m_Device; }
 		const VkPhysicalDeviceFeatures& GetFeatures() const { return m_Features; }
+		const VkPhysicalDeviceProperties& GetProperties() const { return m_Properties; }
 		const VkPhysicalDeviceMemoryProperties& GetMemoryProperties() const
 		{
 			return m_MemoryProperties;
@@ -28,6 +29,7 @@ namespace At0::VulkanTesting
 	private:
 		VkPhysicalDeviceFeatures m_Features;
 		VkPhysicalDeviceMemoryProperties m_MemoryProperties;
+		VkPhysicalDeviceProperties m_Properties;
 		VkPhysicalDevice m_Device;
 	};
 }  // namespace At0::VulkanTesting

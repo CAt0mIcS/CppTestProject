@@ -10,17 +10,16 @@
 
 namespace At0::VulkanTesting
 {
-	void Drawable::CmdDraw(const CommandBuffer& cmdBuff)
+	void Drawable::CmdBind(const CommandBuffer& cmdBuff)
 	{
 		for (Ref<Bindable>& bindable : m_Bindables)
 		{
 			bindable->Bind(cmdBuff);
 		}
+	}
 
-		m_DescriptorsHandler.Push("UniformBufferObject", m_UniformHandler);
-		m_DescriptorsHandler.Update(GetGraphicsPipeline());
-		m_DescriptorsHandler.BindDescriptor(cmdBuff, GetGraphicsPipeline());
-
+	void Drawable::CmdDraw(const CommandBuffer& cmdBuff)
+	{
 		vkCmdDrawIndexed(cmdBuff, GetIndexBuffer().GetNumIndices(), 1, 0, 0, 0);
 	}
 

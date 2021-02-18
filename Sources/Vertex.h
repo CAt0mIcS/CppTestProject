@@ -88,7 +88,7 @@ namespace At0::VulkanTesting
 			{
 			case Position2D: return VK_FORMAT_R32G32_SFLOAT;
 			case Position3D: return VK_FORMAT_R32G32B32_SFLOAT;
-			// case Texture2D: return ;
+			case Texture2D: return VK_FORMAT_R32G32_SFLOAT;
 			case Normal: return VK_FORMAT_R32G32B32_SFLOAT;
 			// case Tangent: return ;
 			// case Bitangent: return ;
