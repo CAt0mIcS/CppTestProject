@@ -7,8 +7,6 @@
 #include <glm/glm.hpp>
 
 #include "Base.h"
-#include "Graphics/Core/UniformHandler.h"
-#include "Graphics/Core/DescriptorsHandler.h"
 #include "Graphics/Core/Entity.h"
 #include "Graphics/Core/Scene.h"
 
@@ -40,10 +38,6 @@ namespace At0::VulkanTesting
 		Drawable() = default;
 
 		void EmplaceBindable(Ref<Bindable> bindable);
-
-	protected:
-		DescriptorsHandler m_DescriptorsHandler;
-		UniformHandler m_UniformHandler;
 
 	private:
 		std::vector<Ref<Bindable>> m_Bindables;

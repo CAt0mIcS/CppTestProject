@@ -28,10 +28,6 @@ namespace At0::VulkanTesting
 		TransformComponent& tform = m_Entity.Get<TransformComponent>();
 
 		glm::mat4 modelView = Graphics::Get().SceneCamera.Matrices.View * tform.GetMatrix();
-
-		m_UniformHandler.Push("modelView", modelView);
-		m_UniformHandler.Push(
-			"modelViewProj", Graphics::Get().SceneCamera.Matrices.Perspective * modelView);
 	}
 
 	void Drawable::EmplaceBindable(Ref<Bindable> bindable)
@@ -41,7 +37,7 @@ namespace At0::VulkanTesting
 		else if (dynamic_cast<GraphicsPipeline*>(bindable.get()))
 		{
 			m_GraphicsPipeline = (GraphicsPipeline*)bindable.get();
-			m_DescriptorsHandler = DescriptorsHandler(GetGraphicsPipeline());
+			// m_DescriptorsHandler = DescriptorsHandler(GetGraphicsPipeline());
 		}
 
 		m_Bindables.emplace_back(std::move(bindable));
