@@ -4,6 +4,7 @@
 #include <array>
 #include <string>
 
+#include "Base.h"
 #include "Buffer.h"
 #include "Bindable.h"
 #include "Vertex.h"

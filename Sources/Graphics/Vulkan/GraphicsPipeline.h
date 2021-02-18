@@ -4,6 +4,8 @@
 #include <string_view>
 #include <vector>
 
+#include "Base.h"
+
 #include "Pipeline.h"
 #include "Shader.h"
 #include "Vertex.h"

@@ -9,6 +9,7 @@ namespace At0::VulkanTesting
 	{
 	public:
 		DepthImage();
+		~DepthImage() = default;
 		VkFormat GetFormat() const { return m_DepthFormat; }
 		static bool HasStencilComponent(VkFormat format);
 

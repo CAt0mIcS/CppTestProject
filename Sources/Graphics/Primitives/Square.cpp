@@ -3,7 +3,7 @@
 #include "Graphics/Core/Codex.h"
 #include "Graphics/Vulkan/IndexBuffer.h"
 #include "Graphics/Vulkan/VertexBuffer.h"
-#include "Graphics/Vulkan/GraphicsPIpeline.h"
+#include "Graphics/Vulkan/GraphicsPipeline.h"
 #include "Graphics/Graphics.h"
 
 #include "Vertex.h"

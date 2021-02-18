@@ -9,6 +9,8 @@
 #include <optional>
 #include <filesystem>
 
+#include "Base.h"
+
 
 namespace glslang
 {

@@ -7,7 +7,6 @@
 
 #include "../../RString.h"
 #include "../../RSerialize.h"
-#include "Utils/RAssert.h"
 
 #include "../Formatters/RBracketFormatter.h"
 #include "../Formatters/RLogLevelFormatter.h"

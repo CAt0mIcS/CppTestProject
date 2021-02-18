@@ -1,11 +1,16 @@
 ﻿#pragma once
 
+#include "Base.h"
+
 #include <string>
 #include <map>
 #include <optional>
 
 #include "Graphics/Vulkan/Descriptor.h"
 #include "Graphics/Vulkan/UniformBuffer.h"
+#include "Graphics/Vulkan/Shader.h"
+
+#include "Utils/RLogger.h"
 
 
 namespace At0::VulkanTesting

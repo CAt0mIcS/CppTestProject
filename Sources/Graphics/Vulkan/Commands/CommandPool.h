@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include <vulkan/vulkan_core.h>
+#include "Base.h"
 
 
 namespace At0::VulkanTesting

@@ -8,7 +8,7 @@
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #if !(GLM_COMPILER & GLM_COMPILER_CUDA)
-	#include "glm/gtx/string_cast.hpp"
+	#include <glm/gtx/string_cast.hpp>
 #endif
 
 #include <entt/entt.hpp>
@@ -23,29 +23,3 @@
 #include <memory>
 #include <filesystem>
 
-#include "Utils/RAssert.h"
-#include "Utils/RLogger.h"
-#include "Utils/RException.h"
-#include "Utils/RSerialize.h"
-
-
-namespace At0::VulkanTesting
-{
-	template<typename T>
-	using Ref = std::shared_ptr<T>;
-
-	template<typename T>
-	using Scope = std::unique_ptr<T>;
-
-	template<typename T, typename... Args>
-	Ref<T> MakeRef(Args&&... args)
-	{
-		return std::make_shared<T>(std::forward<Args>(args)...);
-	}
-
-	template<typename T, typename... Args>
-	Scope<T> MakeScope(Args&&... args)
-	{
-		return std::make_unique<T>(std::forward<Args>(args)...);
-	}
-}  // namespace At0::VulkanTesting

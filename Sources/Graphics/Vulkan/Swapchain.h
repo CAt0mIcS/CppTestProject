@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include "Base.h"
+
 #include <vulkan/vulkan_core.h>
 #include <vector>
 #include <memory>

@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include "Base.h"
 #include "../Bindable.h"
 
 #include <vulkan/vulkan_core.h>

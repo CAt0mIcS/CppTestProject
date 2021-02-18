@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include "Base.h"
+
 #include <memory>
 #include <string>
 

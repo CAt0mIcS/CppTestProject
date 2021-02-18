@@ -5,6 +5,12 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 include("CMake/Macros.cmake")
 
+# TODO: Enable for gcc and clang only
+if(UNIX)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -Wno-attributes")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -Wno-attributes")
+endif()
+
 # ------------------------------------------------------------------------------------------------
 # Set common options
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
@@ -25,6 +31,7 @@ set(ENABLE_CTEST OFF CACHE BOOL "" FORCE)
 
 set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(ASSIMP_INSTALL OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_ZLIB OFF CACHE BOOL "" FORCE)
 
 
 add_subdirectory("Extern")
@@ -128,6 +135,7 @@ set(SRC
     "Sources/pch.h"
     "Sources/Components.h"
     "Sources/Vertex.h"
+    "Sources/Base.h"
 )
 
 set(SHADERS

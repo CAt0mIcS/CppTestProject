@@ -1,8 +1,9 @@
 ﻿#pragma once
 
 #include <vulkan/vulkan_core.h>
-
 #include <vector>
+
+#include "Base.h"
 
 
 namespace At0::VulkanTesting
@@ -62,9 +63,9 @@ namespace At0::VulkanTesting
 	class Descriptor
 	{
 	public:
-		Descriptor() = default;
+		Descriptor(){};
 
-		virtual ~Descriptor() = default;
+		virtual ~Descriptor(){};
 
 		virtual WriteDescriptorSet GetWriteDescriptor(
 			uint32_t binding, VkDescriptorType descriptorType) const = 0;

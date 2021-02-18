@@ -1,9 +1,12 @@
 ﻿#pragma once
 
+#include "Base.h"
+
 #include "Graphics/Vulkan/Shader.h"
-#include "Graphics/Vulkan/Buffer.h"
+#include "Graphics/Vulkan/UniformBuffer.h"
 
 #include <optional>
+#include <string.h>
 
 
 namespace At0::VulkanTesting

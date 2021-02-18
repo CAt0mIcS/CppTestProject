@@ -2,6 +2,7 @@
 
 #include "Drawable.h"
 #include "Graphics/Vulkan/Images/Image.h"
+#include "Base.h"
 
 
 namespace At0::VulkanTesting

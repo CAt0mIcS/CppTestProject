@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "Drawable.h"
+#include "Base.h"
 
 namespace At0::VulkanTesting
 {

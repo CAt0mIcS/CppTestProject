@@ -2,7 +2,7 @@
 
 #ifndef NDEBUG
 
-	// clang-format off
+// clang-format off
 #include "RLogger.h"
 #include "RSerialize.h"
 #include "RString.h"

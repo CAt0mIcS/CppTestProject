@@ -3,8 +3,11 @@
 #include <string>
 #include <vector>
 
+#include "Base.h"
+
 #include "../Descriptor.h"
 #include "ImageView.h"
+#include "../Textures/Sampler.h"
 
 
 namespace At0::VulkanTesting
@@ -31,7 +34,7 @@ namespace At0::VulkanTesting
 
 		static VkDescriptorSetLayoutBinding GetDescriptorSetLayout(
 			uint32_t binding, VkDescriptorType type, VkShaderStageFlags stageFlag, uint32_t count);
-		WriteDescriptorSet GetWriteDescriptor(
+		virtual WriteDescriptorSet GetWriteDescriptor(
 			uint32_t binding, VkDescriptorType descriptorType) const override;
 		static std::vector<VkFormat> FindSupportedFormats(
 			std::vector<VkFormat> candidates, VkImageTiling tiling, VkFormatFeatureFlags features);

@@ -1,10 +1,10 @@
 ﻿#pragma once
 
-#include "pch.h"
 
 #include <memory>
 #include <array>
 
+#include "Base.h"
 #include "Camera.h"
 
 #include "Utils/RAssert.h"
