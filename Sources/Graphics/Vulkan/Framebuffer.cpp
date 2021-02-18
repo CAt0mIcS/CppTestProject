@@ -13,7 +13,7 @@ namespace At0::VulkanTesting
 		VkFramebufferCreateInfo createInfo{};
 		createInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
 		createInfo.renderPass = Graphics::Get().GetRenderpass();
-		createInfo.attachmentCount = attachments.size();
+		createInfo.attachmentCount = (uint32_t)attachments.size();
 		createInfo.pAttachments = attachments.data();
 		createInfo.width = Graphics::Get().GetSwapchain().GetExtent().width;
 		createInfo.height = Graphics::Get().GetSwapchain().GetExtent().height;

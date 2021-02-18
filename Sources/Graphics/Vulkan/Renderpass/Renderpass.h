@@ -3,9 +3,6 @@
 #include <vulkan/vulkan_core.h>
 #include <vector>
 
-#include "Attachment.h"
-#include "Subpass.h"
-
 
 namespace At0::VulkanTesting
 {
@@ -22,7 +19,7 @@ namespace At0::VulkanTesting
 		operator const VkRenderPass&() const { return m_Renderpass; }
 
 		void Begin(CommandBuffer& cmdBuff, const Framebuffer& framebuffer,
-			const VkClearValue& clearColor) const;
+			const std::vector<VkClearValue>& clearColor) const;
 		void End(CommandBuffer& cmdBuff);
 
 	private:

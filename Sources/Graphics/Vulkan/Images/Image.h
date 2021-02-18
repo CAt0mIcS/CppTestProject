@@ -1,20 +1,25 @@
 ﻿#pragma once
 
 #include <string>
+#include <vector>
 
 #include "../Descriptor.h"
+#include "ImageView.h"
 
 
 namespace At0::VulkanTesting
 {
 	class Sampler;
-	class ImageView;
 
 	class Image : public Descriptor
 	{
 	public:
 		Image(const std::string_view filepath);
+		Image() = default;
 		virtual ~Image();
+
+		operator const VkImage&() const { return m_Image; }
+		const VkImageView& GetImageView() const { return *m_ImageView; }
 
 		static void CreateImage(uint32_t width, uint32_t height, VkFormat format,
 			VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties,
@@ -28,13 +33,15 @@ namespace At0::VulkanTesting
 			uint32_t binding, VkDescriptorType type, VkShaderStageFlags stageFlag, uint32_t count);
 		WriteDescriptorSet GetWriteDescriptor(
 			uint32_t binding, VkDescriptorType descriptorType) const override;
+		static std::vector<VkFormat> FindSupportedFormats(
+			std::vector<VkFormat> candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
 
-	private:
-		VkImage m_Image;
-		VkDeviceMemory m_ImageMemory;
+	protected:
+		VkImage m_Image = VK_NULL_HANDLE;
+		VkDeviceMemory m_ImageMemory = VK_NULL_HANDLE;
 
-		Scope<Sampler> m_Sampler;
-		Scope<ImageView> m_ImageView;
-		VkImageLayout m_Layout;
+		Scope<Sampler> m_Sampler = nullptr;
+		Scope<ImageView> m_ImageView = nullptr;
+		VkImageLayout m_Layout = VK_IMAGE_LAYOUT_UNDEFINED;
 	};
 }  // namespace At0::VulkanTesting

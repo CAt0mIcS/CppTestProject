@@ -22,6 +22,7 @@ namespace At0::VulkanTesting
 	class CommandBuffer;
 	class Renderpass;
 	class Framebuffer;
+	class DepthImage;
 	class Drawable;
 
 	class Model;
@@ -90,6 +91,7 @@ namespace At0::VulkanTesting
 		Scope<LogicalDevice> m_LogicalDevice;
 		Scope<Swapchain> m_Swapchain;
 		Scope<Renderpass> m_Renderpass;
+		Scope<DepthImage> m_DepthImage;
 		Scope<CommandPool> m_CommandPool;
 		std::vector<Scope<CommandBuffer>> m_CommandBuffers;
 

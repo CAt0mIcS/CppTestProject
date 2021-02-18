@@ -2,6 +2,7 @@
 
 #include <memory>
 
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm/glm.hpp>
 
 #include "Graphics/Core/UniformHandler.h"

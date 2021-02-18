@@ -91,6 +91,17 @@ namespace At0::VulkanTesting
 					Window::Get().EnableCursor();
 			}
 
+			if (key == GLFW_KEY_LEFT_SHIFT && action == GLFW_PRESS)
+			{
+				Graphics::Get().SceneCamera.SetMovementSpeed(
+					Graphics::Get().SceneCamera.MovementSpeed * 5.0f);
+			}
+			else if (key == GLFW_KEY_LEFT_SHIFT && action == GLFW_RELEASE)
+			{
+				Graphics::Get().SceneCamera.SetMovementSpeed(
+					Graphics::Get().SceneCamera.MovementSpeed / 5.0f);
+			}
+
 			if (Graphics::Get().SceneCamera.Type == Camera::FirstPerson)
 			{
 				switch (action)

@@ -14,10 +14,9 @@
 #include "Vulkan/LogicalDevice.h"
 #include "Vulkan/Framebuffer.h"
 #include "Vulkan/Renderpass/Renderpass.h"
-#include "Vulkan/Renderpass/Attachment.h"
-#include "Vulkan/Renderpass/Subpass.h"
 #include "Vulkan/Commands/CommandPool.h"
 #include "Vulkan/Commands/CommandBuffer.h"
+#include "Vulkan/Images/DepthImage.h"
 
 #include "Core/Codex.h"
 
@@ -45,11 +44,11 @@ namespace At0::VulkanTesting
 		LoadExtensionFunctions();
 
 		m_Swapchain = MakeScope<Swapchain>();
+		m_CommandPool = MakeScope<CommandPool>();
+		m_DepthImage = MakeScope<DepthImage>();
 
 		CreateRenderpass();
 		CreateFramebuffers();
-
-		m_CommandPool = MakeScope<CommandPool>();
 
 		// --------------------------------------------------------------
 		// Create all drawables
@@ -71,19 +70,44 @@ namespace At0::VulkanTesting
 
 	void Graphics::CreateRenderpass()
 	{
-		Attachment attachment;
+		VkAttachmentDescription colorAttachment{};
+		colorAttachment.format = GetSwapchain().GetFormat();
+		colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
+		colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+		colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+		colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+		colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+		colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+		colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
-		std::vector<VkAttachmentReference> attachmentReferences;
+		VkAttachmentDescription depthAttachment{};
+		depthAttachment.format = m_DepthImage->GetFormat();
+		depthAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
+		depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+		depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+		depthAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+		depthAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+		depthAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+		depthAttachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+
 		VkAttachmentReference colorAttachmentRef{};
 		colorAttachmentRef.attachment = 0;
 		colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-		attachmentReferences.emplace_back(std::move(colorAttachmentRef));
 
-		Subpass subpass(attachmentReferences);
+		VkAttachmentReference depthAttachmentRef{};
+		depthAttachmentRef.attachment = 1;
+		depthAttachmentRef.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+
+
+		VkSubpassDescription subpass{};
+		subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+		subpass.colorAttachmentCount = 1;
+		subpass.pColorAttachments = &colorAttachmentRef;
+		subpass.pDepthStencilAttachment = &depthAttachmentRef;
 
 		m_Renderpass = MakeScope<Renderpass>(
-			std::vector<VkAttachmentDescription>{ attachment.GetDescription() },
-			std::vector<VkSubpassDescription>{ subpass.GetDescription() });
+			std::vector<VkAttachmentDescription>{ colorAttachment, depthAttachment },
+			std::vector<VkSubpassDescription>{ subpass });
 	}
 
 	void Graphics::CreateFramebuffers()
@@ -91,8 +115,8 @@ namespace At0::VulkanTesting
 		m_Framebuffers.resize(m_Swapchain->GetNumberOfImages());
 		for (uint32_t i = 0; i < m_Swapchain->GetNumberOfImages(); ++i)
 		{
-			m_Framebuffers[i] =
-				MakeScope<Framebuffer>(std::vector<VkImageView>{ m_Swapchain->GetImageView(i) });
+			m_Framebuffers[i] = MakeScope<Framebuffer>(std::vector<VkImageView>{
+				m_Swapchain->GetImageView(i), m_DepthImage->GetImageView() });
 		}
 	}
 
@@ -140,7 +164,14 @@ namespace At0::VulkanTesting
 		cmdBuff.Begin();
 
 		VkClearValue clearColor{ 0.0137254f, 0.014117f, 0.0149019f };
-		m_Renderpass->Begin(cmdBuff, framebuffer, clearColor);
+		VkClearValue depthStencilClearColor{};
+		depthStencilClearColor.depthStencil = { 1.0f, 0 };
+
+		std::vector<VkClearValue> clearColors;
+		clearColors.emplace_back(clearColor);
+		clearColors.emplace_back(depthStencilClearColor);
+
+		m_Renderpass->Begin(cmdBuff, framebuffer, clearColors);
 
 		const VkViewport viewports[] = { m_Viewport };
 		const VkRect2D scissors[] = { m_Scissor };
@@ -211,10 +242,11 @@ namespace At0::VulkanTesting
 		// even if the ref count of the resource is 1
 		Codex::Shutdown();
 
-		m_CommandPool.reset();
 		m_Framebuffers.clear();
 		m_Renderpass.reset();
+		m_DepthImage.reset();
 
+		m_CommandPool.reset();
 		m_Swapchain.reset();
 		m_LogicalDevice.reset();
 		m_Surface.reset();
@@ -342,19 +374,21 @@ namespace At0::VulkanTesting
 		vkDeviceWaitIdle(*m_LogicalDevice);
 
 		m_CommandBuffers.clear();
-		m_CommandPool.reset();
 		m_Framebuffers.clear();
 
 		m_Renderpass.reset();
+		m_DepthImage.reset();
 
 		m_Swapchain.reset();
+		m_CommandPool.reset();
 
 		m_Swapchain = MakeScope<Swapchain>(m_Swapchain.get());
+		m_CommandPool = MakeScope<CommandPool>();
+		m_DepthImage = MakeScope<DepthImage>();
 		CreateRenderpass();
 		UpdateViewport();
 		UpdateScissor();
 		CreateFramebuffers();
-		m_CommandPool = MakeScope<CommandPool>();
 		CreateCommandBuffers();
 
 		Window::Get().GetFramebufferSize(&width, &height);
