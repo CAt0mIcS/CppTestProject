@@ -12,7 +12,7 @@ namespace At0::VulkanTesting
 {
 	void Drawable::CmdBind(const CommandBuffer& cmdBuff)
 	{
-		mvpdescriptorSet->Bind(cmdBuff, GetGraphicsPipeline());
+		uniformHandler->BindDescriptors(cmdBuff, GetGraphicsPipeline());
 		for (Ref<Bindable>& bindable : m_Bindables)
 		{
 			bindable->Bind(cmdBuff);
@@ -32,7 +32,7 @@ namespace At0::VulkanTesting
 		// mvUniformBuffer->Update(&modelView);
 
 		glm::mat4 mvp = Graphics::Get().SceneCamera.Matrices.Perspective * modelView;
-		mvpUniformBuffer->Update(&mvp);
+		(*uniformHandler)["modelViewProj"] = mvp;
 	}
 
 	Drawable::~Drawable() {}
@@ -46,17 +46,7 @@ namespace At0::VulkanTesting
 			m_GraphicsPipeline = (GraphicsPipeline*)bindable.get();
 			// m_DescriptorsHandler = DescriptorsHandler(GetGraphicsPipeline());
 
-			// mvdescriptorSet = MakeScope<DescriptorSet>(GetGraphicsPipeline());
-			mvpdescriptorSet = MakeScope<DescriptorSet>(GetGraphicsPipeline());
-
-			const Shader& shader = GetGraphicsPipeline().GetShader();
-			// mvUniformBuffer = MakeScope<UniformBuffer>(
-			//	shader.GetUniformBlock("Transforms")->GetUniform("modelView")->GetSize());
-			mvpUniformBuffer = MakeScope<UniformBuffer>(
-				shader.GetUniformBlock("Transforms")->GetUniform("modelViewProj")->GetSize());
-
-			// mvdescriptorSet->Update(*mvUniformBuffer);
-			mvpdescriptorSet->Update(*mvpUniformBuffer);
+			uniformHandler = MakeScope<UniformHandler>(GetGraphicsPipeline());
 		}
 
 		m_Bindables.emplace_back(std::move(bindable));

@@ -63,6 +63,8 @@ set(SRC
     "Sources/Graphics/Core/Entity.h"
     "Sources/Graphics/Core/Scene.h"
     "Sources/Graphics/Core/Scene.cpp"
+    "Sources/Graphics/Core/UniformHandler.h"
+    "Sources/Graphics/Core/UniformHandler.cpp"
 
     "Sources/Graphics/Vulkan/VulkanInstance.h"
     "Sources/Graphics/Vulkan/VulkanInstance.cpp"

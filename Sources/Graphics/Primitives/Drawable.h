@@ -10,8 +10,7 @@
 #include "Graphics/Core/Entity.h"
 #include "Graphics/Core/Scene.h"
 
-#include "Graphics/Vulkan/Descriptor.h"
-#include "Graphics/Vulkan/UniformBuffer.h"
+#include "Graphics/Core/UniformHandler.h"
 
 
 namespace At0::VulkanTesting
@@ -37,10 +36,7 @@ namespace At0::VulkanTesting
 
 		virtual ~Drawable();
 
-		Scope<DescriptorSet> mvdescriptorSet;
-		Scope<DescriptorSet> mvpdescriptorSet;
-		Scope<UniformBuffer> mvUniformBuffer;
-		Scope<UniformBuffer> mvpUniformBuffer;
+		Scope<UniformHandler> uniformHandler;
 
 	protected:
 		Drawable() = default;
