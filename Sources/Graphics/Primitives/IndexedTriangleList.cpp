@@ -1,8 +1,7 @@
 ﻿#include "pch.h"
 #include "IndexedTriangleList.h"
 
-#define _USE_MATH_DEFINES
-#include <cmath>
+#include <DirectXMath.h>
 
 
 namespace At0::VulkanTesting
@@ -16,70 +15,90 @@ namespace At0::VulkanTesting
 	{
 	}
 
-	IndexedTriangleList IndexedTriangleList::UVSphere(VertexLayout layout)
+	IndexedTriangleList IndexedTriangleList::UVSphere(VertexLayout layout, int latDiv, int longDiv)
 	{
-		VertexInput vertexInput(std::move(layout));
-		std::vector<IndexBuffer::Type> indices;
+		namespace dx = DirectX;
 
-		vertexInput.EmplaceBack(glm::vec3{ 0.0f, 1.0f, 0.0f });
-		uint32_t parallels = 11;
-		uint32_t meridians = 22;
-		for (uint32_t i = 0; i < parallels - 1; ++i)
+		constexpr float radius = 1.0f;
+		const auto base = dx::XMVectorSet(0.0f, 0.0f, radius, 0.0f);
+		const float lattitudeAngle = PI / latDiv;
+		const float longitudeAngle = 2.0f * PI / longDiv;
+
+		VertexInput vb{ std::move(layout) };
+		for (int iLat = 1; iLat < latDiv; iLat++)
 		{
-			const double polar = PI_D * double(i + 1) / double(parallels);
-			const double sp = sin(polar);
-			const double cp = cos(polar);
-
-			for (uint32_t j = 0; j < meridians; ++j)
+			const auto latBase =
+				dx::XMVector3Transform(base, dx::XMMatrixRotationX(lattitudeAngle * iLat));
+			for (int iLong = 0; iLong < longDiv; iLong++)
 			{
-				double const azimuth = 2.0 * PI_D * double(j) / double(meridians);
-				double const sa = std::sin(azimuth);
-				double const ca = std::cos(azimuth);
-				double const x = sp * ca;
-				double const y = cp;
-				double const z = sp * sa;
-				vertexInput.EmplaceBack(glm::vec3{ x, y, z });
+				dx::XMFLOAT3 calculatedPos;
+				auto v =
+					dx::XMVector3Transform(latBase, dx::XMMatrixRotationZ(longitudeAngle * iLong));
+				dx::XMStoreFloat3(&calculatedPos, v);
+				vb.EmplaceBack(*(glm::vec3*)&calculatedPos);
 			}
 		}
 
-		for (uint32_t i = 0; i < meridians; ++i)
+		// add the cap vertices
+		const auto iNorthPole = (unsigned short)vb.Size();
 		{
-			uint32_t const a = i + 1;
-			uint32_t const b = (i + 1) % meridians + 1;
-			indices.emplace_back(0);
-			indices.emplace_back(b);
-			indices.emplace_back(a);
+			dx::XMFLOAT3 northPos;
+			dx::XMStoreFloat3(&northPos, base);
+			vb.EmplaceBack(*(glm::vec3*)&northPos);
+		}
+		const auto iSouthPole = (unsigned short)vb.Size();
+		{
+			dx::XMFLOAT3 southPos;
+			dx::XMStoreFloat3(&southPos, dx::XMVectorNegate(base));
+			vb.EmplaceBack(*(glm::vec3*)&southPos);
 		}
 
-		for (uint32_t j = 0; j < parallels - 2; ++j)
+		const auto calcIdx = [latDiv, longDiv](unsigned short iLat, unsigned short iLong) {
+			return iLat * longDiv + iLong;
+		};
+		std::vector<unsigned short> indices;
+		for (unsigned short iLat = 0; iLat < latDiv - 2; iLat++)
 		{
-			uint32_t aStart = j * meridians + 1;
-			uint32_t bStart = (j + 1) * meridians + 1;
-			for (uint32_t i = 0; i < meridians; ++i)
+			for (unsigned short iLong = 0; iLong < longDiv - 1; iLong++)
 			{
-				const uint32_t a = aStart + i;
-				const uint32_t a1 = aStart + (i + 1) % meridians;
-				const uint32_t b = bStart + i;
-				const uint32_t b1 = bStart + (i + 1) % meridians;
-
-				indices.emplace_back(a);
-				indices.emplace_back(a1);
-				indices.emplace_back(b1);
-				indices.emplace_back(b);
-				indices.emplace_back(b1);
-				indices.emplace_back(b);
+				indices.push_back(calcIdx(iLat, iLong));
+				indices.push_back(calcIdx(iLat + 1, iLong));
+				indices.push_back(calcIdx(iLat, iLong + 1));
+				indices.push_back(calcIdx(iLat, iLong + 1));
+				indices.push_back(calcIdx(iLat + 1, iLong));
+				indices.push_back(calcIdx(iLat + 1, iLong + 1));
 			}
+			// wrap band
+			indices.push_back(calcIdx(iLat, longDiv - 1));
+			indices.push_back(calcIdx(iLat + 1, longDiv - 1));
+			indices.push_back(calcIdx(iLat, 0));
+			indices.push_back(calcIdx(iLat, 0));
+			indices.push_back(calcIdx(iLat + 1, longDiv - 1));
+			indices.push_back(calcIdx(iLat + 1, 0));
 		}
 
-		for (uint32_t i = 0; i < meridians; ++i)
+		// cap fans
+		for (unsigned short iLong = 0; iLong < longDiv - 1; iLong++)
 		{
-			uint32_t const a = i + meridians * (parallels - 2) + 1;
-			uint32_t const b = (i + 1) % meridians + meridians * (parallels - 2) + 1;
-			indices.emplace_back((IndexBuffer::Type)(vertexInput.Size() - 1));
-			indices.emplace_back(a);
-			indices.emplace_back(b);
+			// north
+			indices.push_back(iNorthPole);
+			indices.push_back(calcIdx(0, iLong));
+			indices.push_back(calcIdx(0, iLong + 1));
+			// south
+			indices.push_back(calcIdx(latDiv - 2, iLong + 1));
+			indices.push_back(calcIdx(latDiv - 2, iLong));
+			indices.push_back(iSouthPole);
 		}
+		// wrap triangles
+		// north
+		indices.push_back(iNorthPole);
+		indices.push_back(calcIdx(0, longDiv - 1));
+		indices.push_back(calcIdx(0, 0));
+		// south
+		indices.push_back(calcIdx(latDiv - 2, 0));
+		indices.push_back(calcIdx(latDiv - 2, longDiv - 1));
+		indices.push_back(iSouthPole);
 
-		return { vertexInput, indices };
+		return { std::move(vb), std::move(indices) };
 	}
 }  // namespace At0::VulkanTesting

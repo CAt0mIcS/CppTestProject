@@ -147,6 +147,8 @@ set(SHADERS
     "${CMAKE_SOURCE_DIR}/Resources/Shaders/PhongModelShader.frag"
     "${CMAKE_SOURCE_DIR}/Resources/Shaders/FlatTextureShader.vert"
     "${CMAKE_SOURCE_DIR}/Resources/Shaders/FlatTextureShader.frag"
+    "${CMAKE_SOURCE_DIR}/Resources/Shaders/Default/DefaultShader.vert"
+    "${CMAKE_SOURCE_DIR}/Resources/Shaders/Default/DefaultShader.frag"
 )
 
 find_package("Vulkan" REQUIRED FATAL_ERROR)
