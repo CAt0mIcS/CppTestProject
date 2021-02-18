@@ -144,13 +144,8 @@ namespace At0::VulkanTesting
 			int dy = (int)Window::Get().m_MousePos.y - yPos;
 
 			if (!Window::Get().CursorEnabled())
-			{
-				Camera& camera = Graphics::Get().SceneCamera;
-				// float delta = Graphics::Get().GetDelta();
-				camera.Rotate(
-					glm::vec3(dy * camera.RotationSpeed, -dx * camera.RotationSpeed, 0.0f));
-			}
-
+				Graphics::Get().SceneCamera.Rotate(
+					glm::vec3{ dy, -dx, 0.0f } * Graphics::Get().SceneCamera.RotationSpeed);
 
 			Window::Get().m_MousePos = { (float)xPos, (float)yPos };
 		});

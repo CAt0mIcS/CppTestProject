@@ -62,6 +62,7 @@ namespace At0::VulkanTesting
 
 		SceneCamera.SetPosition(glm::vec3(0.0f, 0.0f, -2.5f));
 		SceneCamera.SetRotation(glm::vec3(0.0f));
+		SceneCamera.SetRotationSpeed(0.1f);
 		SceneCamera.SetPerspective(60.0f, (float)width / (float)height, 0.1f, 256.0f);
 		SceneCamera.SetMovementSpeed(2.0f);
 	}
@@ -275,7 +276,6 @@ namespace At0::VulkanTesting
 	void Graphics::Update(float dt)
 	{
 		m_Dt = dt;
-		SceneCamera.SetRotationSpeed(260.0f * dt);
 		SceneCamera.Update(dt);
 
 		// Wait for fence in vkQueueSubmit to become signaled,

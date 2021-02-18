@@ -56,32 +56,46 @@ namespace At0::VulkanTesting
 	void Camera::Update(float dt)
 	{
 		Updated = false;
-		if (Type == CameraType::FirstPerson && IsMoving())
+
+		if (Type == CameraType::FirstPerson)
 		{
-			glm::vec3 camFront;
-			camFront.x = -cos(glm::radians(Rotation.x)) * sin(glm::radians(Rotation.y));
-			camFront.y = sin(glm::radians(Rotation.x));
-			camFront.z = cos(glm::radians(Rotation.x)) * cos(glm::radians(Rotation.y));
-			camFront = glm::normalize(camFront);
+			if (IsMoving())
+			{
+				glm::vec3 camFront;
+				camFront.x = -cos(glm::radians(Rotation.x)) * sin(glm::radians(Rotation.y));
+				camFront.y = sin(glm::radians(Rotation.x));
+				camFront.z = cos(glm::radians(Rotation.x)) * cos(glm::radians(Rotation.y));
+				camFront = glm::normalize(camFront);
 
-			float moveSpeed = dt * MovementSpeed;
+				float moveSpeed = dt * MovementSpeed;
 
-			if (Keys.Forward)
-				Position += camFront * moveSpeed;
-			if (Keys.Backward)
-				Position -= camFront * moveSpeed;
-			if (Keys.Left)
-				Position -=
-					glm::normalize(glm::cross(camFront, glm::vec3(0.0f, 1.0f, 0.0f))) * moveSpeed;
-			if (Keys.Right)
-				Position +=
-					glm::normalize(glm::cross(camFront, glm::vec3(0.0f, 1.0f, 0.0f))) * moveSpeed;
-			if (Keys.Up)
-				Position.y += 1.0f * moveSpeed;
-			if (Keys.Down)
-				Position.y -= 1.0f * moveSpeed;
+				if (Keys.Forward)
+					Position += camFront * moveSpeed;
+				if (Keys.Backward)
+					Position -= camFront * moveSpeed;
+				if (Keys.Left)
+					Position -= glm::normalize(glm::cross(camFront, glm::vec3(0.0f, 1.0f, 0.0f))) *
+								moveSpeed;
+				if (Keys.Right)
+					Position += glm::normalize(glm::cross(camFront, glm::vec3(0.0f, 1.0f, 0.0f))) *
+								moveSpeed;
+				if (Keys.Up)
+					Position.y += 1.0f * moveSpeed;
+				if (Keys.Down)
+					Position.y -= 1.0f * moveSpeed;
 
-			UpdateViewMatrix();
+				UpdateViewMatrix();
+			}
+
+			// if (RotationBuffer != glm::vec2{ 0.0f, 0.0f })
+			//{
+			//	Rotate(glm::vec3(RotationBuffer * (/*dt * */ RotationSpeed), 0.0f));
+			//	RotationBuffer = { 0.0f, 0.0f };
+
+			//	changed = true;
+			//}
+
+			// if (changed)
 		}
 	}
 
