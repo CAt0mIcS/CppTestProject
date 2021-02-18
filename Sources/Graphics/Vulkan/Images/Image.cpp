@@ -10,9 +10,7 @@
 #include "../Textures/Sampler.h"
 #include "ImageView.h"
 
-#ifdef __GNUC__
-	#define STB_IMAGE_IMPLEMENTATION
-#endif
+#define STB_IMAGE_IMPLEMENTATION
 #include <stb_image/stb_image.h>
 
 
