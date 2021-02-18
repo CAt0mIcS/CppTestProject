@@ -12,9 +12,9 @@ namespace At0::VulkanTesting
 	{
 	}
 
-	IndexedTriangleList IndexedTriangleList::UVSphere(VertexLayout layout, int latDiv, int longDiv)
+	IndexedTriangleList IndexedTriangleList::UVSphere(
+		VertexLayout layout, float radius, int latDiv, int longDiv)
 	{
-		constexpr float radius = 1.0f;
 		const glm::vec4 base = glm::vec4{ 0.0f, 0.0f, radius, 0.0f };
 		const float lattitudeAngle = PI / latDiv;
 		const float longitudeAngle = 2.0f * PI / longDiv;

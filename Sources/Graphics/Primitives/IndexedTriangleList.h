@@ -13,7 +13,8 @@ namespace At0::VulkanTesting
 	public:
 		IndexedTriangleList(VertexInput input, std::vector<IndexBuffer::Type> indices);
 
-		static IndexedTriangleList UVSphere(VertexLayout layout, int latDiv = 12, int longDiv = 24);
+		static IndexedTriangleList UVSphere(
+			VertexLayout layout, float radius = 1.0f, int latDiv = 12, int longDiv = 24);
 
 		const VertexInput& GetVertexInput() const { return m_Vertices; }
 		const std::vector<IndexBuffer::Type>& GetIndices() const { return m_Indices; }

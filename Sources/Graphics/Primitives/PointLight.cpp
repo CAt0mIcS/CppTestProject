@@ -17,14 +17,14 @@ namespace At0::VulkanTesting
 		VertexLayout layout;
 		layout.Append(VertexLayout::Position3D);
 
-		IndexedTriangleList uvSphereModel = IndexedTriangleList::UVSphere(layout, 64, 128);
+		IndexedTriangleList uvSphereModel = IndexedTriangleList::UVSphere(layout, 0.2f, 32, 64);
 
 		EmplaceBindable(Codex::Resolve<VertexBuffer>(uvSphereModel.GetVertexInput(), "UVSphere"));
 		EmplaceBindable(Codex::Resolve<IndexBuffer>(uvSphereModel.GetIndices(), "UVSphere"));
 
 		EmplaceBindable(Codex::Resolve<GraphicsPipeline>(
-			layout, std::vector<std::string_view>{ "Resources/Shaders/VertexShader.vert",
-						"Resources/Shaders/FragmentShader.frag" }));
+			layout, std::vector<std::string_view>{ "Resources/Shaders/Default/DefaultShader.vert",
+						"Resources/Shaders/Default/DefaultShader.frag" }));
 	}
 
 	void PointLight::CmdDraw(const CommandBuffer& cmdBuff)
