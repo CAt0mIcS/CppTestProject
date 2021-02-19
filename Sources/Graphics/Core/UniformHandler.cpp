@@ -11,16 +11,17 @@ namespace At0::VulkanTesting
 {
 	UniformHandler::UniformHandler(const Pipeline& pipeline) : m_Shader(pipeline.GetShader())
 	{
+		m_DescriptorSet = MakeScope<DescriptorSet>(pipeline);
+
 		for (auto& [uniformBlockName, uniformBlock] : pipeline.GetShader().GetUniformBlocks())
 		{
 			UniformBuffer* buffer = new UniformBuffer(uniformBlock.GetSize());
-			DescriptorSet* descSet = new DescriptorSet(pipeline);
 			auto writeDesc = buffer->GetWriteDescriptor(
 				uniformBlock.GetBinding(), VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-			writeDesc.GetWriteDescriptorSet().dstSet = *descSet;
-			descSet->Update({ writeDesc });
+			writeDesc.GetWriteDescriptorSet().dstSet = *m_DescriptorSet;
+			m_DescriptorSet->Update({ writeDesc });
 
-			m_Uniforms.emplace(uniformBlockName, UniformData{ buffer, descSet, {} });
+			m_Uniforms.emplace(uniformBlockName, UniformData{ buffer, {} });
 
 			for (auto& [uniformName, uniform] : uniformBlock.GetUniforms())
 			{
@@ -34,16 +35,12 @@ namespace At0::VulkanTesting
 		for (auto& it : m_Uniforms)
 		{
 			delete it.second.uniformBuffer;
-			delete it.second.descriptorSet;
 		}
 	}
 
 	void UniformHandler::Bind(const CommandBuffer& cmdBuff, const Pipeline& pipeline)
 	{
-		for (auto& it : m_Uniforms)
-		{
-			it.second.descriptorSet->Bind(cmdBuff, pipeline);
-		}
+		m_DescriptorSet->Bind(cmdBuff, pipeline);
 	}
 
 	UniformBlockView UniformHandler::operator[](std::string_view uniformBlockName)

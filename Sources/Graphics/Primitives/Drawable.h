@@ -31,6 +31,8 @@ namespace At0::VulkanTesting
 		const IndexBuffer& GetIndexBuffer() const { return *m_IndexBuffer; }
 		const GraphicsPipeline& GetGraphicsPipeline() const { return *m_GraphicsPipeline; }
 
+		UniformHandler& GetUniforms() { return *m_UniformHandler; }
+
 		Entity& GetEntity() { return m_Entity; }
 		const Entity& GetEntity() const { return m_Entity; }
 

@@ -18,7 +18,6 @@ namespace At0::VulkanTesting
 	struct UniformData
 	{
 		UniformBuffer* uniformBuffer;
-		DescriptorSet* descriptorSet;
 		std::vector<std::string> names;
 	};
 
@@ -32,7 +31,8 @@ namespace At0::VulkanTesting
 		template<typename T>
 		UniformView& operator=(const T& data)
 		{
-			m_UniformBuffer->Update(&data, m_Offset);
+			if (m_UniformBuffer)
+				m_UniformBuffer->Update(&data, m_Offset);
 			return *this;
 		}
 
@@ -82,6 +82,7 @@ namespace At0::VulkanTesting
 
 	private:
 		std::unordered_map<std::string, UniformData> m_Uniforms;
+		Scope<DescriptorSet> m_DescriptorSet;
 		const Shader& m_Shader;
 	};
 }  // namespace At0::VulkanTesting

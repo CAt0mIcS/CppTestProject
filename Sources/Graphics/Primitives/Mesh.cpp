@@ -15,4 +15,13 @@ namespace At0::VulkanTesting
 	}
 
 	void Mesh::CmdDraw(const CommandBuffer& cmdBuff) { Drawable::CmdDraw(cmdBuff); }
+	void Mesh::Update()
+	{
+		Drawable::Update();
+		const glm::vec3 lightColor{ 1.0f, 0.0f, 0.0f };
+		const glm::vec3 lightPos{ 0.0f, 0.0f, 0.0f };
+
+		// GetUniforms()["Lighting"]["lightColor"] = lightColor;
+		GetUniforms()["Lighting"]["lightPos"] = lightPos;
+	}
 }  // namespace At0::VulkanTesting
