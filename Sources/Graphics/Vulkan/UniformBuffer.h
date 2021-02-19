@@ -37,7 +37,7 @@ namespace At0::VulkanTesting
 	public:
 		UniformBuffer(VkDeviceSize size, const void* data = nullptr);
 
-		void Update(const void* newData);
+		void Update(const void* newData, uint32_t offset = 0);
 
 		WriteDescriptorSet GetWriteDescriptor(
 			uint32_t binding, VkDescriptorType descriptorType) const;

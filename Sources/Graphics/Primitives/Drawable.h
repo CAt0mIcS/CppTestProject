@@ -47,6 +47,8 @@ namespace At0::VulkanTesting
 		IndexBuffer* m_IndexBuffer;
 		GraphicsPipeline* m_GraphicsPipeline;
 
+		Scope<UniformHandler> m_UniformHandler;
+
 		Scope<UniformBuffer> uniformBuffer;
 		Scope<DescriptorSet> descriptorSet;
 

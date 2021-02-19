@@ -13,7 +13,8 @@ namespace At0::VulkanTesting
 	void Drawable::CmdBind(const CommandBuffer& cmdBuff)
 	{
 		// m_UniformHandler->BindDescriptors(cmdBuff, GetGraphicsPipeline());
-		descriptorSet->Bind(cmdBuff, GetGraphicsPipeline());
+		// descriptorSet->Bind(cmdBuff, GetGraphicsPipeline());
+		m_UniformHandler->Bind(cmdBuff, GetGraphicsPipeline());
 		for (Ref<Bindable>& bindable : m_Bindables)
 		{
 			bindable->Bind(cmdBuff);
@@ -32,25 +33,28 @@ namespace At0::VulkanTesting
 		glm::mat4 modelViewProj = Graphics::Get().SceneCamera.Matrices.Perspective * modelView;
 
 
-		void* data;
-		uniformBuffer->MapMemory(&data);
+		// void* data;
+		// uniformBuffer->MapMemory(&data);
 
-		memcpy((char*)data + GetGraphicsPipeline()
-								 .GetShader()
-								 .GetUniformBlock("Transforms")
-								 ->GetUniform("modelView")
-								 ->GetOffset(),
-			&modelView, sizeof(modelView));
-		memcpy((char*)data + GetGraphicsPipeline()
-								 .GetShader()
-								 .GetUniformBlock("Transforms")
-								 ->GetUniform("modelViewProj")
-								 ->GetOffset(),
-			&modelViewProj, sizeof(modelViewProj));
-		uniformBuffer->UnmapMemory();
+		// memcpy((char*)data + GetGraphicsPipeline()
+		//						 .GetShader()
+		//						 .GetUniformBlock("Transforms")
+		//						 ->GetUniform("modelView")
+		//						 ->GetOffset(),
+		//	&modelView, sizeof(modelView));
+		// memcpy((char*)data + GetGraphicsPipeline()
+		//						 .GetShader()
+		//						 .GetUniformBlock("Transforms")
+		//						 ->GetUniform("modelViewProj")
+		//						 ->GetOffset(),
+		//	&modelViewProj, sizeof(modelViewProj));
+		// uniformBuffer->UnmapMemory();
 
 		//(*m_UniformHandler)["modelView"] = modelView;
 		//(*m_UniformHandler)["modelViewProj"] = modelViewProj;
+
+		(*m_UniformHandler)["Transforms"]["modelView"] = modelView;
+		(*m_UniformHandler)["Transforms"]["modelViewProj"] = modelViewProj;
 	}
 
 	Drawable::~Drawable() {}
@@ -66,14 +70,16 @@ namespace At0::VulkanTesting
 
 			// m_UniformHandler = MakeScope<UniformHandler>(GetGraphicsPipeline());
 
-			uniformBuffer = MakeScope<UniformBuffer>(sizeof(glm::mat4) * 2);
-			descriptorSet = MakeScope<DescriptorSet>(GetGraphicsPipeline());
+			m_UniformHandler = MakeScope<UniformHandler>(GetGraphicsPipeline());
 
-			auto writeDesc =
-				uniformBuffer->GetWriteDescriptor(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-			writeDesc.GetWriteDescriptorSet().dstSet = *descriptorSet;
+			// uniformBuffer = MakeScope<UniformBuffer>(sizeof(glm::mat4) * 2);
+			// descriptorSet = MakeScope<DescriptorSet>(GetGraphicsPipeline());
 
-			descriptorSet->Update({ writeDesc });
+			// auto writeDesc =
+			//	uniformBuffer->GetWriteDescriptor(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+			// writeDesc.GetWriteDescriptorSet().dstSet = *descriptorSet;
+
+			// descriptorSet->Update({ writeDesc });
 		}
 
 		m_Bindables.emplace_back(std::move(bindable));
