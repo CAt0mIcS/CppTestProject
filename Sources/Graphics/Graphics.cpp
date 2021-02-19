@@ -20,12 +20,12 @@
 
 #include "Core/Codex.h"
 
-//#include "Primitives/Cube.h"
-//#include "Primitives/Square.h"
+#include "Primitives/Cube.h"
+#include "Primitives/Square.h"
 #include "Primitives/Triangle.h"
 #include "Primitives/Model.h"
 #include "Primitives/Mesh.h"
-//#include "Primitives/TexturedPlane.h"
+#include "Primitives/TexturedPlane.h"
 #include "Primitives/PointLight.h"
 
 
@@ -124,41 +124,33 @@ namespace At0::VulkanTesting
 
 	void Graphics::CreateDrawables()
 	{
-		m_Drawables.emplace_back(MakeScope<PointLight>());
-
 		m_Model = MakeScope<Model>("Resources/Models/Nanosuit/nanosuit.obj");
-		// m_Model2 = MakeScope<Model>("Resources/Models/Nanosuit/nanosuit.obj");
+		m_Model2 = MakeScope<Model>("Resources/Models/Nanosuit/nanosuit.obj");
 
-		// m_Model2->Translate(glm::vec3(9.0f, 0.0f, 0.0f));
+		m_Model2->Translate(glm::vec3(9.0f, 0.0f, 0.0f));
 
-		// m_Drawables.emplace_back(MakeScope<Cube>());
+		m_Drawables.emplace_back(MakeScope<Cube>());
 		m_Drawables.emplace_back(MakeScope<Triangle>());
 
 		TransformComponent& triangleTransform =
 			m_Drawables.back()->GetEntity().Get<TransformComponent>();
-		triangleTransform.Translation = { 0.0f, 0.0f, 0.0f };
+		triangleTransform.Translation = { 1.0f, 1.0f, 0.0f };
 
-		// m_Drawables.emplace_back(MakeScope<Triangle>());
+		m_Drawables.emplace_back(MakeScope<Square>());
 
-		// TransformComponent& triangleTransform2 =
-		//	m_Drawables.back()->GetEntity().Get<TransformComponent>();
-		// triangleTransform2.Translation = { 1.0f, 0.0f, 0.0f };
+		TransformComponent& squareTransform =
+			m_Drawables.back()->GetEntity().Get<TransformComponent>();
+		squareTransform.Translation = { -1.0f, 1.0f, 0.0f };
 
-		// m_Drawables.emplace_back(MakeScope<Square>());
+		m_Drawables.emplace_back(MakeScope<TexturedPlane>());
+		TransformComponent& texPlaneTransform =
+			m_Drawables.back()->GetEntity().Get<TransformComponent>();
+		texPlaneTransform.Translation = { 0.0f, 5.0f, 0.0f };
 
-		// TransformComponent& squareTransform =
-		//	m_Drawables.back()->GetEntity().Get<TransformComponent>();
-		// squareTransform.Translation = { -1.0f, 1.0f, 0.0f };
-
-		// m_Drawables.emplace_back(MakeScope<TexturedPlane>());
-		// TransformComponent& texPlaneTransform =
-		//	m_Drawables.back()->GetEntity().Get<TransformComponent>();
-		// texPlaneTransform.Translation = { 0.0f, 5.0f, 0.0f };
-
-		// m_Drawables.emplace_back(MakeScope<PointLight>());
-		// TransformComponent& ptLightTransform =
-		//	m_Drawables.back()->GetEntity().Get<TransformComponent>();
-		// ptLightTransform.Translation = { 5.0f, 5.0f, 0.0f };
+		m_Drawables.emplace_back(MakeScope<PointLight>());
+		TransformComponent& ptLightTransform =
+			m_Drawables.back()->GetEntity().Get<TransformComponent>();
+		ptLightTransform.Translation = { 5.0f, 5.0f, 0.0f };
 	}
 
 	void Graphics::CreateCommandBuffers()
@@ -194,7 +186,7 @@ namespace At0::VulkanTesting
 		vkCmdSetScissor(cmdBuff, 0, std::size(scissors), scissors);
 
 		m_Model->CmdDraw(cmdBuff);
-		// m_Model2->CmdDraw(cmdBuff);
+		m_Model2->CmdDraw(cmdBuff);
 		for (Scope<Drawable>& drawable : m_Drawables)
 		{
 			drawable->CmdBind(cmdBuff);
@@ -436,7 +428,7 @@ namespace At0::VulkanTesting
 	void Graphics::UpdateDrawables()
 	{
 		m_Model->Update();
-		// m_Model2->Update();
+		m_Model2->Update();
 		for (Scope<Drawable>& drawable : m_Drawables)
 		{
 			drawable->Update();

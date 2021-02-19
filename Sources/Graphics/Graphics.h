@@ -25,7 +25,6 @@ namespace At0::VulkanTesting
 	class Framebuffer;
 	class DepthImage;
 	class Drawable;
-	class PointLight;
 
 	class Model;
 
@@ -51,7 +50,6 @@ namespace At0::VulkanTesting
 		const Swapchain& GetSwapchain() const { return *m_Swapchain; }
 		const CommandPool& GetCommandPool() const { return *m_CommandPool; }
 		const Renderpass& GetRenderpass() const { return *m_Renderpass; }
-		const PointLight& GetPointLight() const { return *(PointLight*)m_Drawables[0].get(); }
 
 	public:
 		Camera SceneCamera;

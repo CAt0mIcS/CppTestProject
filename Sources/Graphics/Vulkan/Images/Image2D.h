@@ -5,6 +5,7 @@
 
 #include "Base.h"
 
+#include "../Descriptor.h"
 #include "ImageView.h"
 #include "../Textures/Sampler.h"
 
@@ -13,7 +14,7 @@ namespace At0::VulkanTesting
 {
 	class Sampler;
 
-	class Image2D /* : public Descriptor*/
+	class Image2D : public Descriptor
 	{
 	public:
 		Image2D(const std::string_view filepath);
@@ -33,8 +34,8 @@ namespace At0::VulkanTesting
 
 		static VkDescriptorSetLayoutBinding GetDescriptorSetLayout(
 			uint32_t binding, VkDescriptorType type, VkShaderStageFlags stageFlag, uint32_t count);
-		// virtual WriteDescriptorSet GetWriteDescriptor(
-		//	uint32_t binding, VkDescriptorType descriptorType) const override;
+		virtual WriteDescriptorSet GetWriteDescriptor(
+			uint32_t binding, VkDescriptorType descriptorType) const override;
 		static std::vector<VkFormat> FindSupportedFormats(
 			std::vector<VkFormat> candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
 

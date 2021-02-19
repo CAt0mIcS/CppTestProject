@@ -32,8 +32,6 @@ namespace At0::VulkanTesting
 			const void* data = nullptr);
 		virtual ~Buffer();
 
-		VkDeviceSize GetSize() const { return m_Size; }
-
 		void MapMemory(void** data) const;
 		void UnmapMemory() const;
 		operator const VkBuffer&() const { return m_Buffer; }

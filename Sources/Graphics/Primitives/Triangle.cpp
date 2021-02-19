@@ -37,4 +37,10 @@ namespace At0::VulkanTesting
 						"Resources/Shaders/FragmentShader.frag" });
 		EmplaceBindable(graphicsPipeline);
 	}
+
+	void Triangle::CmdBind(const CommandBuffer& cmdBuff)
+	{
+		m_DescriptorsHandler.Push("UniformBufferObject", m_UniformHandler);
+		Drawable::CmdBind(cmdBuff);
+	}
 }  // namespace At0::VulkanTesting

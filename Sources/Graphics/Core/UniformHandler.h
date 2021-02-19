@@ -2,87 +2,72 @@
 
 #include "Base.h"
 
-#include <vector>
-#include <string>
-
-#include "Graphics/Vulkan/UniformBuffer.h"
-#include "Graphics/Vulkan/Descriptor.h"
 #include "Graphics/Vulkan/Shader.h"
+#include "Graphics/Vulkan/UniformBuffer.h"
+
+#include <optional>
+#include <string.h>
 
 
 namespace At0::VulkanTesting
 {
-	class Pipeline;
-	class CommandBuffer;
-
-	struct UniformData
-	{
-		UniformBuffer* uniformBuffer;
-		std::vector<std::string> names;
-	};
-
-	class UniformView
-	{
-	public:
-		UniformView(UniformBuffer* uBuff, int32_t offset) : m_UniformBuffer(uBuff), m_Offset(offset)
-		{
-		}
-
-		template<typename T>
-		UniformView& operator=(const T& data)
-		{
-			if (m_UniformBuffer)
-				m_UniformBuffer->Update(&data, m_Offset);
-			return *this;
-		}
-
-	private:
-		UniformBuffer* m_UniformBuffer;
-		int32_t m_Offset;
-	};
-
-	class UniformBlockView
-	{
-	public:
-		UniformBlockView(UniformData* data, std::optional<Shader::UniformBlock> uniformBlock)
-			: m_UniformData(data), m_UniformBlock(uniformBlock)
-		{
-		}
-
-		UniformView operator[](std::string_view uniformName)
-		{
-			if (!m_UniformBlock || !m_UniformData)
-				return { nullptr, 0 };
-
-			if (auto it = std::find(
-					m_UniformData->names.begin(), m_UniformData->names.end(), uniformName.data());
-				it != m_UniformData->names.end())
-			{
-				return { m_UniformData->uniformBuffer,
-					m_UniformBlock->GetUniform(uniformName)->GetOffset() };
-			}
-
-			return { nullptr, 0 };
-		}
-
-	private:
-		UniformData* m_UniformData;
-		std::optional<Shader::UniformBlock> m_UniformBlock;
-	};
+	class UniformBuffer;
 
 	class UniformHandler
 	{
 	public:
-		UniformHandler(const Pipeline& pipeline);
-		~UniformHandler();
+		UniformHandler();
+		UniformHandler(const Shader::UniformBlock& uniformBlock);
 
-		void Bind(const CommandBuffer& cmdBuff, const Pipeline& pipeline);
+		template<typename T>
+		void Push(const T& object, size_t offset, size_t size)
+		{
+			if (!m_UniformBlock || !m_UniformBuffer)
+				return;
 
-		UniformBlockView operator[](std::string_view uniformBlockName);
+			if (!m_Bound)
+			{
+				m_UniformBuffer->MapMemory(&this->m_Data);
+				m_Bound = true;
+			}
+
+			// If the buffer is already changed we can skip a memory comparison and just copy.
+			if (m_HandlerStatus == Buffer::Status::Changed ||
+				memcmp(static_cast<char*>(this->m_Data), &object, size) != 0)
+			{
+				memcpy(static_cast<char*>(this->m_Data) + offset, &object, size);
+				m_HandlerStatus = Buffer::Status::Changed;
+			}
+		}
+
+		template<typename T>
+		void Push(std::string_view uniformName, const T& object, std::size_t size = 0)
+		{
+			if (!m_UniformBlock || !m_UniformBuffer)
+				return;
+
+			auto uniform = m_UniformBlock->GetUniform(uniformName);
+			if (!uniform)
+				return;
+
+			auto realSize = size;
+			if (realSize == 0)
+				realSize = std::min(sizeof(object), static_cast<std::size_t>(uniform->GetSize()));
+
+			Push(object, static_cast<std::size_t>(uniform->GetOffset()), realSize);
+		}
+
+		bool Update(const std::optional<Shader::UniformBlock>& uniformBlock);
+
+		const UniformBuffer& GetUniformBuffer() const { return *m_UniformBuffer; }
 
 	private:
-		std::unordered_map<std::string, UniformData> m_Uniforms;
-		Scope<DescriptorSet> m_DescriptorSet;
-		const Shader& m_Shader;
+		bool m_Multipipeline;
+		std::optional<Shader::UniformBlock> m_UniformBlock;
+		uint32_t m_Size = 0;
+		void* m_Data = nullptr;
+		bool m_Bound = false;
+		std::unique_ptr<UniformBuffer> m_UniformBuffer;
+		Buffer::Status m_HandlerStatus;
 	};
 }  // namespace At0::VulkanTesting

@@ -11,7 +11,7 @@ namespace At0::VulkanTesting
 	{
 	public:
 		TexturedPlane();
-		virtual void CmdDraw(const CommandBuffer& cmdBuff) override;
+		virtual void CmdBind(const CommandBuffer& cmdBuff) override;
 
 	private:
 		Image2D m_Texture;

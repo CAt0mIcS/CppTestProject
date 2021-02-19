@@ -2,8 +2,6 @@
 #include "Mesh.h"
 
 #include "Graphics/Vulkan/GraphicsPipeline.h"
-#include "Graphics/Graphics.h"
-#include "PointLight.h"
 
 
 namespace At0::VulkanTesting
@@ -16,22 +14,9 @@ namespace At0::VulkanTesting
 		}
 	}
 
-	void Mesh::CmdDraw(const CommandBuffer& cmdBuff) { Drawable::CmdDraw(cmdBuff); }
-
-	void Mesh::Update()
+	void Mesh::CmdBind(const CommandBuffer& cmdBuff)
 	{
-		auto& tform = GetEntity().Get<TransformComponent>();
-
-		GetUniforms()["Transforms"]["model"] = tform.GetMatrix();
-		GetUniforms()["Transforms"]["view"] = Graphics::Get().SceneCamera.Matrices.View;
-		GetUniforms()["Transforms"]["proj"] = Graphics::Get().SceneCamera.Matrices.Perspective;
-
-		TransformComponent& lightTform =
-			Graphics::Get().GetPointLight().GetEntity().Get<TransformComponent>();
-
-		GetUniforms()["Lighting"]["lightPos"] = lightTform.Translation;
-		GetUniforms()["Lighting"]["viewPos"] = Graphics::Get().SceneCamera.Position;
-		GetUniforms()["Lighting"]["lightColor"] = glm::vec3(1.0f, 1.0f, 1.0f);
-		GetUniforms()["Lighting"]["objectColor"] = glm::vec3(1.0f, 1.0f, 1.0f);
+		m_DescriptorsHandler.Push("UniformBufferObject", m_UniformHandler);
+		Drawable::CmdBind(cmdBuff);
 	}
 }  // namespace At0::VulkanTesting

@@ -9,5 +9,6 @@ namespace At0::VulkanTesting
 	{
 	public:
 		PointLight();
+		virtual void CmdBind(const CommandBuffer& cmdBuff) override;
 	};
 }  // namespace At0::VulkanTesting

@@ -10,5 +10,6 @@ namespace At0::VulkanTesting
 	{
 	public:
 		Triangle();
+		void CmdBind(const CommandBuffer& cmdBuff) override;
 	};
 }  // namespace At0::VulkanTesting

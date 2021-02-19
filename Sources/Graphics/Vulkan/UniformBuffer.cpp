@@ -12,11 +12,11 @@ namespace At0::VulkanTesting
 	{
 	}
 
-	void UniformBuffer::Update(const void* newData, uint32_t offset)
+	void UniformBuffer::Update(const void* newData)
 	{
 		void* data;
 		MapMemory(&data);
-		memcpy((char*)data + offset, newData, (size_t)m_Size);
+		memcpy(data, newData, (size_t)m_Size);
 		UnmapMemory();
 	}
 

@@ -229,24 +229,24 @@ namespace At0::VulkanTesting
 		return descriptorSetLayoutBinding;
 	}
 
-	// WriteDescriptorSet Image2D::GetWriteDescriptor(
-	//	uint32_t binding, VkDescriptorType descriptorType) const
-	//{
-	//	VkDescriptorImageInfo imageInfo = {};
-	//	imageInfo.sampler = *m_Sampler;
-	//	imageInfo.imageView = *m_ImageView;
-	//	imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+	WriteDescriptorSet Image2D::GetWriteDescriptor(
+		uint32_t binding, VkDescriptorType descriptorType) const
+	{
+		VkDescriptorImageInfo imageInfo = {};
+		imageInfo.sampler = *m_Sampler;
+		imageInfo.imageView = *m_ImageView;
+		imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
-	//	VkWriteDescriptorSet descriptorWrite = {};
-	//	descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-	//	descriptorWrite.dstSet = VK_NULL_HANDLE;  // Will be set in the descriptor handler.
-	//	descriptorWrite.dstBinding = binding;
-	//	descriptorWrite.dstArrayElement = 0;
-	//	descriptorWrite.descriptorCount = 1;
-	//	descriptorWrite.descriptorType = descriptorType;
-	//	descriptorWrite.pImageInfo = &imageInfo;
-	//	return { descriptorWrite, imageInfo };
-	//}
+		VkWriteDescriptorSet descriptorWrite = {};
+		descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		descriptorWrite.dstSet = VK_NULL_HANDLE;  // Will be set in the descriptor handler.
+		descriptorWrite.dstBinding = binding;
+		descriptorWrite.dstArrayElement = 0;
+		descriptorWrite.descriptorCount = 1;
+		descriptorWrite.descriptorType = descriptorType;
+		descriptorWrite.pImageInfo = &imageInfo;
+		return { descriptorWrite, imageInfo };
+	}
 
 	std::vector<VkFormat> Image2D::FindSupportedFormats(
 		std::vector<VkFormat> candidates, VkImageTiling tiling, VkFormatFeatureFlags features)

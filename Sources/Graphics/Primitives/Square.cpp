@@ -38,12 +38,9 @@ namespace At0::VulkanTesting
 		EmplaceBindable(graphicsPipeline);
 	}
 
-	void Square::CmdDraw(const CommandBuffer& cmdBuff)
+	void Square::CmdBind(const CommandBuffer& cmdBuff)
 	{
 		m_DescriptorsHandler.Push("UniformBufferObject", m_UniformHandler);
-		m_DescriptorsHandler.Update(GetGraphicsPipeline());
-		m_DescriptorsHandler.BindDescriptor(cmdBuff, GetGraphicsPipeline());
-
-		Drawable::CmdDraw(cmdBuff);
+		Drawable::CmdBind(cmdBuff);
 	}
 }  // namespace At0::VulkanTesting

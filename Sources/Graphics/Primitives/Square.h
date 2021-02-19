@@ -9,6 +9,6 @@ namespace At0::VulkanTesting
 	{
 	public:
 		Square();
-		void CmdDraw(const CommandBuffer& cmdBuff) override;
+		void CmdBind(const CommandBuffer& cmdBuff) override;
 	};
 }  // namespace At0::VulkanTesting

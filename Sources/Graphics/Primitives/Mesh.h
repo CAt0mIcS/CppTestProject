@@ -12,7 +12,6 @@ namespace At0::VulkanTesting
 	{
 	public:
 		Mesh(std::vector<Ref<Bindable>> bindables);
-		void CmdDraw(const CommandBuffer& cmdBuff) override;
-		void Update() override;
+		void CmdBind(const CommandBuffer& cmdBuff) override;
 	};
 }  // namespace At0::VulkanTesting

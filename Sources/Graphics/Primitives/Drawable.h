@@ -7,10 +7,10 @@
 #include <glm/glm.hpp>
 
 #include "Base.h"
+#include "Graphics/Core/UniformHandler.h"
+#include "Graphics/Core/DescriptorsHandler.h"
 #include "Graphics/Core/Entity.h"
 #include "Graphics/Core/Scene.h"
-
-#include "Graphics/Core/UniformHandler.h"
 
 
 namespace At0::VulkanTesting
@@ -24,35 +24,31 @@ namespace At0::VulkanTesting
 	class Drawable
 	{
 	public:
-		void CmdBind(const CommandBuffer& cmdBuff);
+		virtual void CmdBind(const CommandBuffer& cmdBuff);
 		virtual void CmdDraw(const CommandBuffer& cmdBuff);
 		virtual void Update();
 
 		const IndexBuffer& GetIndexBuffer() const { return *m_IndexBuffer; }
 		const GraphicsPipeline& GetGraphicsPipeline() const { return *m_GraphicsPipeline; }
 
-		UniformHandler& GetUniforms() { return *m_UniformHandler; }
-
 		Entity& GetEntity() { return m_Entity; }
 		const Entity& GetEntity() const { return m_Entity; }
 
-		virtual ~Drawable();
-
+		virtual ~Drawable() = default;
 
 	protected:
 		Drawable() = default;
 
 		void EmplaceBindable(Ref<Bindable> bindable);
 
+	protected:
+		DescriptorsHandler m_DescriptorsHandler;
+		UniformHandler m_UniformHandler;
+
 	private:
 		std::vector<Ref<Bindable>> m_Bindables;
 		IndexBuffer* m_IndexBuffer;
 		GraphicsPipeline* m_GraphicsPipeline;
-
-		Scope<UniformHandler> m_UniformHandler;
-
-		Scope<UniformBuffer> uniformBuffer;
-		Scope<DescriptorSet> descriptorSet;
 
 		Entity m_Entity = Scene::Get().CreateEntity();
 	};
