@@ -14,45 +14,11 @@ namespace At0::VulkanTesting
 	class Pipeline;
 	class CommandBuffer;
 
-	class UniformBufferView
-	{
-		friend class UniformHandler;
-
-	public:
-		template<typename T>
-		UniformBufferView& operator=(const T& data)
-		{
-			if (m_UniformBuffer)
-				m_UniformBuffer->Update(&data);
-			return *this;
-		}
-
-	private:
-		UniformBufferView(UniformBuffer* ubuff) : m_UniformBuffer(ubuff) {}
-
-	private:
-		UniformBuffer* m_UniformBuffer;
-	};
-
 	class UniformHandler
 	{
-	private:
-		struct UniformPair
-		{
-			std::unordered_map<std::string, UniformBuffer*> uniformBuffers;
-			DescriptorSet* descriptorSet;
-		};
-
 	public:
-		UniformHandler(const Pipeline& pipeline);
-		~UniformHandler();
-
-		void BindDescriptors(const CommandBuffer& cmdBuff, const Pipeline& pipeline);
-		void UpdateDescriptors();
-
-		UniformBufferView operator[](std::string_view uniformName);
-
 	private:
-		std::unordered_map<std::string, UniformPair> m_Uniforms;
+		Scope<UniformBuffer> m_UniformBuffer;
+		Scope<DescriptorSet> m_DescriptorSet;
 	};
 }  // namespace At0::VulkanTesting

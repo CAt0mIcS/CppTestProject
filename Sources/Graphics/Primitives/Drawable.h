@@ -46,7 +46,9 @@ namespace At0::VulkanTesting
 		std::vector<Ref<Bindable>> m_Bindables;
 		IndexBuffer* m_IndexBuffer;
 		GraphicsPipeline* m_GraphicsPipeline;
-		Scope<UniformHandler> m_UniformHandler;
+
+		Scope<UniformBuffer> uniformBuffer;
+		Scope<DescriptorSet> descriptorSet;
 
 		Entity m_Entity = Scene::Get().CreateEntity();
 	};
