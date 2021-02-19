@@ -121,12 +121,12 @@ set(SRC
     "Sources/Graphics/Primitives/Model.cpp"
     "Sources/Graphics/Primitives/Mesh.h"
     "Sources/Graphics/Primitives/Mesh.cpp"
-    # "Sources/Graphics/Primitives/PointLight.h"
-    # "Sources/Graphics/Primitives/PointLight.cpp"
+    "Sources/Graphics/Primitives/PointLight.h"
+    "Sources/Graphics/Primitives/PointLight.cpp"
     # "Sources/Graphics/Primitives/TexturedPlane.h"
     # "Sources/Graphics/Primitives/TexturedPlane.cpp"
-    # "Sources/Graphics/Primitives/IndexedTriangleList.h"
-    # "Sources/Graphics/Primitives/IndexedTriangleList.cpp"
+    "Sources/Graphics/Primitives/IndexedTriangleList.h"
+    "Sources/Graphics/Primitives/IndexedTriangleList.cpp"
 
 
     "Sources/main.cpp"

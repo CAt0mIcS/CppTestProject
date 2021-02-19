@@ -26,7 +26,7 @@
 #include "Primitives/Model.h"
 #include "Primitives/Mesh.h"
 //#include "Primitives/TexturedPlane.h"
-//#include "Primitives/PointLight.h"
+#include "Primitives/PointLight.h"
 
 
 namespace At0::VulkanTesting
@@ -124,6 +124,8 @@ namespace At0::VulkanTesting
 
 	void Graphics::CreateDrawables()
 	{
+		m_Drawables.emplace_back(MakeScope<PointLight>());
+
 		m_Model = MakeScope<Model>("Resources/Models/Nanosuit/nanosuit.obj");
 		// m_Model2 = MakeScope<Model>("Resources/Models/Nanosuit/nanosuit.obj");
 

@@ -3,6 +3,7 @@
 
 #include "Graphics/Vulkan/GraphicsPipeline.h"
 #include "Graphics/Graphics.h"
+#include "PointLight.h"
 
 
 namespace At0::VulkanTesting
@@ -25,7 +26,10 @@ namespace At0::VulkanTesting
 		GetUniforms()["Transforms"]["view"] = Graphics::Get().SceneCamera.Matrices.View;
 		GetUniforms()["Transforms"]["proj"] = Graphics::Get().SceneCamera.Matrices.Perspective;
 
-		GetUniforms()["Lighting"]["lightPos"] = glm::vec3(0.0f, 0.0f, 0.0f);
+		TransformComponent& lightTform =
+			Graphics::Get().GetPointLight().GetEntity().Get<TransformComponent>();
+
+		GetUniforms()["Lighting"]["lightPos"] = lightTform.Translation;
 		GetUniforms()["Lighting"]["viewPos"] = Graphics::Get().SceneCamera.Position;
 		GetUniforms()["Lighting"]["lightColor"] = glm::vec3(1.0f, 1.0f, 1.0f);
 		GetUniforms()["Lighting"]["objectColor"] = glm::vec3(1.0f, 1.0f, 1.0f);

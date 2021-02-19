@@ -26,13 +26,4 @@ namespace At0::VulkanTesting
 			layout, std::vector<std::string_view>{ "Resources/Shaders/Default/DefaultShader.vert",
 						"Resources/Shaders/Default/DefaultShader.frag" }));
 	}
-
-	void PointLight::CmdDraw(const CommandBuffer& cmdBuff)
-	{
-		m_DescriptorsHandler.Push("UniformBufferObject", m_UniformHandler);
-		m_DescriptorsHandler.Update(GetGraphicsPipeline());
-		m_DescriptorsHandler.BindDescriptor(cmdBuff, GetGraphicsPipeline());
-
-		Drawable::CmdDraw(cmdBuff);
-	}
 }  // namespace At0::VulkanTesting
