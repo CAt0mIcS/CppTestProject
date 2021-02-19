@@ -12,7 +12,7 @@ namespace At0::VulkanTesting
 {
 	void Drawable::CmdBind(const CommandBuffer& cmdBuff)
 	{
-		uniformHandler->BindDescriptors(cmdBuff, GetGraphicsPipeline());
+		m_UniformHandler->BindDescriptors(cmdBuff, GetGraphicsPipeline());
 		for (Ref<Bindable>& bindable : m_Bindables)
 		{
 			bindable->Bind(cmdBuff);
@@ -26,13 +26,12 @@ namespace At0::VulkanTesting
 
 	void Drawable::Update()
 	{
-		TransformComponent& tform = m_Entity.Get<TransformComponent>();
-
+		TransformComponent& tform = GetEntity().Get<TransformComponent>();
 		glm::mat4 modelView = Graphics::Get().SceneCamera.Matrices.View * tform.GetMatrix();
-		// mvUniformBuffer->Update(&modelView);
+		glm::mat4 modelViewProj = Graphics::Get().SceneCamera.Matrices.Perspective * modelView;
 
-		glm::mat4 mvp = Graphics::Get().SceneCamera.Matrices.Perspective * modelView;
-		(*uniformHandler)["modelViewProj"] = mvp;
+		(*m_UniformHandler)["modelView"] = modelView;
+		(*m_UniformHandler)["modelViewProj"] = modelViewProj;
 	}
 
 	Drawable::~Drawable() {}
@@ -46,7 +45,7 @@ namespace At0::VulkanTesting
 			m_GraphicsPipeline = (GraphicsPipeline*)bindable.get();
 			// m_DescriptorsHandler = DescriptorsHandler(GetGraphicsPipeline());
 
-			uniformHandler = MakeScope<UniformHandler>(GetGraphicsPipeline());
+			m_UniformHandler = MakeScope<UniformHandler>(GetGraphicsPipeline());
 		}
 
 		m_Bindables.emplace_back(std::move(bindable));

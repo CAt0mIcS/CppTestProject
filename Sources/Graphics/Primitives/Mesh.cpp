@@ -14,12 +14,5 @@ namespace At0::VulkanTesting
 		}
 	}
 
-	void Mesh::CmdDraw(const CommandBuffer& cmdBuff)
-	{
-		m_DescriptorsHandler.Push("UniformBufferObject", m_UniformHandler);
-		m_DescriptorsHandler.Update(GetGraphicsPipeline());
-		m_DescriptorsHandler.BindDescriptor(cmdBuff, GetGraphicsPipeline());
-
-		Drawable::CmdDraw(cmdBuff);
-	}
+	void Mesh::CmdDraw(const CommandBuffer& cmdBuff) { Drawable::CmdDraw(cmdBuff); }
 }  // namespace At0::VulkanTesting

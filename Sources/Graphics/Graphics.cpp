@@ -23,8 +23,8 @@
 //#include "Primitives/Cube.h"
 //#include "Primitives/Square.h"
 #include "Primitives/Triangle.h"
-//#include "Primitives/Model.h"
-//#include "Primitives/Mesh.h"
+#include "Primitives/Model.h"
+#include "Primitives/Mesh.h"
 //#include "Primitives/TexturedPlane.h"
 //#include "Primitives/PointLight.h"
 
@@ -124,7 +124,7 @@ namespace At0::VulkanTesting
 
 	void Graphics::CreateDrawables()
 	{
-		// m_Model = MakeScope<Model>("Resources/Models/Nanosuit/nanosuit.obj");
+		m_Model = MakeScope<Model>("Resources/Models/Nanosuit/nanosuit.obj");
 		// m_Model2 = MakeScope<Model>("Resources/Models/Nanosuit/nanosuit.obj");
 
 		// m_Model2->Translate(glm::vec3(9.0f, 0.0f, 0.0f));
@@ -135,6 +135,12 @@ namespace At0::VulkanTesting
 		TransformComponent& triangleTransform =
 			m_Drawables.back()->GetEntity().Get<TransformComponent>();
 		triangleTransform.Translation = { 0.0f, 0.0f, 0.0f };
+
+		// m_Drawables.emplace_back(MakeScope<Triangle>());
+
+		// TransformComponent& triangleTransform2 =
+		//	m_Drawables.back()->GetEntity().Get<TransformComponent>();
+		// triangleTransform2.Translation = { 1.0f, 0.0f, 0.0f };
 
 		// m_Drawables.emplace_back(MakeScope<Square>());
 
@@ -185,7 +191,7 @@ namespace At0::VulkanTesting
 		vkCmdSetViewport(cmdBuff, 0, std::size(viewports), viewports);
 		vkCmdSetScissor(cmdBuff, 0, std::size(scissors), scissors);
 
-		// m_Model->CmdDraw(cmdBuff);
+		m_Model->CmdDraw(cmdBuff);
 		// m_Model2->CmdDraw(cmdBuff);
 		for (Scope<Drawable>& drawable : m_Drawables)
 		{
@@ -242,8 +248,8 @@ namespace At0::VulkanTesting
 		// ---------------------------------------
 		// Reset all drawables here
 		m_Drawables.clear();
-		// m_Model.reset();
-		// m_Model2.reset();
+		m_Model.reset();
+		m_Model2.reset();
 
 		// Explicit Codex destruction because Drawables might still need resources
 		// even if the ref count of the resource is 1
@@ -427,7 +433,7 @@ namespace At0::VulkanTesting
 
 	void Graphics::UpdateDrawables()
 	{
-		// m_Model->Update();
+		m_Model->Update();
 		// m_Model2->Update();
 		for (Scope<Drawable>& drawable : m_Drawables)
 		{

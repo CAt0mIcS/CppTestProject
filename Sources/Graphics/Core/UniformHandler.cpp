@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "UniformHandler.h"
 
 #include "Graphics/Vulkan/Descriptor.h"
@@ -12,17 +12,16 @@ namespace At0::VulkanTesting
 	UniformHandler::UniformHandler(const Pipeline& pipeline)
 	{
 		const Shader& shader = pipeline.GetShader();
-		m_DescriptorSets.reserve(shader.GetUniformBlocks().size());
-		m_UniformBuffers.reserve(m_DescriptorSets.size());
-
 		for (const auto& uniformBlock : shader.GetUniformBlocks())
 		{
+			std::unordered_map<std::string, UniformBuffer*> uniformBuffers;
 			for (const auto& uniform : uniformBlock.second.GetUniforms())
 			{
-				m_DescriptorSets.emplace_back(new DescriptorSet(pipeline));
-				m_UniformBuffers.emplace(
-					uniform.first, new UniformBuffer(uniform.second.GetSize()));
+				uniformBuffers.emplace(uniform.first, new UniformBuffer(uniform.second.GetSize()));
 			}
+
+			m_Uniforms.emplace(
+				uniformBlock.first, UniformPair{ uniformBuffers, new DescriptorSet(pipeline) });
 		}
 
 		UpdateDescriptors();
@@ -30,37 +29,49 @@ namespace At0::VulkanTesting
 
 	UniformHandler::~UniformHandler()
 	{
-		for (auto& it : m_UniformBuffers)
-			if (it.second)
-				delete it.second;
+		for (auto& it : m_Uniforms)
+		{
+			for (auto& buffer : it.second.uniformBuffers)
+				delete buffer.second;
 
-		for (DescriptorSet* descSet : m_DescriptorSets)
-			if (descSet)
-				delete descSet;
+			delete it.second.descriptorSet;
+		}
 	}
 
 	void UniformHandler::BindDescriptors(const CommandBuffer& cmdBuff, const Pipeline& pipeline)
 	{
-		for (DescriptorSet* descSet : m_DescriptorSets)
-			descSet->Bind(cmdBuff, pipeline);
+		for (auto& it : m_Uniforms)
+			it.second.descriptorSet->Bind(cmdBuff, pipeline);
 	}
 
 	void UniformHandler::UpdateDescriptors()
 	{
-		std::vector<UniformBuffer*> uniformBuffers;
-		for (const auto& it : m_UniformBuffers)
+		for (auto& it : m_Uniforms)
 		{
-			uniformBuffers.emplace_back(it.second);
-		}
+			std::vector<VkWriteDescriptorSet> writeDescriptors;
+			for (auto& buffer : it.second.uniformBuffers)
+			{
+				auto writeDesc =
+					buffer.second->GetWriteDescriptor(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+				writeDesc.GetWriteDescriptorSet().dstSet = *it.second.descriptorSet;
+				writeDescriptors.emplace_back(std::move(writeDesc));
+			}
 
-		for (uint32_t i = 0; i < uniformBuffers.size(); ++i)
-		{
-			m_DescriptorSets[i]->Update(*uniformBuffers[i]);
+			it.second.descriptorSet->Update({ writeDescriptors });
 		}
 	}
 
 	UniformBufferView UniformHandler::operator[](std::string_view uniformName)
 	{
-		return { *m_UniformBuffers[uniformName.data()] };
+		for (auto& it : m_Uniforms)
+		{
+			auto& itBuff = it.second.uniformBuffers.find(uniformName.data());
+			if (itBuff == it.second.uniformBuffers.end())
+				return { nullptr };
+
+			return { itBuff->second };
+		}
+
+		return { nullptr };
 	}
 }  // namespace At0::VulkanTesting

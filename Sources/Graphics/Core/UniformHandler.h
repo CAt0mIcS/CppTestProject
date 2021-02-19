@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "Base.h"
 
@@ -22,19 +22,27 @@ namespace At0::VulkanTesting
 		template<typename T>
 		UniformBufferView& operator=(const T& data)
 		{
-			m_UniformBuffer.Update(&data);
+			if (m_UniformBuffer)
+				m_UniformBuffer->Update(&data);
 			return *this;
 		}
 
 	private:
-		UniformBufferView(UniformBuffer& ubuff) : m_UniformBuffer(ubuff) {}
+		UniformBufferView(UniformBuffer* ubuff) : m_UniformBuffer(ubuff) {}
 
 	private:
-		UniformBuffer& m_UniformBuffer;
+		UniformBuffer* m_UniformBuffer;
 	};
 
 	class UniformHandler
 	{
+	private:
+		struct UniformPair
+		{
+			std::unordered_map<std::string, UniformBuffer*> uniformBuffers;
+			DescriptorSet* descriptorSet;
+		};
+
 	public:
 		UniformHandler(const Pipeline& pipeline);
 		~UniformHandler();
@@ -45,7 +53,6 @@ namespace At0::VulkanTesting
 		UniformBufferView operator[](std::string_view uniformName);
 
 	private:
-		std::unordered_map<std::string, UniformBuffer*> m_UniformBuffers;
-		std::vector<DescriptorSet*> m_DescriptorSets;
+		std::unordered_map<std::string, UniformPair> m_Uniforms;
 	};
 }  // namespace At0::VulkanTesting

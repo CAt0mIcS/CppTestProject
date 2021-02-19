@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Descriptor.h"
 
 #include "Graphics/Graphics.h"
@@ -30,24 +30,9 @@ namespace At0::VulkanTesting
 			&m_DescriptorSet, 0, nullptr);
 	}
 
-	void DescriptorSet::Update(const UniformBuffer& uniformBuffer)
+	void DescriptorSet::Update(const std::vector<VkWriteDescriptorSet>& descriptorWrites)
 	{
-		VkDescriptorBufferInfo bufferInfo{};
-		bufferInfo.buffer = uniformBuffer;
-		bufferInfo.offset = 0;
-		bufferInfo.range = uniformBuffer.GetSize();
-
-		VkWriteDescriptorSet descriptorWrite{};
-		descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		descriptorWrite.dstSet = m_DescriptorSet;
-		descriptorWrite.dstBinding = 0;	 // VK_TODO: Get binding from shader
-		descriptorWrite.dstArrayElement = 0;
-		descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		descriptorWrite.descriptorCount = 1;
-		descriptorWrite.pBufferInfo = &bufferInfo;
-		descriptorWrite.pImageInfo = nullptr;
-		descriptorWrite.pTexelBufferView = nullptr;
-
-		vkUpdateDescriptorSets(Graphics::Get().GetLogicalDevice(), 1, &descriptorWrite, 0, nullptr);
+		vkUpdateDescriptorSets(Graphics::Get().GetLogicalDevice(),
+			(uint32_t)descriptorWrites.size(), descriptorWrites.data(), 0, nullptr);
 	}
 }  // namespace At0::VulkanTesting

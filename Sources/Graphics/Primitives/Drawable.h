@@ -26,7 +26,7 @@ namespace At0::VulkanTesting
 	public:
 		void CmdBind(const CommandBuffer& cmdBuff);
 		virtual void CmdDraw(const CommandBuffer& cmdBuff);
-		void Update();
+		virtual void Update();
 
 		const IndexBuffer& GetIndexBuffer() const { return *m_IndexBuffer; }
 		const GraphicsPipeline& GetGraphicsPipeline() const { return *m_GraphicsPipeline; }
@@ -36,7 +36,6 @@ namespace At0::VulkanTesting
 
 		virtual ~Drawable();
 
-		Scope<UniformHandler> uniformHandler;
 
 	protected:
 		Drawable() = default;
@@ -47,6 +46,7 @@ namespace At0::VulkanTesting
 		std::vector<Ref<Bindable>> m_Bindables;
 		IndexBuffer* m_IndexBuffer;
 		GraphicsPipeline* m_GraphicsPipeline;
+		Scope<UniformHandler> m_UniformHandler;
 
 		Entity m_Entity = Scene::Get().CreateEntity();
 	};

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <vulkan/vulkan_core.h>
 
@@ -16,7 +16,7 @@ namespace At0::VulkanTesting
 		~DescriptorSet();
 
 		void Bind(const CommandBuffer& cmdBuff, const Pipeline& pipeline);
-		void Update(const UniformBuffer& uniformBuffer);
+		void Update(const std::vector<VkWriteDescriptorSet>& descriptorWrites);
 
 		operator const VkDescriptorSet&() const { return m_DescriptorSet; }
 
