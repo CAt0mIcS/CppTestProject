@@ -3,22 +3,22 @@
 
 layout(binding = 0) uniform Transforms
 {
-    mat4 modelView;
-    mat4 modelViewProj;
+    mat4 model;
+    mat4 view;
+    mat4 proj;
 } ubo;
 
-layout(location = 0) in vec3 inPosition;
-layout(location = 1) in vec3 inNormal;
+layout (location = 0) in vec3 aPos;
+layout (location = 1) in vec3 aNormal;
 
-layout(location = 0) out vec3 outViewPos;
-layout(location = 1) out vec3 outNormal;
+layout(location = 0) out vec3 FragPos;
+layout(location = 1) out vec3 Normal;
 
 
 void main()
 {
-    outViewPos = vec3(vec4(inPosition, 1.0f) * ubo.modelView);
-    // outNormal = inNormal * mat3(ubo.modelView);
-    outNormal = inNormal;
-
-    gl_Position = ubo.modelViewProj * vec4(inPosition, 1.0);
+    FragPos = vec3(ubo.model * vec4(aPos, 1.0));
+    Normal = mat3(transpose(inverse(ubo.model))) * aNormal;
+    
+    gl_Position = ubo.proj * ubo.view * vec4(FragPos, 1.0);
 }
