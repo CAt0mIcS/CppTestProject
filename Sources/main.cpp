@@ -9,6 +9,7 @@
  * This system lets the client specify, which features he/she wants to have enabled.
  */
 
+using GraphicsPipeline = uint32_t;
 enum class Features
 {
 	None = 0,
@@ -98,6 +99,17 @@ class Material : MaterialBase<flags>...
 public:
 	Material(float roughness, float shininess) : roughness(roughness), shininess(shininess)
 	{
+		CreatePipeline();
+	}
+
+	template<Features feature, typename... Args>
+	void Set(Args&&... args)
+	{
+		MaterialBase<feature>::Change(std::forward<Args>(args)...);
+	}
+
+	void CreatePipeline()
+	{
 		PipelineConfiguration config{};
 		(MaterialBase<flags>::PopulateConfig(config), ...);
 
@@ -105,12 +117,11 @@ public:
 			std::cout << "config.recreatePipeline = " << *config.recreatePipeline << '\n';
 		if (config.recreateSwapchain)
 			std::cout << "config.recreateSwapchain = " << *config.recreateSwapchain << '\n';
-	}
 
-	template<Features feature, typename... Args>
-	decltype(auto) Set(Args&&... args)
-	{
-		return MaterialBase<feature>::Change(std::forward<Args>(args)...);
+		// Resolve pipeline from codex using PipelineConfiguration
+		static int i = 0;
+		pipeline = MakeRef<GraphicsPipeline>(i);
+		++i;
 	}
 
 	float GetRoughness() const { return roughness; }
@@ -119,12 +130,37 @@ public:
 	void SetRoughness(float r) { roughness = r; }
 	void SetShininess(float s) { shininess = s; }
 
+	Ref<GraphicsPipeline> GetPipeline() const { return pipeline; }
+
 private:
 	float roughness;
 	float shininess;
+	Ref<GraphicsPipeline> pipeline;
 };
 
 using DefaultMaterial = Material<>;
+
+
+class Mesh
+{
+public:
+	template<Features... flags>
+	Mesh(const Material<flags...>& material) : pipeline(material.GetPipeline())
+	{
+	}
+
+	template<Features... flags>
+	void UpdateMaterial(Material<flags...>& material)
+	{
+		material.CreatePipeline();
+		pipeline = material.GetPipeline();
+	}
+
+	void Bind() { std::cout << "Binding pipeline " << *pipeline << '\n'; }
+
+private:
+	Ref<GraphicsPipeline> pipeline;
+};
 
 
 int main()
@@ -135,7 +171,13 @@ int main()
 	dynamicMat.Set<Features::DynamicPipeline>("Res/Sh/Def.vert", "Res/Sh/Def.frag");
 	dynamicMat.Set<Features::DynamicSpecular>(215);
 
+	Mesh mesh(dynamicMat);
+	mesh.Bind();
+
 	// After a while
 	dynamicMat.Set<Features::DynamicPipeline>("Res/Sh/Deffered.vert", "Res/Sh/Deffered.frag");
 	dynamicMat.Set<Features::DynamicSpecular>(33);
+
+	mesh.UpdateMaterial(dynamicMat);
+	mesh.Bind();
 }
