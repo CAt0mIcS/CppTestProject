@@ -97,10 +97,7 @@ template<Features... flags>
 class Material : MaterialBase<flags>...
 {
 public:
-	Material(float roughness, float shininess) : roughness(roughness), shininess(shininess)
-	{
-		CreatePipeline();
-	}
+	Material(float roughness, float shininess) : roughness(roughness), shininess(shininess) {}
 
 	template<Features feature, typename... Args>
 	void Set(Args&&... args)
@@ -144,11 +141,21 @@ using DefaultMaterial = Material<>;
 class Mesh
 {
 public:
+	/**
+	 * The constructor will call the update material function which creates the pipeline in the
+	 * material and updates the member stored in the mesh
+	 */
 	template<Features... flags>
-	Mesh(const Material<flags...>& material) : pipeline(material.GetPipeline())
+	Mesh(Material<flags...>& material)
 	{
+		UpdateMaterial(material);
 	}
 
+	/**
+	 * Once Material::Set has been called after the material is created, the pipeline might need to
+	 * change/be recreated. This is handled by this function. When it gets a material it recreates
+	 * it and updates the pipeline stored in the mesh
+	 */
 	template<Features... flags>
 	void UpdateMaterial(Material<flags...>& material)
 	{
