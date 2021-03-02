@@ -4,7 +4,7 @@
 /**
  * ------------------------ NOTICE ------------------------
  * If the client using the material system wants to change the pipeline we need to know which
- * shaders were in use before (we don't actually, but just pretend we do). But if the use doesn't
+ * shaders were in use before (we don't actually, but just pretend we do). But if the user doesn't
  * want to change the pipeline (so the shaders) then we don't need to store the old shaders.
  * This system lets the client specify, which features he/she wants to have enabled.
  */
@@ -26,7 +26,15 @@ template<>
 struct MaterialBase<Features::DynamicPipeline>
 {
 public:
-	void SetShaders(std::vector<std::string> sh) { shaders = std::move(sh); }
+	template<typename... Args>
+	void Change(Args&&... args)
+	{
+		std::cout << "Changing shader to: \n";
+		shaders = { args... };
+
+		for (std::string sh : shaders)
+			std::cout << "\t" << sh << '\n';
+	}
 
 protected:
 	std::vector<std::string> shaders;
@@ -36,7 +44,11 @@ template<>
 struct MaterialBase<Features::DynamicSpecular>
 {
 public:
-	void SetSpecularIntensity(uint32_t specs) { specularIntensity = specs; }
+	void Change(uint32_t newSpec)
+	{
+		std::cout << "Changing specular to " << newSpec << '\n';
+		specularIntensity = newSpec;
+	}
 
 protected:
 	uint32_t specularIntensity;
@@ -55,29 +67,15 @@ struct HasFlag<flag, T, std::enable_if_t<std::is_base_of_v<MaterialBase<flag>, T
 
 
 template<Features... flags>
-class Material : public MaterialBase<flags>...
+class Material : MaterialBase<flags>...
 {
 public:
 	Material(float roughness, float shininess) : roughness(roughness), shininess(shininess) {}
 
-	void ChangeShaders(std::vector<std::string> sh)
+	template<Features feature, typename... Args>
+	decltype(auto) Set(Args&&... args)
 	{
-		if constexpr (HasFlag<Features::DynamicPipeline, Material<flags...>>::value)
-		{
-			std::cout << "Change shaders here...\n";
-		}
-		else
-			static_assert(false, "Features::DynamicPipeline not present.");
-	}
-
-	void ChangeSpecular(uint32_t specs)
-	{
-		if constexpr (HasFlag<Features::DynamicSpecular, Material<flags...>>::value)
-		{
-			std::cout << "Changing specular to " << specs << '\n';
-		}
-		else
-			static_assert(false, "Features::DynamicSpecular not present.");
+		return MaterialBase<feature>::Change(std::forward<Args>(args)...);
 	}
 
 	float GetRoughness() const { return roughness; }
@@ -97,16 +95,12 @@ using DefaultMaterial = Material<>;
 int main()
 {
 	DefaultMaterial mat(1.0f, 2.0f);
-	// mat.ChangeShaders({ "" }); // Fails
 
 	Material<Features::DynamicPipeline, Features::DynamicSpecular> dynamicMat(1.0f, 2.0f);
-	dynamicMat.SetShaders({ "Res/Sh/Def.vert", "Res/Sh/Def.frag" });
-	dynamicMat.SetSpecularIntensity(1);
+	dynamicMat.Set<Features::DynamicPipeline>("Res/Sh/Def.vert", "Res/Sh/Def.frag");
+	dynamicMat.Set<Features::DynamicSpecular>(215);
 
 	// After a while
-	dynamicMat.ChangeShaders({ "Res/Sh/Deffered.vert", "Res/Sh/Deffered.frag" });
-	dynamicMat.ChangeSpecular(12);
-
-	// Shouldn't work!
-	MaterialBase<Features::DynamicPipeline> dynamicMatCast = dynamicMat;
+	dynamicMat.Set<Features::DynamicPipeline>("Res/Sh/Deffered.vert", "Res/Sh/Deffered.frag");
+	dynamicMat.Set<Features::DynamicSpecular>(33);
 }
