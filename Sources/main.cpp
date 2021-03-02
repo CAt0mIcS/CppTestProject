@@ -7,6 +7,11 @@
  * shaders were in use before (we don't actually, but just pretend we do). But if the user doesn't
  * want to change the pipeline (so the shaders) then we don't need to store the old shaders.
  * This system lets the client specify, which features he/she wants to have enabled.
+ *
+ * The mesh only cares about the pipeline which is created using all the PipelineConfiguration
+ * variables. When the material goes out of Scope, the Mesh still has the pipeline and can continue
+ * operating as usual. When the client wants to change something in the material the pipeline will
+ * get recreated once he/she calles Mesh::UpdateMaterial
  */
 
 using GraphicsPipeline = uint32_t;
@@ -97,7 +102,7 @@ template<Features... flags>
 class Material : MaterialBase<flags>...
 {
 public:
-	Material(float roughness, float shininess) : roughness(roughness), shininess(shininess) {}
+	Material() {}
 
 	template<Features feature, typename... Args>
 	void Set(Args&&... args)
@@ -121,17 +126,9 @@ public:
 		++i;
 	}
 
-	float GetRoughness() const { return roughness; }
-	float GetShininess() const { return shininess; }
-
-	void SetRoughness(float r) { roughness = r; }
-	void SetShininess(float s) { shininess = s; }
-
 	Ref<GraphicsPipeline> GetPipeline() const { return pipeline; }
 
 private:
-	float roughness;
-	float shininess;
 	Ref<GraphicsPipeline> pipeline;
 };
 
@@ -146,7 +143,7 @@ public:
 	 * material and updates the member stored in the mesh
 	 */
 	template<Features... flags>
-	Mesh(Material<flags...>& material)
+	Mesh(Material<flags...> material = DefaultMaterial{})
 	{
 		UpdateMaterial(material);
 	}
@@ -172,13 +169,13 @@ private:
 
 int main()
 {
-	DefaultMaterial mat(1.0f, 2.0f);
+	Mesh mesh;
 
-	Material<Features::DynamicPipeline, Features::DynamicSpecular> dynamicMat(1.0f, 2.0f);
+	Material<Features::DynamicPipeline, Features::DynamicSpecular> dynamicMat;
 	dynamicMat.Set<Features::DynamicPipeline>("Res/Sh/Def.vert", "Res/Sh/Def.frag");
 	dynamicMat.Set<Features::DynamicSpecular>(215);
 
-	Mesh mesh(dynamicMat);
+	mesh.UpdateMaterial(dynamicMat);
 	mesh.Bind();
 
 	// After a while
