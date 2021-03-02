@@ -16,6 +16,18 @@ enum class Features
 	DynamicSpecular = 2
 };
 
+/**
+ * This will hold all members to describe the pipeline. Each MaterialBase specialization will have a
+ * function to fill in the required struct members for the feature. So feature 1 might set member 1
+ * to x and feature 2 might set member b to 32. If the same member is set twice, it means the
+ * pipeline config is invalid.
+ */
+struct PipelineConfiguration
+{
+	std::optional<bool> recreateSwapchain;
+	std::optional<bool> recreatePipeline;
+};
+
 
 template<Features flags>
 struct MaterialBase
@@ -36,6 +48,13 @@ public:
 			std::cout << "\t" << sh << '\n';
 	}
 
+	void PopulateConfig(PipelineConfiguration& config)
+	{
+		assert(!config.recreateSwapchain &&
+			   "MaterialBase configuration invalid. RecreateSwapchain already set.");
+		config.recreateSwapchain = true;
+	}
+
 protected:
 	std::vector<std::string> shaders;
 };
@@ -48,6 +67,13 @@ public:
 	{
 		std::cout << "Changing specular to " << newSpec << '\n';
 		specularIntensity = newSpec;
+	}
+
+	void PopulateConfig(PipelineConfiguration& config)
+	{
+		assert(!config.recreatePipeline &&
+			   "MaterialBase configuration invalid. RecreatePipeline already set.");
+		config.recreatePipeline = true;
 	}
 
 protected:
@@ -70,7 +96,16 @@ template<Features... flags>
 class Material : MaterialBase<flags>...
 {
 public:
-	Material(float roughness, float shininess) : roughness(roughness), shininess(shininess) {}
+	Material(float roughness, float shininess) : roughness(roughness), shininess(shininess)
+	{
+		PipelineConfiguration config{};
+		(MaterialBase<flags>::PopulateConfig(config), ...);
+
+		if (config.recreatePipeline)
+			std::cout << "config.recreatePipeline = " << *config.recreatePipeline << '\n';
+		if (config.recreateSwapchain)
+			std::cout << "config.recreateSwapchain = " << *config.recreateSwapchain << '\n';
+	}
 
 	template<Features feature, typename... Args>
 	decltype(auto) Set(Args&&... args)

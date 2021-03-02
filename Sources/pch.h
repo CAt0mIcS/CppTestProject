@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <iostream>
 #include <filesystem>
@@ -10,5 +10,7 @@
 #include <unordered_set>
 #include <map>
 #include <set>
+#include <assert.h>
+#include <optional>
 #include <vector>
 #include <array>
