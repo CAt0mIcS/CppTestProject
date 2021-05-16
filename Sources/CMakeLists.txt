@@ -3,16 +3,30 @@ set(SRC
 	"main.cpp"
 )
 
-set(monoPath "C:/Program Files/Mono/lib")
+if(WIN32)
+	set(monoPath "C:/Program Files/Mono/lib")
+	
+	set(LIB
+		"${monoPath}/mono-2.0-sgen.lib"
+	)
+	
+	set(INC
+		"C:/Program Files/Mono/include/mono-2.0"
+	)
+	
+else()
+	set(monoPath "/usr/lib")
+	
+	set(LIB
+		"${monoPath}/libmono-2.0.so"
+	)
+	
+	set(INC
+		"${monoPath}/../include/mono-2.0"
+	)
+	
+endif()
 
-set(LIB
-	"${monoPath}/mono-2.0-sgen.lib"
-)
-
-
-set(INC
-	"C:/Program Files/Mono/include/mono-2.0"
-)
 
 
 add_executable("TestProject" "${SRC}")

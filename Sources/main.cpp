@@ -31,12 +31,20 @@ void RunStaticMethod(MonoDomain* domain, MonoImage* image, const char* methodDes
 
 int main()
 {
+#ifdef _WIN32
 	std::string command = "\"C:/Program Files/Mono/bin/mcs\" Sources/Test.cs -target:library";
+#elif defined(__linux__)
+	std::string command = "mcs Sources/Test.cs -target:library";
+#endif
 
 	// Compile the script
 	system(command.c_str());
 
+#ifdef _WIN32
 	mono_set_dirs("C:\\Program Files\\Mono\\lib", "C:\\Program Files\\Mono\\etc");
+#elif defined(__linux__)
+	// mono_set_dirs("/usr/lib", "C:\\Program Files\\Mono\\etc");
+#endif
 
 	/*
 	 * Load the default Mono configuration file, this is needed
