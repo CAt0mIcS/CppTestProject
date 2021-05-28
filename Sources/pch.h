@@ -14,6 +14,7 @@
 #include <optional>
 #include <vector>
 #include <array>
+#include <source_location>
 
 template<typename T>
 using Scope = std::unique_ptr<T>;
