@@ -22,5 +22,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 include("CMake/Macros.cmake")
 
-add_subdirectory("Sources")
+add_subdirectory("TestProject")
+add_subdirectory("Lib1")
+add_subdirectory("Lib2")
 add_subdirectory("Extern")

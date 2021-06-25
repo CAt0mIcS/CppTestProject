@@ -8,7 +8,8 @@ set(LIB
 )
 
 set(INC
-	""
+	"${CMAKE_SOURCE_DIR}/Lib1/"
+	"${CMAKE_SOURCE_DIR}/Lib2/"
 )
 
 add_executable("TestProject" "${SRC}")

@@ -14,6 +14,7 @@
 #include <optional>
 #include <vector>
 #include <array>
+#include <Windows.h>
 #include <source_location>
 
 template<typename T>
